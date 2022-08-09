@@ -116,8 +116,7 @@ function opReserveScript(club, script) {
 }
 function getSplitterDate(code) {
   const lns = code.split("\r\n");
-  const regex =
-    /\s?const\s?fulldate\s?=\s?\[\s?year,\s?month,\sdate\s?\]\.join\("(.?)"\);/;
+  const regex = /\s?const\s?splitterDate\s?=\s?\"(.?)\"/;
   let splitter = "";
   lns.every((ln) => {
     const res = regex.exec(ln);
