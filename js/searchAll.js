@@ -76,6 +76,7 @@ elMqtt.onclick = function () {
     command: "searchAll",
   };
   log(param);
+  log("device", selDevice.value);
   if (param.clubs.length == 0) return;
   socket.send(
     JSON.stringify({
