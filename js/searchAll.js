@@ -80,7 +80,7 @@ elMqtt.onclick = function () {
   socket.send(
     JSON.stringify({
       command: "publish",
-      topic: "95b7a543-ea1d-11ec-a93e-0242ac11000a",
+      topic: selDevice.value,
       message: JSON.stringify(param),
     })
   );
