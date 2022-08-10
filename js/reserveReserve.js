@@ -1,5 +1,5 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "http://mnemosynesolutions.co.kr:8080";
+const urlHeader = "http://dev.mnemosyne.co.kr:1009";
 const dictClub = {};
 const urlName = {
   funcLogin: "login_url",
@@ -116,8 +116,7 @@ function opReserveScript(club, script) {
 }
 function getSplitterDate(code) {
   const lns = code.split("\r\n");
-  const regex =
-    /\s?const\s?fulldate\s?=\s?\[\s?year,\s?month,\sdate\s?\]\.join\("(.?)"\);/;
+  const regex = /\s?const\s?splitterDate\s?=\s?\"(.?)\"/;
   let splitter = "";
   lns.every((ln) => {
     const res = regex.exec(ln);

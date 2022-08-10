@@ -1,5 +1,5 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "http://mnemosynesolutions.co.kr:8080";
+const urlHeader = "http://dev.mnemosyne.co.kr:1009";
 const dictClub = {};
 const cf = new jCommon();
 let startNumber;
@@ -76,11 +76,12 @@ elMqtt.onclick = function () {
     command: "searchAll",
   };
   log(param);
+  log("device", selDevice.value);
   if (param.clubs.length == 0) return;
   socket.send(
     JSON.stringify({
       command: "publish",
-      topic: "95b7a543-ea1d-11ec-a93e-0242ac11000a",
+      topic: selDevice.value,
       message: JSON.stringify(param),
     })
   );
