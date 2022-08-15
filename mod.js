@@ -312,11 +312,12 @@ log("raw addr :: ", location.href);
 log("aDDr :: ", aDDr);
 log("addr :: ", addr); */
 
-  const COMMAND = "GET_TIME";
-  const clubId = "a7fe6b1d-f05e-11ec-a93e-0242ac11000a";
+  const COMMAND = "GET_DATE";
+  const clubId = "3facbc96-7cfc-11ec-b15c-0242ac110005";
   const courses = {
-    In: "a8005001-f05e-11ec-a93e-0242ac11000a",
-    Out: "a8005112-f05e-11ec-a93e-0242ac11000a",
+    서: "5f18ab1b-7cfc-11ec-b15c-0242ac110005",
+    남: "5f18addf-7cfc-11ec-b15c-0242ac110005",
+    동: "5f18ae4d-7cfc-11ec-b15c-0242ac110005",
   };
   log("step::", 1);
   const addrOuter = OUTER_ADDR_HEADER + "/api/reservation/golfSchedule";
@@ -386,7 +387,7 @@ log("addr :: ", addr); */
       const result = [];
       dates.every((arr) => {
         const [date] = arr;
-        if (date == "20220831") {
+        if (date == "${TARGET_DATE}") {
           result.push(arr);
           return false;
         }
@@ -440,14 +441,14 @@ log("addr :: ", addr); */
       }
     });
   }
-  function mneCall(strdate, callback) {
+  function mneCall(date, callback) {
     const param = {};
-    const els = document.getElementsByClassName("cal_live");
+    const els = doc.gcn("can");
     Array.from(els).forEach((el) => {
-      const href = el.getAttribute("href");
+      const href = el.attr("href");
       if (href === "#") return;
-      const date = strdate + el.innerText.addzero();
-      dates.push([date, ""]);
+      const fulldate = date + el.str().addzero();
+      dates.push([fulldate, ""]);
     });
     callback();
   }
@@ -455,71 +456,55 @@ log("addr :: ", addr); */
   function mneCallDetail(arrDate) {
     const [date, strParam] = arrDate;
     const param = {
-      golfResType: "real",
-      courseId: "0",
-      usrMemCd: "40",
-      pointDate: date,
-      openYn: "1",
-      dateGbn: "3",
-      choiceTime: "00",
-      cssncourseum: "",
-      inputType: "I",
-    };
-    const courseDict = {
-      IN: "In",
-      OUT: "Out",
+      strReserveDate: date.gh(4) + "-" + date.ch(4).gh(2) + "-" + date.gt(2),
+      strGolfLgubun: 160,
     };
 
-    post(
-      "/mobile/reservation/list/ajax_real_timeinfo_list.do",
-      param,
-      {},
-      (data) => {
-        const ifr = document.createElement("div");
-        ifr.innerHTML = data;
+    get("/Mobile/Reservation/ReservationTimeList.aspx", param, {}, (data) => {
+      const ifr = document.createElement("div");
+      ifr.innerHTML = data;
 
-        const tbl = ifr
-          .getElementsByClassName("cm_time_list_tbl")[0]
-          .getElementsByTagName("tbody")[0];
-        const els = tbl.getElementsByTagName("tr");
+      const els = ifr.gcn("cosTable")[0].gtn("tr");
+      Array.from(els).forEach((el, i) => {
+        if (i === 0) return;
+        const param = el.gtn("a")[0].attr("href").inparen();
+        const dictCourse = {
+          11: "서",
+          22: "남",
+          33: "동",
+        };
+        let [, time, course, , , , , , , fee_discount] = param;
+        course = dictCourse[course];
+        fee_discount *= 1;
+        const fee_normal = fee_discount;
 
-        const obTeams = {};
-        Array.from(els).forEach((el, i) => {
-          if (i === 0) return;
-          const course = courseDict[el.children[1].innerText];
-          const time = el.children[2].innerText;
-          const fee_discount = el.children[4].innerText.split(",").join("") * 1;
-          const fee_normal = el.children[4].innerText.split(",").join("") * 1;
-
-          golf_schedule.push({
-            golf_club_id: clubId,
-            golf_course_id: course,
-            date,
-            time,
-            in_out: "",
-            persons: "",
-            fee_normal,
-            fee_discount,
-            others: "9홀",
-          });
+        golf_schedule.push({
+          golf_club_id: clubId,
+          golf_course_id: course,
+          date,
+          time,
+          in_out: "",
+          persons: "",
+          fee_normal,
+          fee_discount,
+          others: "9홀",
         });
-        procDate();
-      }
-    );
+      });
+      procDate();
+    });
   }
 
   function LOGOUT() {
     log("LOGOUT");
-    location.href = "/mobile/user/sign/Logout.do";
+    location.href = "/Mobile/Member/LogOut.aspx";
   }
 
   const dict = {
-    "http://www.360cc.co.kr/mobile/login/login.do": funcLogin,
-    "http://www.360cc.co.kr/mobile/reservation/real_reservation.do":
+    "https://shilla.kxleisure.com/Mobile/Member/LoginNew.aspx": funcLogin,
+    "https://shilla.kxleisure.com/Mobile/Reservation/ReservationList.aspx":
       funcReserve,
-    "http://www.360cc.co.kr/mobile/main/mainPage.do": funcMain,
-    "http://www.360cc.co.kr/mobile/user/sign/Logout.do": funcOut,
-    "http://www.360cc.co.kr/mobile/reservation/my_golfreslist.do": funcList,
+    "https://shilla.kxleisure.com/Mobile/": funcMain,
+    "https://shilla.kxleisure.com/Mobile/Member/LogOut.aspx": funcOut,
   };
   main();
 
@@ -533,14 +518,12 @@ log("addr :: ", addr); */
 
   function funcList() {
     log("funcList");
-    location.href =
-      "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
     return;
   }
   function funcMain() {
     log("funcMain");
-    location.href =
-      "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
     return;
   }
   function funcOut() {
@@ -553,8 +536,7 @@ log("addr :: ", addr); */
   function funcOther() {
     log("funcOther");
 
-    location.href =
-      "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
 
     return;
   }
@@ -563,14 +545,13 @@ log("addr :: ", addr); */
 
     const chk = LSCHK("TZ_SEARCH_LOGIN", 5);
     if (!chk) {
-      location.href =
-        "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+      location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
       return;
     }
 
-    usrId2.value = "${login_id}";
-    usrPwd2.value = "${login_password}";
-    fnLogin2();
+    user_id.value = "${login_id}";
+    user_pw.value = "${login_password}";
+    login();
 
     return;
   }
@@ -578,7 +559,7 @@ log("addr :: ", addr); */
     log("funcSearch");
 
     mneCall(thisdate, () => {
-      doc.gcn("right")[1].click();
+      Update("CALENDAR|" + nextyear + "-" + nextmonth + "|");
       setTimeout(() => {
         mneCall(nextdate, procDate);
       }, 1000);
