@@ -3,6 +3,7 @@ const urlHeader = "http://dev.mnemosyne.co.kr:1009";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const dictClub = {};
 const cf = new jCommon();
+
 let startNumber;
 let endNumber;
 let boxes = [];
@@ -76,7 +77,7 @@ function engClick(e) {
 function setBoxButtons() {
   boxes.forEach((box) => {
     const div = box.add("div");
-    const strs = ["L", "S", "rR", "rS", "rC"];
+    const strs = ["L", "Sd", "St", "rR", "rS", "rC"];
     strs.forEach((str) => {
       const btn = div.add("button");
       btn.className = "smallbtn";
@@ -105,8 +106,8 @@ function setpopbody({ content: con, close }, club, sign) {
     "width: 95%;height: 90%; border: 0px; background-color: black; color: white; font-size: 15px;";
   if (sign == "L")
     post(
-      "http://dev.mnemosyne.co.kr:1009/" + club.eng_id,
-      {},
+      "http://dev.mnemosyne.co.kr:1009/login_admin",
+      { club: club.eng_id },
       httpHeader,
       (data) => {
         const json = JSON.parse(data);
@@ -114,14 +115,25 @@ function setpopbody({ content: con, close }, club, sign) {
         ta.scrollTop = ta.scrollHeight;
       }
     );
-  if (sign == "S")
+  if (sign == "Sd")
     post(
-      "http://dev.mnemosyne.co.kr:1009/searchbot",
-      { club: club.eng_id },
+      "http://dev.mnemosyne.co.kr:1009/searchbots_date_admin",
+      { clubs: [club.eng_id] },
       httpHeader,
       (data) => {
         const json = JSON.parse(data);
-        ta.value = json.script;
+        ta.value = json.scripts[club.eng_id];
+        ta.scrollTop = ta.scrollHeight;
+      }
+    );
+  if (sign == "St")
+    post(
+      "http://dev.mnemosyne.co.kr:1009/searchbots_time_admin",
+      { clubs: [club.eng_id], date: "20220831" },
+      httpHeader,
+      (data) => {
+        const json = JSON.parse(data);
+        ta.value = json.scripts[club.eng_id];
         ta.scrollTop = ta.scrollHeight;
       }
     );
@@ -174,61 +186,71 @@ function setpopbody({ content: con, close }, club, sign) {
     );
 }
 function setpophead({ content: con, close }, club, sign) {
+  const editorUrls = {
+    L:
+      "http://dev.mnemosyne.co.kr:1007/html/loginEditor.html?clubId=" +
+      club.eng_id,
+    Sd: "http://dev.mnemosyne.co.kr:1007/html/editor.html?club_id=" + club.id,
+    St: "http://dev.mnemosyne.co.kr:1007/html/editor.html?club_id=" + club.id,
+    rR:
+      "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveReserve.html?club=" +
+      club.eng_id,
+    rS:
+      "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveSearch.html?club=" +
+      club.eng_id,
+    rC:
+      "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveCancel.html?club=" +
+      club.eng_id,
+  };
+  const mqttCommands = {
+    L: "login",
+    Sd: "searchAll_date",
+    St: "searchAll_time",
+    rR: "reserveReserve",
+    rS: "reserveSearch",
+    rC: "reserveCancel",
+  };
   const div = con.add("div");
   div.style.cssText = "background-color: royalblue; padding: 5px;";
   const btnEnd = div.add("button");
   btnEnd.onclick = close;
   btnEnd.innerHTML = "X";
-  if (sign == "L") {
-    const btn = div.add("button");
-    btn.innerHTML = "Edit";
-    btn.onclick = function () {
-      window.open(
-        "http://dev.mnemosyne.co.kr:1007/html/loginEditor.html?clubId=" +
-          club.eng_id,
-        "_blank"
-      );
+
+  const btn = div.add("button");
+  btn.innerHTML = "Edit";
+  btn.onclick = function () {
+    window.open(editorUrls[sign], "_blank");
+  };
+
+  const iptMqtt = div.add("input");
+  iptMqtt.value = "f1b8ab82-1c3d-11ed-a93e-0242ac11000a";
+  iptMqtt.style.cssText = "width: 300px;text-align: right;padding: 3px;";
+
+  const btnMqtt = div.add("button");
+  btnMqtt.innerHTML = "Mqtt";
+  btnMqtt.onclick = function () {
+    const param = {
+      club: club.eng_id,
+      club_id: club.id,
+      clubs: [club.eng_id],
+      command: mqttCommands[sign],
     };
-  } else if (sign == "S") {
-    const btn = div.add("button");
-    btn.innerHTML = "Edit";
-    btn.onclick = function () {
-      window.open(
-        "http://dev.mnemosyne.co.kr:1007/html/editor.html?club_id=" + club.id,
-        "_blank"
-      );
-    };
-  } else if (sign == "rR") {
-    const btn = div.add("button");
-    btn.innerHTML = "Edit";
-    btn.onclick = function () {
-      window.open(
-        "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveReserve.html?club=" +
-          club.eng_id,
-        "_blank"
-      );
-    };
-  } else if (sign == "rS") {
-    const btn = div.add("button");
-    btn.innerHTML = "Edit";
-    btn.onclick = function () {
-      window.open(
-        "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveSearch.html?club=" +
-          club.eng_id,
-        "_blank"
-      );
-    };
-  } else if (sign == "rC") {
-    const btn = div.add("button");
-    btn.innerHTML = "Edit";
-    btn.onclick = function () {
-      window.open(
-        "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveCancel.html?club=" +
-          club.eng_id,
-        "_blank"
-      );
-    };
-  }
+    log(param);
+    log("device", iptMqtt.value);
+    if (param.clubs.length == 0) return;
+    socket.send(
+      JSON.stringify({
+        command: "publish",
+        topic: iptMqtt.value,
+        message: JSON.stringify(param),
+      })
+    );
+  };
+
+  const span = div.add("span");
+  span.style.cssText =
+    "display: inline-block; color: white; font-weight: bold; padding-left: 10px;";
+  span.str(mqttCommands[sign].toUpperCase());
 }
 function boxclick(e) {
   e.preventDefault();
@@ -286,22 +308,4 @@ btnSelect.onclick = function () {
 };
 iptSelect.onkeyup = function () {
   btnSelect.onclick();
-};
-elMqtt.onclick = function () {
-  const param = {
-    club: "",
-    club_id: "",
-    clubs: getSelectedClubs(),
-    command: "searchAll",
-  };
-  log(param);
-  log("device", iptDevice.value);
-  if (param.clubs.length == 0) return;
-  socket.send(
-    JSON.stringify({
-      command: "publish",
-      topic: iptDevice.value,
-      message: JSON.stringify(param),
-    })
-  );
 };
