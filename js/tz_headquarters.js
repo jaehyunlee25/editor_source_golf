@@ -1,26 +1,5 @@
 const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "http://dev.mnemosyne.co.kr:1009";
-<<<<<<< HEAD
-const dictClub = {};
-const cf = new jCommon();
-let startNumber;
-let endNumber;
-const boxes = [];
-
-post(urlHeader + "/clubs", {}, httpHeader, (data) => {
-  clubs = JSON.parse(data).clubs;
-  clubs.sort();
-  setBoxes(clubs);
-});
-
-function setBoxes(clubs) {
-  clubs.forEach((club, i) => {
-    const box = doc.gcn("cover")[0].add("div");
-    box.className = "box";
-    box.number = i;
-    box.club = club;
-    box.str(i + 1 + ". " + club);
-=======
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const dictClub = {};
 const cf = new jCommon();
@@ -70,7 +49,6 @@ function setBoxes(clubs) {
     );
     window[club].onclick = engClick;
     window["kor_" + club].onclick = korClick;
->>>>>>> 3c4749dc48df0a726f692a5db70032c00857e72e
     box.onclick = boxclick;
     box.onselect = () => {
       return false;
@@ -80,8 +58,6 @@ function setBoxes(clubs) {
     };
     boxes.push(box);
   });
-<<<<<<< HEAD
-=======
   setBoxButtons();
 }
 function korClick(e) {
@@ -277,7 +253,6 @@ function setpophead({ content: con, close }, club, sign) {
   span.style.cssText =
     "display: inline-block; color: white; font-weight: bold; padding-left: 10px;";
   span.str(mqttCommands[sign].toUpperCase());
->>>>>>> 3c4749dc48df0a726f692a5db70032c00857e72e
 }
 function boxclick(e) {
   e.preventDefault();
@@ -286,13 +261,9 @@ function boxclick(e) {
     selectBoxes();
   } else {
     startNumber = this.number;
-<<<<<<< HEAD
-    unselectBoxes();
-=======
     endNumber = this.number;
     unselectBoxes();
     selectBoxes();
->>>>>>> 3c4749dc48df0a726f692a5db70032c00857e72e
   }
 }
 function unselectBoxes() {
@@ -324,25 +295,6 @@ function getSelectedClubs() {
   });
   return result;
 }
-<<<<<<< HEAD
-elMqtt.onclick = function () {
-  const param = {
-    club: "",
-    club_id: "",
-    clubs: getSelectedClubs(),
-    command: "searchAll",
-  };
-  log(param);
-  log("device", selDevice.value);
-  if (param.clubs.length == 0) return;
-  socket.send(
-    JSON.stringify({
-      command: "publish",
-      topic: iptDevice.value,
-      message: JSON.stringify(param),
-    })
-  );
-=======
 btnSelect.onclick = function () {
   const str = iptSelect.value;
   const selClubs = [];
@@ -358,5 +310,4 @@ btnSelect.onclick = function () {
 };
 iptSelect.onkeyup = function () {
   btnSelect.onclick();
->>>>>>> 3c4749dc48df0a726f692a5db70032c00857e72e
 };
