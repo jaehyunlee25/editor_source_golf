@@ -346,8 +346,8 @@ elMqtt.onclick = function () {
   socket.send(
     JSON.stringify({
       command: "publish",
-      //topic: "95b7a543-ea1d-11ec-a93e-0242ac11000a",
-      topic: "252a6790-185d-11ed-a93e-0242ac11000a",
+      topic: "95b7a543-ea1d-11ec-a93e-0242ac11000a",
+      //topic: "252a6790-185d-11ed-a93e-0242ac11000a",
       message: JSON.stringify(param),
     })
   );
