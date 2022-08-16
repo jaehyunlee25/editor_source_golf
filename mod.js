@@ -500,11 +500,9 @@ log("addr :: ", addr); */
   }
 
   const dict = {
-    "https://shilla.kxleisure.com/Mobile/Member/LoginNew.aspx": funcLogin,
-    "https://shilla.kxleisure.com/Mobile/Reservation/ReservationList.aspx":
-      funcReserve,
-    "https://shilla.kxleisure.com/Mobile/": funcMain,
-    "https://shilla.kxleisure.com/Mobile/Member/LogOut.aspx": funcOut,
+    "https://shilla.kmhleisure.com/Mobile/Member/LoginNew.aspx": funcLogin,
+    "https://shilla.kmhleisure.com/Mobile/Shilla/Default.aspx": funcReserve,
+    "https://shilla.kmhleisure.com/Mobile/Member/LogOut.aspx": funcOut,
   };
   main();
 

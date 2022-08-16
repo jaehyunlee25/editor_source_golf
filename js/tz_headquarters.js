@@ -8,6 +8,7 @@ let startNumber;
 let endNumber;
 let boxes = [];
 let objGolfClubs = {};
+let objGCUUID = {};
 let clubs;
 
 post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
@@ -16,6 +17,7 @@ post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
     clubs = JSON.parse(data).clubs;
     golfClubs.forEach((golfclub) => {
       objGolfClubs[golfclub.eng_id] = golfclub;
+      objGCUUID[golfclub.id] = golfclub;
     });
     clubs.sort();
     setBoxes(clubs);
