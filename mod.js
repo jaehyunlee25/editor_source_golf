@@ -313,11 +313,11 @@ log("aDDr :: ", aDDr);
 log("addr :: ", addr); */
 
   const COMMAND = "GET_DATE";
-  const clubId = "3facbc96-7cfc-11ec-b15c-0242ac110005";
+  const clubId = "ab264b8e-eecb-11ec-a93e-0242ac11000a";
   const courses = {
-    서: "5f18ab1b-7cfc-11ec-b15c-0242ac110005",
-    남: "5f18addf-7cfc-11ec-b15c-0242ac110005",
-    동: "5f18ae4d-7cfc-11ec-b15c-0242ac110005",
+    Wales: "ab2a1b57-eecb-11ec-a93e-0242ac11000a",
+    England: "ab2a1c38-eecb-11ec-a93e-0242ac11000a",
+    Scotland: "ab2a1c79-eecb-11ec-a93e-0242ac11000a",
   };
   log("step::", 1);
   const addrOuter = OUTER_ADDR_HEADER + "/api/reservation/golfSchedule";
@@ -369,8 +369,8 @@ log("addr :: ", addr); */
           param,
           header,
           (data) => {
-            log(data);
             const json = JSON.parse(data);
+            log(json.message);
             const ac = window.AndroidController;
             if (json.resultCode == 200) {
               if (ac) ac.message("SUCCESS_OF_GET_DATE");
@@ -431,8 +431,8 @@ log("addr :: ", addr); */
     /* console.log(golf_schedule); */
     const param = { golf_schedule, golf_club_id: clubId };
     post(addrOuter, param, header, (data) => {
-      log(data);
       const json = JSON.parse(data);
+      log(json.message);
       const ac = window.AndroidController;
       if (json.resultCode == 200) {
         if (ac) ac.message("end of procGolfSchedule!");
@@ -442,41 +442,55 @@ log("addr :: ", addr); */
     });
   }
   function mneCall(date, callback) {
-    const param = {};
-    const els = doc.gcn("can");
-    Array.from(els).forEach((el) => {
-      const href = el.attr("href");
-      if (href === "#") return;
-      const fulldate = date + el.str().addzero();
-      dates.push([fulldate, ""]);
+    const param = {
+      nYear: date.gh(4),
+      nMonth: date.gt(2),
+    };
+    get("/mobile/reservation/reservation1.asp", param, {}, (data) => {
+      const ifr = document.createElement("div");
+      ifr.innerHTML = data;
+      const els = ifr.getElementsByClassName("possible");
+      Array.from(els).forEach((el) => {
+        const a = el.getElementsByTagName("a")[0];
+        const param = a.getAttribute("href").inparen();
+        const fulldate = param[1].trim();
+        dates.push([fulldate, param]);
+      });
+      callback();
     });
-    callback();
   }
 
   function mneCallDetail(arrDate) {
-    const [date, strParam] = arrDate;
+    const [date, option] = arrDate;
     const param = {
-      strReserveDate: date.gh(4) + "-" + date.ch(4).gh(2) + "-" + date.gt(2),
-      strGolfLgubun: 160,
+      club_code: "",
+      booking_date: date,
+      day_gubun: option[2].trim(),
+      gbn: "1",
+      evt_cd: "",
     };
-
-    get("/Mobile/Reservation/ReservationTimeList.aspx", param, {}, (data) => {
+    const dictCourse = {
+      A: "England",
+      B: "Scotland",
+      C: "Wales",
+    };
+    post("/mobile/reservation/reservation2.asp", param, {}, (data) => {
       const ifr = document.createElement("div");
       ifr.innerHTML = data;
 
-      const els = ifr.gcn("cosTable")[0].gtn("tr");
+      const els = ifr
+        .getElementsByClassName("reserCourseList")[0]
+        .getElementsByClassName("listBox");
       Array.from(els).forEach((el, i) => {
-        if (i === 0) return;
-        const param = el.gtn("a")[0].attr("href").inparen();
-        const dictCourse = {
-          11: "서",
-          22: "남",
-          33: "동",
-        };
-        let [, time, course, , , , , , , fee_discount] = param;
-        course = dictCourse[course];
-        fee_discount *= 1;
-        const fee_normal = fee_discount;
+        if (i == 0) return;
+        const param = el.getAttribute("href").inparen();
+        const course = dictCourse[param[2]];
+        const time = param[1];
+        let fee_normal = param[5].split(",").join("") * 1;
+        let fee_discount = param[4].split(",").join("") * 1;
+
+        if (isNaN(fee_normal)) fee_normal = -1;
+        if (isNaN(fee_discount)) fee_discount = -1;
 
         golf_schedule.push({
           golf_club_id: clubId,
@@ -487,7 +501,7 @@ log("addr :: ", addr); */
           persons: "",
           fee_normal,
           fee_discount,
-          others: "9홀",
+          others: "18홀",
         });
       });
       procDate();
@@ -496,13 +510,13 @@ log("addr :: ", addr); */
 
   function LOGOUT() {
     log("LOGOUT");
-    location.href = "/Mobile/Member/LogOut.aspx";
+    location.href = "/_mobile/login/logout.asp";
   }
 
   const dict = {
-    "https://shilla.kmhleisure.com/Mobile/Member/LoginNew.aspx": funcLogin,
-    "https://shilla.kmhleisure.com/Mobile/Shilla/Default.aspx": funcReserve,
-    "https://shilla.kmhleisure.com/Mobile/Member/LogOut.aspx": funcOut,
+    "http://www.centeriumcc.com/mobile/index.asp": funcLogin,
+    "http://www.centeriumcc.com/mobile/reservation/reservation1.asp":
+      funcReserve,
   };
   main();
 
@@ -516,12 +530,14 @@ log("addr :: ", addr); */
 
   function funcList() {
     log("funcList");
-    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
+    location.href =
+      "http://www.centeriumcc.com/mobile/reservation/reservation1.asp";
     return;
   }
   function funcMain() {
     log("funcMain");
-    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
+    location.href =
+      "http://www.centeriumcc.com/mobile/reservation/reservation1.asp";
     return;
   }
   function funcOut() {
@@ -534,7 +550,11 @@ log("addr :: ", addr); */
   function funcOther() {
     log("funcOther");
 
-    location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
+    const chk = LSCHK("TZ_SEARCH_OTHER", 5);
+    if (!chk) return;
+
+    location.href =
+      "http://www.centeriumcc.com/mobile/reservation/reservation1.asp";
 
     return;
   }
@@ -543,13 +563,18 @@ log("addr :: ", addr); */
 
     const chk = LSCHK("TZ_SEARCH_LOGIN", 5);
     if (!chk) {
-      location.href = "https://shilla.kxleisure.com/Mobile/Shilla/Default.aspx";
+      location.href =
+        "http://www.centeriumcc.com/mobile/reservation/reservation1.asp";
       return;
     }
 
-    user_id.value = "${login_id}";
-    user_pw.value = "${login_password}";
-    login();
+    try {
+      mem_id.value = "${login_id}";
+      mem_pw.value = "${login_password}";
+      document.loign.submit();
+    } catch (e) {
+      location.href = "http://www.centeriumcc.com/mobile/myzone/stateReser.asp";
+    }
 
     return;
   }
@@ -557,10 +582,7 @@ log("addr :: ", addr); */
     log("funcSearch");
 
     mneCall(thisdate, () => {
-      Update("CALENDAR|" + nextyear + "-" + nextmonth + "|");
-      setTimeout(() => {
-        mneCall(nextdate, procDate);
-      }, 1000);
+      mneCall(nextdate, procDate);
     });
 
     return;

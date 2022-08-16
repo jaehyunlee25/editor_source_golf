@@ -69,7 +69,7 @@ function wsmessage(event) {
       clubAnchor[engname].onclick();
     } catch (e) {
       log(e);
-      log("mqtt parse error 2 ", json.message);
+      log("mqtt parse error 2 ", event.data);
     }
   } catch (e) {
     // log(e);

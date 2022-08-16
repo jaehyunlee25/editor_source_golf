@@ -43,6 +43,24 @@ function getLogInfo() {
         LOG[row.device_id][club.eng_id] = [];
       LOG[row.device_id][club.eng_id].push(row);
     });
+    /////////////////////////////////////////////////
+    clubs.forEach((club, i) => {
+      if (i > 2) return;
+      const param = {
+        club: "",
+        club_id: "",
+        clubs: [club],
+        command: "searchAll_date",
+      };
+      socket.send(
+        JSON.stringify({
+          command: "publish",
+          topic: "f1b8ab82-1c3d-11ed-a93e-0242ac11000a",
+          message: JSON.stringify(param),
+        })
+      );
+    });
+    //////////////////////////////////////////////////
   });
 }
 function setLog() {
@@ -227,7 +245,7 @@ function setpopbody({ content: con, close }, club, sign) {
 }
 function setdevicepopbody({ content: con, close }, device) {
   const div = con.add("div");
-  div.style.cssText = "height: 100%;padding: 15px;";
+  div.style.cssText = "height: 90%;padding: 15px;overflow: auto;";
   Object.keys(device).forEach((club) => {
     const a = div.add("a");
     a.str(club);
@@ -244,6 +262,10 @@ function setdevicepopbody({ content: con, close }, device) {
 }
 function clubClick() {
   currentClub = this.club;
+  Array.from(this.parentNode.gtn("a")).forEach((a) => {
+    a.style.cssText = "background-color:white;";
+  });
+  this.style.cssText = "background-color:#eee";
   const result = [];
   this.log.forEach((Log) => {
     try {
