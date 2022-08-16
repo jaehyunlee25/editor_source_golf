@@ -10,22 +10,60 @@ let boxes = [];
 let objGolfClubs = {};
 let objGCUUID = {};
 let clubs;
+let LOG = {};
 
-post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
-  golfClubs = JSON.parse(data).golfClubs;
-  post(urlHeader + "/clubs", {}, httpHeader, (data) => {
-    clubs = JSON.parse(data).clubs;
-    golfClubs.forEach((golfclub) => {
-      objGolfClubs[golfclub.eng_id] = golfclub;
-      objGCUUID[golfclub.id] = golfclub;
+let POP;
+let deviceDiv = {};
+let clubAnchor = {};
+
+main();
+function main() {
+  post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
+    golfClubs = JSON.parse(data).golfClubs;
+    post(urlHeader + "/clubs", {}, httpHeader, (data) => {
+      clubs = JSON.parse(data).clubs;
+      golfClubs.forEach((golfclub) => {
+        objGolfClubs[golfclub.eng_id] = golfclub;
+        objGCUUID[golfclub.id] = golfclub;
+      });
+      clubs.sort();
+      tabCode.onclick();
+      getLogInfo();
     });
-    clubs.sort();
-    setBoxes(clubs);
   });
-});
-
-function setBoxes(clubs) {
-  doc.gcn("cover")[1].innerHTML = "";
+}
+function getLogInfo() {
+  post(urlHeader + "/getLog", {}, httpHeader, (data) => {
+    const { resultCode, message, data: rows } = JSON.parse(data);
+    rows.forEach((row) => {
+      const club =
+        objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id];
+      if (!LOG[row.device_id]) LOG[row.device_id] = {};
+      if (!LOG[row.device_id][club.eng_id])
+        LOG[row.device_id][club.eng_id] = [];
+      LOG[row.device_id][club.eng_id].push(row);
+    });
+  });
+}
+function setLog() {
+  Object.keys(LOG).forEach((device) => {
+    const div = elBody.add("div");
+    div.className = "box";
+    div.innerHTML = device;
+    div.device = LOG[device];
+    div.onclick = deviceClick;
+    deviceDiv[device] = div;
+  });
+}
+function deviceClick() {
+  currentDevice = this.device;
+  POP = layerpop();
+  POP.content.className = "popcon";
+  setdevicepophead(POP);
+  setdevicepopbody(POP, this.device);
+}
+function setBoxes() {
+  elBody.innerHTML = "";
   boxes = [];
   clubs.forEach((club, i) => {
     const golfclub = objGolfClubs[club];
@@ -94,10 +132,10 @@ function boxbtnclick(e) {
   e.preventDefault();
   e.stopPropagation();
 
-  const pop = layerpop();
-  pop.content.className = "popcon";
-  setpophead(pop, this.club, this.sign);
-  setpopbody(pop, this.club, this.sign);
+  POP = layerpop();
+  POP.content.className = "popcon";
+  setpophead(POP, this.club, this.sign);
+  setpopbody(POP, this.club, this.sign);
 }
 function setpopbody({ content: con, close }, club, sign) {
   const div = con.add("div");
@@ -187,6 +225,55 @@ function setpopbody({ content: con, close }, club, sign) {
       }
     );
 }
+function setdevicepopbody({ content: con, close }, device) {
+  const div = con.add("div");
+  div.style.cssText = "height: 100%;padding: 15px;";
+  Object.keys(device).forEach((club) => {
+    const a = div.add("a");
+    a.str(club);
+    a.className = "club";
+    a.href = "#";
+    a.club = club;
+    a.log = device[club];
+    a.onclick = clubClick;
+    clubAnchor[club] = a;
+  });
+  const tac = div.add("div");
+  tac.style.cssText = "margin-top:10px;width:95%;height:85%;border: 0px;";
+  div.tac = tac;
+}
+function clubClick() {
+  currentClub = this.club;
+  const result = [];
+  this.log.forEach((Log) => {
+    try {
+      const msg = JSON.parse(Log.message);
+      if (msg.message) {
+        try {
+          const jsn = JSON.parse(msg.message);
+          if (jsn.message)
+            result.push([Log.sub_type, "> ", jsn.message].join(""));
+          else result.push([Log.sub_type, "> ", msg.message].join(""));
+        } catch (e) {
+          // log("error 2", e);
+          result.push([Log.sub_type, "> ", msg.message].join(""));
+        }
+      } else {
+        result.push([Log.sub_type, "> ", Log.message].join(""));
+      }
+    } catch (e) {
+      // log("error 1", e);
+      result.push([Log.sub_type, "> ", Log.message].join(""));
+    }
+  });
+
+  this.parentNode.tac.innerHTML = "";
+  const ta = this.parentNode.tac.add("textarea");
+  ta.value = result.join("\r\n");
+  ta.style.cssText =
+    "margin-top: 10px;width: 95%;height: 95%; border: 0px; background-color: black; color: white; font-size: 15px;";
+  ta.scrollTop = ta.scrollHeight;
+}
 function setpophead({ content: con, close }, club, sign) {
   const editorUrls = {
     L:
@@ -237,8 +324,8 @@ function setpophead({ content: con, close }, club, sign) {
       clubs: [club.eng_id],
       command: mqttCommands[sign],
     };
-    log(param);
-    log("device", iptMqtt.value);
+    // log(param);
+    // log("device", iptMqtt.value);
     if (param.clubs.length == 0) return;
     socket.send(
       JSON.stringify({
@@ -253,6 +340,13 @@ function setpophead({ content: con, close }, club, sign) {
   span.style.cssText =
     "display: inline-block; color: white; font-weight: bold; padding-left: 10px;";
   span.str(mqttCommands[sign].toUpperCase());
+}
+function setdevicepophead({ content: con, close }) {
+  const div = con.add("div");
+  div.style.cssText = "background-color: royalblue; padding: 5px;";
+  const btnEnd = div.add("button");
+  btnEnd.onclick = close;
+  btnEnd.innerHTML = "X";
 }
 function boxclick(e) {
   e.preventDefault();
@@ -295,6 +389,22 @@ function getSelectedClubs() {
   });
   return result;
 }
+tabCode.onclick = function () {
+  elBody.innerHTML = "";
+  tabLog.parentNode.style.cssText = "background-color:white;";
+  tabLog.style.cssText = "color:black;";
+  this.parentNode.style.cssText = "background-color:royalblue;";
+  this.style.cssText = "color:white;";
+  setBoxes();
+};
+tabLog.onclick = function () {
+  elBody.innerHTML = "";
+  tabCode.parentNode.style.cssText = "background-color:white;";
+  tabCode.style.cssText = "color:black;";
+  this.parentNode.style.cssText = "background-color:royalblue;";
+  this.style.cssText = "color:white;";
+  setLog();
+};
 btnSelect.onclick = function () {
   const str = iptSelect.value;
   const selClubs = [];
@@ -305,7 +415,7 @@ btnSelect.onclick = function () {
       selClubs.push(club.eng_id);
     }
   });
-  log("clubs", selClubs.length);
+  // log("clubs", selClubs.length);
   setBoxes(selClubs);
 };
 iptSelect.onkeyup = function () {
