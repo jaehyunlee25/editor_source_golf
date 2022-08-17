@@ -26,20 +26,34 @@
                 width: 60%;
                 height: 80%;
             }
+            .club {
+                display: inline-block;
+                border: 1px solid gray;
+                padding: 5px;
+                font-size: 12px;
+            }
         </style>
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
         <script src="js/control.js"></script>
     </head>
-    <body>
+    <body>        
         <div class="cover">
             <h3 style="text-align: center;">TZ Headquarters</h3>
+            <div>
+                <table style="width: 10%;">
+                    <tr>
+                        <td><a href="#" id="tabCode" style="width:100%;text-align:center;">코드</a></td>
+                        <td><a href="#" id="tabLog" style="width:100%;text-align:center;">로그</a></td>
+                    </tr>
+                </table>
+            </div>
             <div style="margin: 5px;">
                 <input id="iptSelect" style="padding: 5px;text-align: right;" />
                 <button id="btnSelect" style="padding: 5px;">검색</button>
             </div>
         </div>
-        <div class="cover">
+        <div id="elBody" class="cover">
         </div>
         <script src="js/tz_headquarters.js"></script>
     </body>

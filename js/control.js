@@ -2,6 +2,7 @@ const CLUBS = {};
 const ADDR_HEADER = "http://dev.mnemosyne.co.kr:1006";
 const WS_HEADER = "ws://dev.mnemosyne.co.kr:9001";
 const socket = new WebSocket(WS_HEADER);
+let wsCount = 1000000;
 
 socket.onopen = wsopen;
 socket.onmessage = wsmessage;
@@ -37,34 +38,42 @@ function wserror(e) {
 }
 function wsmessage(event) {
   let json;
+  let message;
   try {
     json = JSON.parse(event.data);
-    log("mqtt", json.topic, json.message);
-    let msg;
     try {
-      msg = JSON.parse(json.message);
-      if (
-        json.topic == "TZLOG" &&
-        msg.deviceId == "f1b8ab82-1c3d-11ed-a93e-0242ac11000a"
-      ) {
-        if (msg.parameter) {
-          const prm = JSON.parse(msg.parameter);
-          if (prm.clubId) {
-            const club = objGCUUID[prm.clubId];
-            log("TZLOG>", msg.subType, club.eng_id, msg.message);
-          } else {
-            log("TZLOG>", msg.subType, msg.parameter, msg.message);
-          }
-        } else {
-          log("TZLOG>", msg.subType, msg.message);
-        }
-      }
+      message = JSON.parse(json.message);
+      const row = {
+        id: wsCount++,
+        type: "command",
+        sub_type: message.subType,
+        device_id: message.deviceId,
+        device_token: "",
+        ip: "",
+        golf_club_id: message.golfClubId || message.clubId,
+        message: message.message,
+        paramater: message.parameter,
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      if (POP) POP.close();
+      const engname = (
+        objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id]
+      ).eng_id;
+      if (!LOG[row.device_id]) LOG[row.device_id] = {};
+      if (!LOG[row.device_id][engname]) LOG[row.device_id][engname] = [];
+      LOG[row.device_id][engname].push(row);
+      tabLog.onclick();
+      deviceDiv[row.device_id].onclick();
+      clubAnchor[engname].onclick();
     } catch (e) {
       log(e);
-      //log("<<", json.message);
+      log("mqtt parse error 2 ", event.data);
     }
   } catch (e) {
-    log("mqtt", event.data);
+    // log(e);
+    log("mqtt parse error 1 ", event.data);
     return;
   }
 }
