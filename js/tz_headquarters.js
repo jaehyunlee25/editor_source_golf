@@ -55,7 +55,7 @@ function getLogInfo() {
       socket.send(
         JSON.stringify({
           command: "publish",
-          topic: "f1b8ab82-1c3d-11ed-a93e-0242ac11000a",
+          topic: "a3679151-1d08-11ed-a93e-0242ac11000a",
           message: JSON.stringify(param),
         })
       );
