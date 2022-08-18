@@ -44,8 +44,8 @@ function getLogInfo() {
       LOG[row.device_id][club.eng_id].push(row);
     });
     /////////////////////////////////////////////////
-    clubs.forEach((club, i) => {
-      if (i > 2) return;
+    /* clubs.forEach((club, i) => {
+      if (i > 5) return;
       const param = {
         club: "",
         club_id: "",
@@ -55,11 +55,23 @@ function getLogInfo() {
       socket.send(
         JSON.stringify({
           command: "publish",
-          topic: "191cefd5-1d7e-11ed-a93e-0242ac11000a",
+          topic: "a3679151-1d08-11ed-a93e-0242ac11000a",
           message: JSON.stringify(param),
         })
       );
-    });
+    }); */
+    const param = {
+      command: "popup",
+      url: "http://dev.mnemosyne.co.kr:1010/index.html",
+    };
+    log(param);
+    socket.send(
+      JSON.stringify({
+        command: "publish",
+        topic: "76262f54-1f4c-11ed-a93e-0242ac11000a",
+        message: JSON.stringify(param),
+      })
+    );
     //////////////////////////////////////////////////
   });
 }
