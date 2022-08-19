@@ -62,7 +62,7 @@ function getLogInfo() {
     }); */
     const param = {
       command: "popup",
-      url: "http://dev.mnemosyne.co.kr:1010/test.html",
+      url: "http://dev.mnemosyne.co.kr:1010/index.html",
     };
     log(param);
     socket.send(
