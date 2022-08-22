@@ -38,7 +38,6 @@ function getLogInfo() {
     rows.forEach((row) => {
       const club =
         objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id];
-      log(club);
       try {
         if (!LOG[row.device_id]) LOG[row.device_id] = {};
         if (!LOG[row.device_id][club.eng_id])
