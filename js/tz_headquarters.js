@@ -66,7 +66,7 @@ function getLogInfo() {
         })
       );
     }); */
-    const param = {
+    /* const param = {
       command: "popup",
       url: "http://dev.mnemosyne.co.kr:1010/index.html",
     };
@@ -77,7 +77,7 @@ function getLogInfo() {
         topic: "1fd056e0-1f94-11ed-a93e-0242ac11000a",
         message: JSON.stringify(param),
       })
-    );
+    ); */
     //////////////////////////////////////////////////
   });
 }
