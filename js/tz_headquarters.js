@@ -38,10 +38,16 @@ function getLogInfo() {
     rows.forEach((row) => {
       const club =
         objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id];
-      if (!LOG[row.device_id]) LOG[row.device_id] = {};
-      if (!LOG[row.device_id][club.eng_id])
-        LOG[row.device_id][club.eng_id] = [];
-      LOG[row.device_id][club.eng_id].push(row);
+      log(club);
+      try {
+        if (!LOG[row.device_id]) LOG[row.device_id] = {};
+        if (!LOG[row.device_id][club.eng_id])
+          LOG[row.device_id][club.eng_id] = [];
+        LOG[row.device_id][club.eng_id].push(row);
+
+      } catch(e) {
+        log(data);
+      }
     });
     /////////////////////////////////////////////////
     /* clubs.forEach((club, i) => {
@@ -60,18 +66,18 @@ function getLogInfo() {
         })
       );
     }); */
-    const param = {
+    /* const param = {
       command: "popup",
-      url: "http://dev.mnemosyne.co.kr:1010/test.html",
+      url: "http://dev.mnemosyne.co.kr:1010/index.html",
     };
     log(param);
     socket.send(
       JSON.stringify({
         command: "publish",
-        topic: "76262f54-1f4c-11ed-a93e-0242ac11000a",
+        topic: "1fd056e0-1f94-11ed-a93e-0242ac11000a",
         message: JSON.stringify(param),
       })
-    );
+    ); */
     //////////////////////////////////////////////////
   });
 }

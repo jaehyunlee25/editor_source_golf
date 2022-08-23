@@ -43,34 +43,39 @@ function wsmessage(event) {
     json = JSON.parse(event.data);
     try {
       message = JSON.parse(json.message);
-      const row = {
-        id: wsCount++,
-        type: "command",
-        sub_type: message.subType,
-        device_id: message.deviceId,
-        device_token: "",
-        ip: "",
-        golf_club_id: message.golfClubId || message.clubId,
-        message: message.message,
-        paramater: message.parameter,
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
-
-      if (POP) POP.close();
-      const engname = (
-        objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id]
-      ).eng_id;
-      if (!LOG[row.device_id]) LOG[row.device_id] = {};
-      if (!LOG[row.device_id][engname]) LOG[row.device_id][engname] = [];
-      LOG[row.device_id][engname].push(row);
-      tabLog.onclick();
-      deviceDiv[row.device_id].onclick();
-      clubAnchor[engname].onclick();
     } catch (e) {
       log(e);
-      log("mqtt parse error 2 ", event.data);
+      log("mqtt parse error 2 ", json.message);
+      return;
     }
+    const row = {
+      id: wsCount++,
+      type: "command",
+      sub_type: message.subType,
+      device_id: message.deviceId,
+      device_token: "",
+      ip: "",
+      golf_club_id: message.golfClubId || message.clubId,
+      message: message.message,
+      paramater: message.parameter,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    try {
+      if (POP) POP.close();
+    } catch (e) {      
+      log("no popup");
+    }
+    const engname = (
+      objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id]
+    ).eng_id;
+    if (!LOG[row.device_id]) LOG[row.device_id] = {};
+    if (!LOG[row.device_id][engname]) LOG[row.device_id][engname] = [];
+    LOG[row.device_id][engname].push(row);
+    tabLog.onclick();
+    deviceDiv[row.device_id].onclick();
+    clubAnchor[engname].onclick();
   } catch (e) {
     // log(e);
     log("mqtt parse error 1 ", event.data);

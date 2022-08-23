@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 javascript: (() => {
   /* test */
   const log = console.log;
@@ -23,6 +24,32 @@ javascript: (() => {
   } catch (e) {
     ac = false;
   }
+=======
+javascript:(() => {   
+  
+  /* test */
+const log = console.log;
+const dir = console.dir;
+const doc = document;
+const ls = localStorage;
+const OUTER_ADDR_HEADER = "https://dev.mnemosyne.co.kr";
+const logParam = {
+type: "command",
+sub_type: "",
+device_id: "${deviceId}",
+device_token: "${deviceToken}",
+golf_club_id: "${golfClubId}",
+message: "",
+parameter: JSON.stringify({}),
+};
+let ac = false; 
+try {
+ac = window.AndroidController || window.webkit.messageHandlers.iosController;
+ac.message = ac.message || window.webkit.messageHandlers.iosController.postMessage;
+} catch(e) {
+ac = false;
+}
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
 
   const splitter = location.href.indexOf("?") == -1 ? "#" : "?";
   const aDDr = location.href.split(splitter)[0];
@@ -294,7 +321,30 @@ javascript: (() => {
     return;
   }
 
+  const dict = {
+    "http://www.360cc.co.kr/mobile/login/login.do": funcLogin,
+    "http://www.360cc.co.kr/mobile/reservation/real_reservation.do": funcReserve,
+    "http://www.360cc.co.kr/mobile/user/sign/Logout.do": funcOut};   
+
+  function funcLogin() {
+    log("funcLogin");
+    
+    const chk = LSCHK("TZ_SEARCH_LOGIN", 5);
+    if(!chk) {
+      location.href = "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+      return;
+    }
+
+    usrId2.value = "${login_id}";
+usrPwd2.value = "${login_password}";
+fnLogin2();
+
+  
+    return;
+  }
+  
   /* begin blocking infinite call */
+<<<<<<< HEAD
   let TZ_BOT_SAFETY = true;
   let visitNumber = lsg("TZ_ADMIN_BLOCK_IC") * 1;
   let lastVistTime = lsg("TZ_ADMIN_BLOCK_IC_TIME") * 1;
@@ -321,6 +371,22 @@ javascript: (() => {
     }
   } else {
     log(5);
+=======
+let TZ_BOT_SAFETY = true;
+let visitNumber = lsg("TZ_ADMIN_BLOCK_IC") * 1;
+let lastVistTime = lsg("TZ_ADMIN_BLOCK_IC_TIME") * 1;
+let curTimeforVisit = new Date().getTime();
+log(visitNumber, visitNumber == null);
+if(lsg("TZ_ADMIN_BLOCK_IC") != null) {
+log(1);
+if (curTimeforVisit - lastVistTime < 1000 * 15) {
+  log(2);
+  if (visitNumber > 9) {
+    log(3);
+    if(ac) ac.message("TZ_MSG_IC");
+    TZ_BOT_SAFETY = false;
+    /* 초기화 */
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
     visitNumber = 0;
     lss("TZ_ADMIN_BLOCK_IC_TIME", new Date().getTime());
   }
@@ -345,6 +411,7 @@ log("raw addr :: ", location.href);
 log("aDDr :: ", aDDr);
 log("addr :: ", addr); */
 
+<<<<<<< HEAD
   const COMMAND = "GET_DATE";
   const clubId = "5a2e3107-cd84-11ec-a93e-0242ac11000a";
   const courses = {
@@ -483,6 +550,202 @@ log("addr :: ", addr); */
       const sign = el.children[1].innerText;
       if (sign != "예약") return;
       dates.push([date, ""]);
+=======
+const COMMAND = "GET_DATE";
+const clubId = 'a7fe6b1d-f05e-11ec-a93e-0242ac11000a';
+const courses = { 
+'In': 'a8005001-f05e-11ec-a93e-0242ac11000a',
+'Out': 'a8005112-f05e-11ec-a93e-0242ac11000a',
+};
+log("step::", 1);const addrOuter = OUTER_ADDR_HEADER + "/api/reservation/golfSchedule";
+const header = { "Content-Type": "application/json" };
+
+const now = new Date();
+const thisyear = now.getFullYear() + "";
+const thismonth = ("0" + (1 + now.getMonth())).slice(-2);
+const thisdate = thisyear + thismonth;
+
+now.setDate(28);
+now.setMonth(now.getMonth() + 1);
+const nextyear = now.getFullYear() + "";
+const nextmonth = ("0" + (1 + now.getMonth())).slice(-2);
+const nextdate = nextyear + nextmonth;
+
+log(thisdate, nextdate);
+
+let dates = [];
+const result = [];
+const golf_schedule = [];
+let lmt;
+function procDate() {
+if (lmt === undefined && dates.length == 0) {
+  log("예약가능한 시간이 없습니다.");
+  if (ac) ac.message("NONE_OF_GET_SCHEDULE");
+  LOGOUT();
+  return;
+}
+
+if (COMMAND == "GET_DATE") {
+  if (dates.length > 0) {
+    const golf_date = [];
+    dates.forEach(([date]) => {
+      logParam.sub_type = "search";
+      logParam.message = date;
+      logParam.parameter = JSON.stringify({
+        clubId,
+        date,
+        type: typeof date,
+      });
+      TZLOG(logParam, (data) => {});
+      golf_date.push(date.datify("-"));
+    });
+    const param = { golf_date, golf_club_id: clubId };
+    post(
+      OUTER_ADDR_HEADER + "/api/reservation/golfDate",
+      param,
+      header,
+      (data) => {
+        const json = JSON.parse(data);
+        log(json.message);
+        if (json.resultCode == 200) {
+          if (ac) ac.message("SUCCESS_OF_GET_DATE");
+        } else {
+          if (ac) ac.message("FAIL_OF_GET_DATE");
+        }
+        LOGOUT();
+      }
+    );
+  } else {
+    log("예약가능한 날짜가 없습니다.");
+    if (ac) ac.message("NONE_OF_GET_DATE");
+    LOGOUT();
+  }
+  return;
+}
+
+if (COMMAND == "GET_TIME") {
+  const result = [];
+  dates.every((arr) => {
+    const [date] = arr;
+    if (date == "${TARGET_DATE}") {
+      result.push(arr);
+      return false;
+    }
+    return true;
+  });
+  dates = result;
+}
+
+if (lmt === undefined) lmt = dates.length - 1;
+const order = lmt - dates.length + 1;
+const arrDate = dates.shift();
+if (arrDate) {
+  log("수집하기", order + "/" + lmt, arrDate[0]);
+  log("TZ_PROGRESS," + order + "," + lmt + "," + arrDate[0]);
+  const param = {
+    type: "command",
+    sub_type: "search",
+    device_id: "${deviceId}",
+    device_token: "${deviceToken}",
+    golf_club_id: "${golfClubId}",
+    message: "search",
+    parameter: JSON.stringify({ order, total: lmt, date: arrDate[0] }),
+  };
+  TZLOG(param, (data) => {});
+  mneCallDetail(arrDate);
+} else {
+  procGolfSchedule();
+}
+}
+function procGolfSchedule() {
+golf_schedule.forEach((obj) => {
+  let course_id = courses[obj.golf_course_id];
+  if (!course_id && Object.keys(courses).length === 1)
+    course_id = courses[Object.keys(courses)[0]];
+  obj.golf_course_id = course_id;
+  obj.date =
+    obj.date.gh(4) + "-" + obj.date.ch(4).gh(2) + "-" + obj.date.gt(2);
+  if (obj.time.indexOf(":") == -1)
+    obj.time = obj.time.gh(2) + ":" + obj.time.gt(2);
+});
+/* console.log(golf_schedule); */
+if (golf_schedule.length == 0) {
+  log("예약가능한 시간이 없습니다.");
+  if (ac) ac.message("NONE_OF_GET_SCHEDULE");
+  LOGOUT();
+  return;
+}
+const param = { golf_schedule, golf_club_id: clubId };
+post(addrOuter, param, header, (data) => {
+  const json = JSON.parse(data);
+  log(json.message);
+  if (json.resultCode == 200) {
+    if (ac) ac.message("end of procGolfSchedule!");
+  } else {
+    if (ac) ac.message("FAIL_OF_GET_SCHEDULE");
+  }
+  LOGOUT();
+});
+}
+function mneCall(strdate, callback) {
+const param = {};
+const els = document.getElementsByClassName("cal_live");
+Array.from(els).forEach((el) => {
+  const href = el.getAttribute("href");
+  if (href === "#") return;
+  const date = strdate + el.innerText.addzero();
+  dates.push([date, ""]);
+});
+callback();
+}
+
+
+function mneCallDetail(arrDate) {
+const [date, strParam] = arrDate;
+const param = {
+  golfResType: "real",
+  courseId: "0",
+  usrMemCd: "40",
+  pointDate: date,
+  openYn: "1",
+  dateGbn: "3",
+  choiceTime: "00",
+  cssncourseum: "",
+  inputType: "I",
+};
+const courseDict = {
+  IN: "In",
+  OUT: "Out",
+};
+
+post("/mobile/reservation/list/ajax_real_timeinfo_list.do", param, {}, (data) => {
+  const ifr = document.createElement("div");
+  ifr.innerHTML = data;
+
+  const tbl = ifr
+    .getElementsByClassName("cm_time_list_tbl")[0]
+    .getElementsByTagName("tbody")[0];
+  const els = tbl.getElementsByTagName("tr");
+
+  const obTeams = {};
+  Array.from(els).forEach((el, i) => {
+    if (i === 0) return;
+    const course = courseDict[el.children[1].innerText];
+    const time = el.children[2].innerText;
+    const fee_discount = el.children[4].innerText.split(",").join("") * 1;
+    const fee_normal = el.children[4].innerText.split(",").join("") * 1;
+
+    golf_schedule.push({
+      golf_club_id: clubId,
+      golf_course_id: course,
+      date,
+      time,
+      in_out: "",
+      persons: "",
+      fee_normal,
+      fee_discount,
+      others: "9홀",
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
     });
 
     callback();
@@ -496,6 +759,7 @@ log("addr :: ", addr); */
       fStoreCd: 2180,
     };
 
+<<<<<<< HEAD
     post("/m.rsv.selectMobileRsvStepOne.dp/dmparse.dm", param, {}, (data) => {
       const ifr = document.createElement("div");
       ifr.innerHTML = data;
@@ -555,6 +819,13 @@ log("addr :: ", addr); */
     logout();
   }
 
+=======
+function LOGOUT() {
+  log("LOGOUT");
+  location.href = "/mobile/user/sign/Logout.do";
+}
+  
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
   function main() {
     log("main");
 
@@ -565,12 +836,20 @@ log("addr :: ", addr); */
 
   function funcList() {
     log("funcList");
+<<<<<<< HEAD
     location.href = "https://www.sonofelicecc.com/m.rsv.mainCal.dp/dmparse.dm";
+=======
+    location.href = "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
     return;
   }
   function funcMain() {
     log("funcMain");
+<<<<<<< HEAD
     location.href = "https://www.sonofelicecc.com/m.rsv.mainCal.dp/dmparse.dm";
+=======
+    location.href = "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
     return;
   }
   function funcOut() {
@@ -584,6 +863,7 @@ log("addr :: ", addr); */
     log("funcOther");
 
     const chk = LSCHK("TZ_SEARCH_OTHER", 5);
+<<<<<<< HEAD
     if (!chk) return;
 
     location.href = "https://www.sonofelicecc.com/m.rsv.mainCal.dp/dmparse.dm";
@@ -594,7 +874,31 @@ log("addr :: ", addr); */
     log("funcSearch");
 
     mneCall(thisdate, procDate);
+=======
+    if(!chk) return;
+      
+    location.href = "http://www.360cc.co.kr/mobile/reservation/real_reservation.do";
+
+    return;
+  }    
+  function funcReserve() {
+    log("funcSearch");
+
+    const chk = LSCHK("TZ_SEARCH_RESERVE", 5);
+    if(!chk) return;
+
+    
+mneCall(thisdate, () => {
+doc.gcn("right")[1].click();
+setTimeout(() => {
+  mneCall(nextdate, procDate);
+}, 1000);
+});
+
+>>>>>>> 9b67df767d9f52a91c3d6be4a5e5933f858a4441
 
     return;
   }
+
+  main();
 })();
