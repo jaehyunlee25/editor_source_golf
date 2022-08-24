@@ -69,6 +69,7 @@ function getLogInfo() {
     /* const param = {
       command: "popup",
       url: "http://dev.mnemosyne.co.kr:1010/index.html",
+      message: "",
     };
     log(param);
     socket.send(
