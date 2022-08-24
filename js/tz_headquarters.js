@@ -10,6 +10,7 @@ let boxes = [];
 let objGolfClubs = {};
 let objGCUUID = {};
 let clubs;
+let clubStates;
 let LOG = {};
 
 let POP;
@@ -21,7 +22,10 @@ function main() {
   post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
     golfClubs = JSON.parse(data).golfClubs;
     post(urlHeader + "/clubs", {}, httpHeader, (data) => {
-      clubs = JSON.parse(data).clubs;
+      const json = JSON.parse(data);
+      clubs = json.clubs;
+      clubStates = json.clubStates;
+
       golfClubs.forEach((golfclub) => {
         objGolfClubs[golfclub.eng_id] = golfclub;
         objGCUUID[golfclub.id] = golfclub;
@@ -38,14 +42,12 @@ function getLogInfo() {
     rows.forEach((row) => {
       const club =
         objGolfClubs[row.golf_club_id] || objGCUUID[row.golf_club_id];
-      log(club);
       try {
         if (!LOG[row.device_id]) LOG[row.device_id] = {};
         if (!LOG[row.device_id][club.eng_id])
           LOG[row.device_id][club.eng_id] = [];
         LOG[row.device_id][club.eng_id].push(row);
-
-      } catch(e) {
+      } catch (e) {
         log(data);
       }
     });
@@ -104,10 +106,15 @@ function setBoxes() {
   boxes = [];
   clubs.forEach((club, i) => {
     const golfclub = objGolfClubs[club];
-    const box = doc.gcn("cover")[1].add("div");
-    box.className = "box";
+    const hdr = doc.gcn("cover")[1].add("div");
+    const box = hdr.add("span");
+    const sel = hdr.add("span");
+    hdr.className = "box";
+    box.style.cssText = "display:inline-block;";
+    sel.style.cssText = "display:inline-block;margin-left: 15px;";
     box.number = i;
     box.club = golfclub;
+    sel.club = golfclub;
     box.str(
       i +
         1 +
@@ -133,7 +140,35 @@ function setBoxes() {
     };
     boxes.push(box);
   });
+  setBoxStateSelect();
   setBoxButtons();
+}
+function setBoxStateSelect() {
+  boxes.forEach((box) => {
+    const vals = [0, 1, 2];
+    const strs = ["normal", "sys err", "web err"];
+    const par = box.parentNode.children[1];
+    const sel = par.add("select");
+    sel.club = par.club;
+    strs.forEach((str, i) => {
+      const opt = doc.clm("option");
+      opt.value = vals[i];
+      opt.innerHTML = str;
+      sel.add(opt);
+    });
+    sel.value = clubStates[par.club.eng_id];
+    sel.onchange = clubstatechange;
+  });
+}
+function clubstatechange() {
+  post(
+    urlHeader + "/setGolfClubState",
+    { golfClubId: this.club.id, golfClubState: this.value },
+    httpHeader,
+    (data) => {
+      log(data);
+    }
+  );
 }
 function korClick(e) {
   e.preventDefault();
@@ -153,7 +188,7 @@ function engClick(e) {
 }
 function setBoxButtons() {
   boxes.forEach((box) => {
-    const div = box.add("div");
+    const div = box.parentNode.add("div");
     const strs = ["L", "Sd", "St", "rR", "rS", "rC"];
     strs.forEach((str) => {
       const btn = div.add("button");
