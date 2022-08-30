@@ -328,18 +328,18 @@ function clubClick() {
         try {
           const jsn = JSON.parse(msg.message);
           if (jsn.message)
-            result.push([Log.sub_type, "> ", jsn.message].join(""));
-          else result.push([Log.sub_type, "> ", msg.message].join(""));
+            result.push([new Date().getTime(), "_", Log.sub_type, "> ", jsn.message].join(""));
+          else result.push([new Date().getTime(), "_", Log.sub_type, "> ", msg.message].join(""));
         } catch (e) {
           // log("error 2", e);
-          result.push([Log.sub_type, "> ", msg.message].join(""));
+          result.push([new Date().getTime(), "_", Log.sub_type, "> ", msg.message].join(""));
         }
       } else {
-        result.push([Log.sub_type, "> ", Log.message].join(""));
+        result.push([new Date().getTime(), "_", Log.sub_type, "> ", Log.message].join(""));
       }
     } catch (e) {
       // log("error 1", e);
-      result.push([Log.sub_type, "> ", Log.message].join(""));
+      result.push([new Date().getTime(), "_", Log.sub_type, "> ", Log.message].join(""));
     }
   });
 
