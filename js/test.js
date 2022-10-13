@@ -1,25 +1,28 @@
 function mneCallDetail(arrDate) {
-  const [date] = arrDate;
-  const dictCourse = {
-    1: "단일",
-  };
-
+  const [date, course] = arrDate;
   const param = {
-    Choice_Date: date.datify(),
-    Day_Gubun: "",
-    Day_Course: "00",
+    pmode: "appointment",
+    s: date.datify(),
   };
-  post("/reserve/Reserve_list.asp", param, {}, (data) => {
-    const ifr = doc.clm("div");
+  const dictCourse = { 1: "단일" };
+
+  post("/new/sub4/menu1.php", param, {}, (data) => {
+    const ifr = doc.createElement("div");
     ifr.innerHTML = data;
 
-    const els = ifr.gcn("stats");
+    const cvr = doc.getElementById("booking");
+    const els = cvr.gtn("a");
     Array.from(els).forEach((el) => {
-      const time = el.children[0].attr("href").inparen()[1];
-      const course = dictCourse[1];
-      const hole = el.parentNode.children[1].str();
-      fee_discount = hole == "9홀" ? 40000 : 80000;
-      fee_normal = hole == "9홀" ? 40000 : 80000;
+      if (el.str() != "예약하기") return;
+      const param = el.attr("href").inparen()[0].split("?")[1].split("&");
+      let course = 1;
+      let [, opt] = param[1].split("=");
+      let [, time] = param[3].split("=");
+      time = time.rm(":");
+      const hole = opt == "3" ? "9홀" : "18홀";
+      const fee_discount = 85000;
+      const fee_normal = 85000;
+      course = dictCourse[course];
 
       golf_schedule.push({
         golf_club_id: clubId,
@@ -33,5 +36,6 @@ function mneCallDetail(arrDate) {
         others: hole,
       });
     });
+    procDate();
   });
 }
