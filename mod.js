@@ -1,8 +1,4 @@
 function mneCall(date, callback) {
-<<<<<<< HEAD
-  timer(1000, () => { 
-=======
-<<<<<<< HEAD
   log("mneCall");
 
   const param = {
@@ -20,9 +16,7 @@ function mneCall(date, callback) {
     });
     callback();
   });
-=======
   timer(2000, () => {
->>>>>>> a57d517b22fb413fe6c7ce1bacd7f2994bae5471
     const param = {
       clickTdId: "",
       clickTdClass: "",
@@ -41,32 +35,26 @@ function mneCall(date, callback) {
     post("/reservation/ajax/golfCalendar", param, {}, (data) => {
       const ifr = document.createElement("div");
       ifr.innerHTML = data;
-  
+
       const tbls = ifr.getElementsByClassName("cm_calender_tbl");
       let as = [];
       Array.from(tbls).forEach((tbl) => {
         const arr = Array.from(tbl.getElementsByTagName("a"));
         as = as.concat(arr);
       });
-  
+
       as.forEach((a) => {
         if (a.className === "cal_end") return;
         const str = a.attr("onclick");
         if (str.indexOf("CLOSE") !== -1) return;
         if (str.indexOf("NOOPEN") !== -1) return;
         console.log(str);
-        const [ , , date] = str.inparen();
+        const [, , date] = str.inparen();
         log(date);
         dates.push([date, 0]);
       });
-  
+
       callback();
     });
-<<<<<<< HEAD
-
   });
-=======
-  });  
->>>>>>> 2f0fcfcfef4afeb73bef21ca404add411fe854e1
->>>>>>> a57d517b22fb413fe6c7ce1bacd7f2994bae5471
 }
