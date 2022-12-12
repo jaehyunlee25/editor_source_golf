@@ -43,7 +43,7 @@ function setList() {
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
     tr.onclick = trclick;
-    tr.item = clubs[id];
+    tr.item = clubs;
     tr.css("border-bottom: 1px solid #eee;");
     [
       id,
