@@ -3812,9 +3812,6 @@ String.prototype.gup = function () {
 HTMLElement.prototype.css = function (str) {
   this.style.cssText += str;
 };
-HTMLElement.prototype.str = function () {
-  return this.innerText;
-};
 HTMLElement.prototype.add = function (tag) {
   const el = document.createElement(tag);
   this.appendChild(el);
@@ -3831,9 +3828,50 @@ HTMLElement.prototype.gtn = function (str) {
   const els = this.getElementsByTagName(str);
   return Array.from(els);
 };
+HTMLElement.prototype.gbn = function (str) {
+  const els = this.getElementsByName(str);
+  return Array.from(els);
+};
 HTMLElement.prototype.str = function (str) {
-  if (str) return (this.innerHTML = str);
   return this.innerText;
+};
+HTMLElement.prototype.trav = function (fnc) {
+  fnc(this);
+  var a = this.children.length;
+  for (var i = 0; i < a; i++) {
+    if (this.children[i].trav) this.children[i].trav(fnc);
+  }
+};
+HTMLElement.prototype.gba = function (attr, val, opt) {
+  /* getElementsByAttribute */
+  const res = [];
+  this.trav((el) => {
+    const str = el.attr(attr);
+    if (!str) return;
+    if (opt) {
+      if (str.indexOf(val) != -1) res.push(el);
+    } else {
+      if (str == val) res.push(el);
+    }
+  });
+  return res;
+};
+HTMLElement.prototype.nm = function () {
+  /* node move */
+  const args = Array.from(arguments);
+  const up = args.shift();
+  let el = this;
+  for (let i = 0; i < up; i++) {
+    const p = el.parentNode;
+    if (p) el = p;
+  }
+
+  args.forEach((num) => {
+    const p = el.children[num];
+    if (p) el = p;
+  });
+
+  return el;
 };
 document.gcn = function (str) {
   const els = this.getElementsByClassName(str);
@@ -3843,8 +3881,21 @@ document.gtn = function (str) {
   const els = this.getElementsByTagName(str);
   return Array.from(els);
 };
+document.gbn = function (str) {
+  const els = this.getElementsByName(str);
+  return Array.from(els);
+};
 document.clm = function (str) {
   return document.createElement(str);
+};
+document.gba = function (attr, val) {
+  /* getElementsByAttribute */
+  const res = [];
+  this.body.trav((el) => {
+    const str = el.attr(attr);
+    if (str == val) res.push(el);
+  });
+  return res;
 };
 window.timer = function (time, callback) {
   setTimeout(callback, time);
