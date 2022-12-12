@@ -42,7 +42,7 @@ function setList() {
       description,
     ].forEach((con, i) => {
       tds[i].textContent = con;
-      tds[i].css("overflow-wrap: break-word;");
+      tds[i].css("overflow-wrap: break-word;text-align:normal;");
     });
     tbl.appendChild(row);
   });
