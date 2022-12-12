@@ -83,12 +83,14 @@ btnNew.onclick = function () {
 function confirmClick() {
   if (this.opt) {
     // 수정
-    const row = this.row;
-    Object.keys(row).forEach((key) => {
+    const param = this.row;
+    Object.keys(param).forEach((key) => {
       if (!window["el_" + key]) return;
-      row[key] = window["el_" + key].value.replace(/\"/g, "'");
+      param[key] = window["el_" + key].value.replace(/"/g, "'");
     });
-    log(row);
+    post(apiHeader + "dbSetGolfClub", param, httpHeader, (data) => {
+      log(data.jp());
+    });
   } else {
     // 등록
   }
