@@ -110,15 +110,15 @@ function confirmClick() {
       window["el_name"].focus();
       return;
     }
-    log(param);
-    return;
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
-      if (type == "okay") {
-        log("successfully updated :: " + param.name + " " + param.id);
+      log(type);
+      log(data);
+      /* if (type == "okay") {
+        log("successfully inserted :: " + param.name + " " + param.id);
       } else {
         log("something wrong :: " + param.name + " " + param.id);
-      }
+      } */
     });
   }
   this.close();
