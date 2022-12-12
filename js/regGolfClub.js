@@ -89,10 +89,26 @@ function confirmClick() {
       param[key] = window["el_" + key].value.replace(/"/g, "'");
     });
     post(apiHeader + "dbSetGolfClub", param, httpHeader, (data) => {
-      log(data.jp());
+      const { type, data } = data.jp();
+      if (type == "okay") {
+        log("successfully updated :: " + param.name + " " + param.id);
+      } else {
+        log("something wrong :: " + param.name + " " + param.id);
+      }
     });
   } else {
     // 등록
+    const els = doc.gba("id", "el_", true);
+    log(els);
+    return;
+    post(apiHeader + "dbNewGolfClub", param, httpHeader, (data) => {
+      const { type, data } = data.jp();
+      if (type == "okay") {
+        log("successfully updated :: " + param.name + " " + param.id);
+      } else {
+        log("something wrong :: " + param.name + " " + param.id);
+      }
+    });
   }
   this.close();
 }
