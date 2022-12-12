@@ -72,7 +72,6 @@ function setDetail(row) {
 
   if (!opt) return;
   Object.keys(row).forEach((key) => {
-    log(key);
     if (!window["el_" + key]) return;
     window["el_" + key].value = row[key];
   });
@@ -81,7 +80,16 @@ btnNew.onclick = function () {
   setDetail();
 };
 function confirmClick() {
-  log(this.opt);
+  if (this.opt) {
+    // 수정
+    Object.keys(row).forEach((key) => {
+      if (!window["el_" + key]) return;
+      row[key] = window["el_" + key].value;
+      log(row);
+    });
+  } else {
+    // 등록
+  }
   log(this.content);
   this.close();
 }
