@@ -16,7 +16,7 @@ function setList() {
   log(clubs);
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
-  Object.keys(clubs).forEach((id) => {
+  Object.keys(clubs).forEach((id, j) => {
     const {
       name,
       phone,
@@ -29,20 +29,22 @@ function setList() {
     } = clubs[id];
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
-    [
-      id,
-      name,
-      address,
-      area,
-      phone,
-      email,
-      homepage,
-      corp_reg_number,
-      description,
-    ].forEach((con, i) => {
-      log(con);
-      tds[i].textContent = con;
-    });
+    const tr = row.querySelectorAll("tr");
+    if (j % 2 == 1) tr.css("background-color: gray;")
+      [
+        id,
+        name,
+        address,
+        area,
+        phone,
+        email,
+        homepage,
+        corp_reg_number,
+        description,
+      ].forEach((con, i) => {
+        log(con);
+        tds[i].textContent = con;
+      });
     log(tbl);
     tbl.appendChild(row);
   });
