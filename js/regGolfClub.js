@@ -71,7 +71,7 @@ function setDetail(row) {
 
   if (!opt) return;
   Object.keys(row).forEach((key) => {
-    window[key].value = row[key];
+    window["el_" + key].value = row[key];
   });
 }
 btnNew.onclick = function () {
