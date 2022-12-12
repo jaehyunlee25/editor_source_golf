@@ -86,12 +86,11 @@ function confirmClick() {
     const row = this.row;
     Object.keys(row).forEach((key) => {
       if (!window["el_" + key]) return;
-      row[key] = window["el_" + key].value;
+      row[key] = window["el_" + key].value.replace(/\"/g, "'");
     });
     log(row);
   } else {
     // 등록
   }
-  log(this.content);
   this.close();
 }
