@@ -13,7 +13,6 @@ function main() {
   });
 }
 function setList() {
-  return;
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
   Object.keys(clubs).forEach((id, j) => {
