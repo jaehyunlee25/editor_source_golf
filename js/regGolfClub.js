@@ -16,8 +16,8 @@ function main() {
       return res;
     })(golfClubs);
     clubs = clubs.sort((a, b) => {
-      const na = a.updated_at;
-      const nb = b.updated_at;
+      const na = new Date(a.updated_at).getTime();
+      const nb = new Date(b.updated_at).getTime();
       return na < nb ? -1 : 1;
     });
     setList();
