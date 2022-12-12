@@ -29,7 +29,7 @@ function setList() {
     } = clubs[id];
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
-    const tr = row.querySelectorAll("tr");
+    const [tr] = row.querySelectorAll("tr");
     if (j % 2 == 1) tr.css("background-color: gray;");
     [
       id,
