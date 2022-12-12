@@ -66,6 +66,7 @@ function trclick() {
   setDetail(this.item);
 }
 function setDetail(row) {
+  log(row);
   let opt = false;
   if (row) opt = true;
   const { back, content, close } = layerpop();
