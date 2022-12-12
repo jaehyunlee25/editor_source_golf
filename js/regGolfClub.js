@@ -30,7 +30,7 @@ function setList() {
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
-    if (j % 2 == 1) tr.css("background-color: gray;");
+    if (j % 2 == 1) tr.css("background-color: #eee;");
     [
       id,
       name,
