@@ -3696,8 +3696,118 @@ function mkGameDetail(ob, p) {
       "</b>";
   }
 }
+String.prototype.gt = function (num) {
+  return this.substring(this.length - num, this.length);
+};
+String.prototype.gh = function (num) {
+  return this.substring(0, num);
+};
+String.prototype.ct = function (num) {
+  return this.substring(0, this.length - num);
+};
+String.prototype.ch = function (num) {
+  return this.substring(num, this.length);
+};
+String.prototype.addzero = function () {
+  if (this.length == 1) return "0" + this;
+  return this;
+};
+String.prototype.inparen = function (opt) {
+  const regex = /.+?\((.+)\)/;
+  const str = this.toString();
+  const result = [];
+  const org = regex.exec(str)[1];
+  if (opt) {
+    let ar = [];
+    let flg = false;
+    Array.from(org).forEach((chr) => {
+      if (chr == "'") {
+        flg = !flg;
+      } else if (chr == ",") {
+        if (flg) {
+          ar.push(chr);
+        } else {
+          result.push(ar.join(""));
+          ar = [];
+        }
+      } else {
+        ar.push(chr);
+      }
+    });
+    if (ar.length > 0) {
+      result.push(ar.join(""));
+      ar = [];
+    }
+  } else {
+    org
+      .split("'")
+      .join("")
+      .split(",")
+      .forEach((str) => {
+        result.push(str.trim());
+      });
+  }
+  return result;
+};
+String.prototype.datify = function (sign) {
+  const str = this.toString();
+  if (!sign) sign = "-";
+  return [str.gh(4), str.ch(4).gh(2), str.gt(2)].join(sign);
+};
+String.prototype.getFee = function () {
+  let str = this.toString();
+  str = str.replace(/[^0-9]/g, "");
+  return str * 1;
+};
+String.prototype.daySign = function () {
+  const str = this.getFee().toString();
+  const num = new Date(str.datify()).getDay();
+  let sign;
+  if (num == 0) sign = 3;
+  else if (num == 6) sign = 2;
+  else sign = 1;
+  return sign.toString();
+};
+String.prototype.dayNum = function () {
+  const str = this.getFee().toString();
+  const num = new Date(str.datify()).getDay();
+  return (num + 1).toString();
+};
+String.prototype.dayKor = function () {
+  const str = this.getFee().toString();
+  const num = new Date(str.datify()).getDay();
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
+
+  return week[num];
+};
 String.prototype.rm = function (str) {
   return this.split(str).join("");
+};
+String.prototype.fillzero = function (sep) {
+  const ar = this.split(sep);
+  const result = [];
+  ar.forEach((el) => {
+    result.push(el.addzero());
+  });
+
+  return result.join("");
+};
+String.prototype.jp = function () {
+  return JSON.parse(this);
+};
+String.prototype.regex = function (re) {
+  return re.exec(this);
+};
+String.prototype.gup = function () {
+  /*get url param*/
+  const param = {};
+  this.split("?")[1]
+    .split("&")
+    .forEach((str) => {
+      const [key, val] = str.split("=");
+      param[key] = val;
+    });
+  return param;
 };
 HTMLElement.prototype.css = function (str) {
   this.style.cssText += str;

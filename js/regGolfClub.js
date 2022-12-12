@@ -6,6 +6,7 @@ const cf = new jCommon();
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
-    log(data);
+    const { type, golfClubs } = data.jp();
+    log(golfClubs);
   });
 }
