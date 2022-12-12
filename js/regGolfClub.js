@@ -101,8 +101,8 @@ function confirmClick() {
     const els = doc.gba("id", "el_", true);
     log(els);
     return;
-    post(apiHeader + "dbNewGolfClub", param, httpHeader, (data) => {
-      const { type, data } = data.jp();
+    post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
+      const { type, data } = resp.jp();
       if (type == "okay") {
         log("successfully updated :: " + param.name + " " + param.id);
       } else {
