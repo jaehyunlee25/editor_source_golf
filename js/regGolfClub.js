@@ -51,3 +51,6 @@ function setList() {
 function trclick() {
   log(this);
 }
+btnNew.onclick = function () {
+  const pop = layerpop();
+};
