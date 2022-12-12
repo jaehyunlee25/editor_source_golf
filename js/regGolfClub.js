@@ -23,6 +23,7 @@ function setList() {
   const tbl = doc.querySelector("#tblList");
   clubs.forEach((club, j) => {
     const {
+      id,
       name,
       phone,
       homepage,
