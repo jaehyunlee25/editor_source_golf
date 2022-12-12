@@ -99,7 +99,11 @@ function confirmClick() {
   } else {
     // 등록
     const els = doc.body.gba("id", "el_", true);
-    log(els);
+    const param = {};
+    els.forEach((el) => {
+      param[el.id.ch(3)] = el.value;
+    });
+    log(param);
     return;
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
