@@ -67,6 +67,7 @@ function setDetail(row) {
   }); */
   btnConfirm.opt = opt;
   btnConfirm.content = content;
+  btnConfirm.row = row;
   btnConfirm.onclick = confirmClick;
   btnConfirm.close = close;
 
@@ -82,6 +83,7 @@ btnNew.onclick = function () {
 function confirmClick() {
   if (this.opt) {
     // 수정
+    const row = this.row;
     Object.keys(row).forEach((key) => {
       if (!window["el_" + key]) return;
       row[key] = window["el_" + key].value;
