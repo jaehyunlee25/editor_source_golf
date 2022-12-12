@@ -40,8 +40,10 @@ function setList() {
       corp_reg_number,
       description,
     ].forEach((con, i) => {
+      log(con);
       tds[i].textContent = con;
     });
+    log(tbl);
     tbl.appendChild(row);
   });
 }
