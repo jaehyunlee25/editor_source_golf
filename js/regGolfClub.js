@@ -71,6 +71,8 @@ function setDetail(row) {
   btnConfirm.onclick = confirmClick;
   btnConfirm.close = close;
 
+  btnCancel.onclick = close;
+
   if (!opt) return;
   Object.keys(row).forEach((key) => {
     if (!window["el_" + key]) return;
@@ -108,6 +110,7 @@ function confirmClick() {
       window["el_name"].focus();
       return;
     }
+    log(param);
     return;
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
