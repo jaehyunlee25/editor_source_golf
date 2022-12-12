@@ -45,4 +45,5 @@ function setList() {
     });
     tbl.appendChild(row);
   });
+  tblTable.nm(0, 0, 0, 6).css("overflow-wrap: break-word;");
 }
