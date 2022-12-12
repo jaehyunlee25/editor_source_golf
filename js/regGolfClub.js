@@ -51,14 +51,22 @@ function setList() {
 function trclick() {
   log(this);
 }
-function setDetail() {
+function setDetail(row) {
+  let opt = true;
+  if (!row) opt = false;
   const { back, content, close } = layerpop();
   const div = content.add("div");
   div.css("margin:auto;width: 80%;padding-bottom: 20px;");
   const tmplt = doc.querySelector("#tplDetail");
   const dtl = doc.importNode(tmplt.content, true);
   div.appendChild(dtl);
+  btnConfirm.opt = opt;
+  btnConfirm.content = content;
 }
 btnNew.onclick = function () {
   setDetail();
+};
+btnConfirm.onclick = function () {
+  log(this.opt);
+  log(this.content);
 };
