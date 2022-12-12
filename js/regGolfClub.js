@@ -60,6 +60,10 @@ function setDetail(row) {
   const tmplt = doc.querySelector("#tplDetail");
   const dtl = doc.importNode(tmplt.content, true);
   div.appendChild(dtl);
+  const trs = div.querySelectorAll("tr");
+  trs.forEach((tr) => {
+    tr.css("background-color: white;");
+  });
   btnConfirm.opt = opt;
   btnConfirm.content = content;
   btnConfirm.onclick = confirmClick;
