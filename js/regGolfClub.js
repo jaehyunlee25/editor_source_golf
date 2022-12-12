@@ -98,7 +98,7 @@ function confirmClick() {
     });
   } else {
     // 등록
-    const els = doc.gba("id", "el_", true);
+    const els = doc.body.gba("id", "el_", true);
     log(els);
     return;
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
