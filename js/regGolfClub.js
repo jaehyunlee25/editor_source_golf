@@ -15,6 +15,9 @@ function main() {
       });
       return res;
     })(golfClubs);
+    clubs.sort((a, b) => {
+      return b.updated_at - a.updated_at;
+    });
     setList();
   });
 }
