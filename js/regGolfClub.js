@@ -54,7 +54,9 @@ function trclick() {
 function setDetail() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
-  const table = doc.clm("table");
+  const tmplt = doc.querySelector("#tplDetail");
+  const dtl = doc.importNode(tmplt.content, true);
+  div.appendChild(dtl);
 }
 btnNew.onclick = function () {
   setDetail();
