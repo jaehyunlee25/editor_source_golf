@@ -15,7 +15,7 @@ function main() {
       });
       return res;
     })(golfClubs);
-    clubs.sort((a, b) => {
+    clubs = clubs.sort((a, b) => {
       return a.updated_at - b.updated_at;
     });
     setList();
