@@ -87,8 +87,8 @@ function confirmClick() {
     Object.keys(row).forEach((key) => {
       if (!window["el_" + key]) return;
       row[key] = window["el_" + key].value;
-      log(row);
     });
+    log(row);
   } else {
     // 등록
   }
