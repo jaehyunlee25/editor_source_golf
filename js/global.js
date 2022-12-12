@@ -3405,7 +3405,7 @@ function layerpop(opt) {
   cells[0][0].parentNode.parentNode.style.cssText = "width:100%;height:100%;";
 
   var con = cf.mkTag("div", cells[0][0]);
-  con.style.cssText = "width:70%;margin:auto;background-color:white;";
+  con.style.cssText = "width:70%;margin:auto;background-color:rgba(0,0,0,0);";
 
   const trs = div.querySelectorAll("tr");
   trs.forEach((tr) => {
