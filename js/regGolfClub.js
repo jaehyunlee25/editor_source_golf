@@ -1,12 +1,11 @@
 const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "https://dev.mnemosyne.co.kr/api/reservation/";
-const apiHeader = "http://mnemosynesolutions.co.kr";
+const apiHeader = "https://dev.mnemosyne.co.kr/crawler/";
 const cf = new jCommon();
 
+main();
 function main() {
-  /* post(urlHeader + "/clubs", {}, httpHeader, (data) => {
-    clubs = JSON.parse(data).clubs;
-    clubs.sort();
-    setBoxes(clubs);
-  }); */
+  post(apiHeader + "/clubs", {}, httpHeader, (data) => {
+    log(data);
+  });
 }

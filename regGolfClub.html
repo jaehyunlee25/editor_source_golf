@@ -26,14 +26,7 @@
     </head>
     <body>
         <div class="cover">
-            <h3 style="text-align: center;">search all v.1.0 <button id="elMqtt">MQTT</button></h3>
-            <div>
-                <select id="selDevice">
-                    <option value="252a6790-185d-11ed-a93e-0242ac11000a">노트북</option>
-                    <option value="95b7a543-ea1d-11ec-a93e-0242ac11000a">당산동</option>
-                </select>
-            </div>
-            <table id="tblList" style="width: 100%;">
+            <table style="width: 100%;">
                 <thead>
                     <tr>
                         <td>이름</td>
@@ -46,20 +39,21 @@
                         <td>골프장소개</td>
                     </tr>
                 </thead>
+                <tbody id="tblList"></tbody>
             </table>
         </div>
+        <template id="tplItem">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </template>
         <script src="js/regGolfClub.js"></script>
     </body>
-    <template>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </template>
 </html>
