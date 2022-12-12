@@ -7,8 +7,8 @@ let clubs;
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
-    const { type, golfClubs: clubs } = data.jp();
-    log(clubs);
+    const { type, golfClubs } = data.jp();
+    clubs = golfClubs;
     setList();
   });
 }
