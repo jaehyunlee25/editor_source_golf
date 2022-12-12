@@ -54,7 +54,7 @@ function trclick() {
 function setDetail() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
-  div.css("margin:auto;width: 50%;");
+  div.css("margin:auto;width: 100%;");
   const tmplt = doc.querySelector("#tplDetail");
   const dtl = doc.importNode(tmplt.content, true);
   div.appendChild(dtl);
