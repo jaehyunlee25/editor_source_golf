@@ -68,6 +68,7 @@ function setDetail(row) {
   btnConfirm.opt = opt;
   btnConfirm.content = content;
   btnConfirm.onclick = confirmClick;
+  btnConfirm.close = close;
 
   if (!opt) return;
   Object.keys(row).forEach((key) => {
@@ -82,4 +83,5 @@ btnNew.onclick = function () {
 function confirmClick() {
   log(this.opt);
   log(this.content);
+  this.close();
 }
