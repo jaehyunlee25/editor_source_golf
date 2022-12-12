@@ -52,5 +52,8 @@ function trclick() {
   log(this);
 }
 btnNew.onclick = function () {
-  const pop = layerpop();
+  const { back, content, close } = layerpop();
+  const div = content.add("div");
+  div.innerHTML = "hellow, world!";
+  div.onclick = close;
 };
