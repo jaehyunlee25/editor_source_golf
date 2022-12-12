@@ -29,6 +29,7 @@ function setList() {
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
+    tr.onclick = trclick;
     if (j % 2 == 1) tr.css("background-color: #eee;");
     [
       id,
@@ -46,4 +47,7 @@ function setList() {
     });
     tbl.appendChild(row);
   });
+}
+function trclick() {
+  log(this);
 }
