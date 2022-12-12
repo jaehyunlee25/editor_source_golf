@@ -13,7 +13,6 @@ function main() {
   });
 }
 function setList() {
-  log(clubs);
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
   Object.keys(clubs).forEach((id, j) => {
@@ -42,10 +41,8 @@ function setList() {
       corp_reg_number,
       description,
     ].forEach((con, i) => {
-      log(con);
       tds[i].textContent = con;
     });
-    log(tbl);
     tbl.appendChild(row);
   });
 }
