@@ -52,8 +52,8 @@ function trclick() {
   log(this);
 }
 function setDetail(row) {
-  let opt = true;
-  if (!row) opt = false;
+  let opt = false;
+  if (row) opt = true;
   const { back, content, close } = layerpop();
   const div = content.add("div");
   div.css("margin:auto;width: 80%;padding-bottom: 20px;");
@@ -62,11 +62,14 @@ function setDetail(row) {
   div.appendChild(dtl);
   btnConfirm.opt = opt;
   btnConfirm.content = content;
+  btnConfirm.onclick = confirmClick;
+
+  if (!opt) return;
 }
 btnNew.onclick = function () {
   setDetail();
 };
-btnConfirm.onclick = function () {
+function confirmClick() {
   log(this.opt);
   log(this.content);
-};
+}
