@@ -45,5 +45,5 @@ function setList() {
     });
     tbl.appendChild(row);
   });
-  tblTable.nm(0, 0, 0, 0).css("width: 200px;");
+  log(tblTable.nm(0, 0, 0, 0));
 }
