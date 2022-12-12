@@ -3409,8 +3409,7 @@ function layerpop(opt) {
 
   const trs = div.querySelectorAll("tr");
   trs.forEach((tr) => {
-    tr.onmousemove = function () {};
-    tr.onmouseout = function () {};
+    tr.css("background-color: white;");
   });
 
   layerPopStack++;
