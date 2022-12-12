@@ -8,14 +8,20 @@ main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
     const { type, golfClubs } = data.jp();
-    clubs = golfClubs;
+    clubs = ((golfclubs) => {
+      const res = [];
+      Object.keys(golfclubs).forEach((id) => {
+        res.push(golfclubs[id]);
+      });
+      return res;
+    })(golfClubs);
     setList();
   });
 }
 function setList() {
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
-  Object.keys(clubs).forEach((id, j) => {
+  clubs.forEach((club, j) => {
     const {
       name,
       phone,
@@ -25,7 +31,7 @@ function setList() {
       address,
       corp_reg_number,
       description,
-    } = clubs[id];
+    } = club;
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
