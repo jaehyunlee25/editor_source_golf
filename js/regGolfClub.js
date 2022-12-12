@@ -15,6 +15,7 @@ function main() {
       });
       return res;
     })(golfClubs);
+    log(clubs);
     clubs = clubs.sort((a, b) => {
       const na = new Date(a.updated_at).getTime();
       const nb = new Date(b.updated_at).getTime();
