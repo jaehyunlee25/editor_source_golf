@@ -5,7 +5,7 @@ const cf = new jCommon();
 
 main();
 function main() {
-  post(apiHeader + "dbGetGolfClub", {}, {}, (data) => {
+  post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
     log(data);
   });
 }
