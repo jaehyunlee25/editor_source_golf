@@ -30,7 +30,7 @@ function setList() {
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
     tr.onclick = trclick;
-    if (j % 2 == 1) tr.css("background-color: #eee;");
+    // if (j % 2 == 1) tr.css("background-color: #eee;");
     [
       id,
       name,
