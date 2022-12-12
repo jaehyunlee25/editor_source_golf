@@ -19,7 +19,7 @@ function main() {
     clubs = clubs.sort((a, b) => {
       const na = new Date(a.updated_at).getTime();
       const nb = new Date(b.updated_at).getTime();
-      return na > nb ? -1 : 1;
+      return na - nb;
     });
     setList();
   });
