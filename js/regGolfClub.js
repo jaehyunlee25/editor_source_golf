@@ -103,7 +103,11 @@ function confirmClick() {
     els.forEach((el) => {
       param[el.id.ch(3)] = el.value;
     });
-    log(param);
+    if (param.name.replace(/\s/g, "") == "") {
+      alert("이름은 필수 입력입니다.");
+      window["el_name"].focus();
+      return;
+    }
     return;
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
