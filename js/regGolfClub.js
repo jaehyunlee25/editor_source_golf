@@ -88,8 +88,8 @@ function confirmClick() {
       if (!window["el_" + key]) return;
       param[key] = window["el_" + key].value.replace(/"/g, "'");
     });
-    post(apiHeader + "dbSetGolfClub", param, httpHeader, (data) => {
-      const { type, data } = data.jp();
+    post(apiHeader + "dbSetGolfClub", param, httpHeader, (resp) => {
+      const { type, data } = resp.jp();
       if (type == "okay") {
         log("successfully updated :: " + param.name + " " + param.id);
       } else {
