@@ -42,8 +42,8 @@ function setList() {
       description,
     ].forEach((con, i) => {
       tds[i].textContent = con;
+      tds[i].css("overflow-wrap: break-word;");
     });
     tbl.appendChild(row);
   });
-  tblTable.nm(0, 0, 0, 6).css("overflow-wrap: break-word;");
 }
