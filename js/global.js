@@ -3407,6 +3407,12 @@ function layerpop(opt) {
   var con = cf.mkTag("div", cells[0][0]);
   con.style.cssText = "width:70%;margin:auto;background-color:white;";
 
+  const trs = div.querySelectorAll("tr");
+  trs.forEach((tr) => {
+    tr.onmousemove = function () {};
+    tr.onmouseout = function () {};
+  });
+
   layerPopStack++;
 
   function close() {
