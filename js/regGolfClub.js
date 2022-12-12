@@ -42,5 +42,6 @@ function setList() {
     ].forEach((con, i) => {
       tds[i].textContent = con;
     });
+    tbl.appendChild(row);
   });
 }
