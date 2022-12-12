@@ -17,8 +17,16 @@ function setList() {
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
   Object.keys(clubs).forEach((id) => {
-    const { name, phone, homepage, email, area, address, corp_reg_number } =
-      clubs[id];
+    const {
+      name,
+      phone,
+      homepage,
+      email,
+      area,
+      address,
+      corp_reg_number,
+      description,
+    } = clubs[id];
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     [
