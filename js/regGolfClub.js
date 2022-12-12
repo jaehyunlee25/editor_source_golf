@@ -30,6 +30,7 @@ function setList() {
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
     tr.onclick = trclick;
+    tr.item = clubs[id];
     tr.css("border-bottom: 1px solid #eee;");
     [
       id,
@@ -49,7 +50,7 @@ function setList() {
   });
 }
 function trclick() {
-  log(this);
+  setDetail(this.item);
 }
 function setDetail(row) {
   let opt = false;
@@ -69,6 +70,7 @@ function setDetail(row) {
   btnConfirm.onclick = confirmClick;
 
   if (!opt) return;
+  log(row);
 }
 btnNew.onclick = function () {
   setDetail();
