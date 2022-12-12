@@ -70,7 +70,9 @@ function setDetail(row) {
   btnConfirm.onclick = confirmClick;
 
   if (!opt) return;
-  log(row);
+  Object.keys(row).forEach((key) => {
+    window[key].value = row[key];
+  });
 }
 btnNew.onclick = function () {
   setDetail();
