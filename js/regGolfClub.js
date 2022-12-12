@@ -51,9 +51,11 @@ function setList() {
 function trclick() {
   log(this);
 }
-btnNew.onclick = function () {
+function setDetail() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
-  div.innerHTML = "hellow, world!";
-  div.onclick = close;
+  const table = doc.clm("table");
+}
+btnNew.onclick = function () {
+  setDetail();
 };
