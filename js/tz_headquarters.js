@@ -129,9 +129,8 @@ function setBoxes() {
         golfclub.name +
         "</a>"
     );
-    log(club);
-    //window[club].onclick = engClick;
-    //window["kor_" + club].onclick = korClick;
+    window[club].onclick = engClick;
+    window["kor_" + club].onclick = korClick;
     box.onclick = boxclick;
     box.onselect = () => {
       return false;
