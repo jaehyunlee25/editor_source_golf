@@ -101,6 +101,8 @@ btnNew.onclick = function () {
   setDetail();
 };
 function nameChange() {
+  const span = doc.gba("id", "nameDesc")[0];
+  span.str("");
   if (this.value == "") return;
   post(
     apiHeader + "dbCheckGolfClubName",
@@ -109,14 +111,14 @@ function nameChange() {
     (resp) => {
       const { type, data } = resp.jp();
       const names = data.map((ob) => ob.name);
-      const span = doc.gba("id", "nameDesc")[0];
-      span.str("");
       if (type == "okay") span.str(names.join(","));
       else span.str("eng change fail");
     }
   );
 }
 function engIdChange() {
+  const span = doc.gba("id", "engDesc")[0];
+  span.str("");
   if (this.value == "") return;
   post(
     apiHeader + "dbCheckGolfClubEngName",
@@ -125,8 +127,6 @@ function engIdChange() {
     (resp) => {
       const { type, data } = resp.jp();
       const names = data.map((ob) => ob.eng_id);
-      const span = doc.gba("id", "engDesc")[0];
-      span.str("");
       if (type == "okay") span.str(names);
       else span.str("eng change fail");
     }
