@@ -101,10 +101,30 @@ btnNew.onclick = function () {
   setDetail();
 };
 function nameChange() {
-  doc.gba("id", "nameDesc")[0].str("eng change");
+  post(
+    apiHeader + "dbCheckGolfClubName",
+    { name: this.value },
+    httpHeader,
+    (resp) => {
+      const { type, data } = resp.jp();
+      const span = doc.gba("id", "engDesc")[0];
+      if (type == "okay") span.str("eng change okay");
+      else span.str("eng change fail");
+    }
+  );
 }
 function engIdChange() {
-  doc.gba("id", "engDesc")[0].str("eng change");
+  post(
+    apiHeader + "dbCheckGolfClubEngName",
+    { eng_id: this.value },
+    httpHeader,
+    (resp) => {
+      const { type, data } = resp.jp();
+      const span = doc.gba("id", "engDesc")[0];
+      if (type == "okay") span.str("eng change");
+      else span.str("eng change fail");
+    }
+  );
 }
 function confirmClick() {
   if (this.opt) {
