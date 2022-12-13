@@ -101,7 +101,7 @@ btnNew.onclick = function () {
   setDetail();
 };
 function nameChange() {
-  log(this.value);
+  if (this.value == "") return;
   post(
     apiHeader + "dbCheckGolfClubName",
     { name: this.value },
@@ -117,6 +117,7 @@ function nameChange() {
   );
 }
 function engIdChange() {
+  if (this.value == "") return;
   post(
     apiHeader + "dbCheckGolfClubEngName",
     { eng_id: this.value },
