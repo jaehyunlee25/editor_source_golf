@@ -107,6 +107,7 @@ function nameChange() {
     httpHeader,
     (resp) => {
       const { type, data } = resp.jp();
+      log(type, data);
       const span = doc.gba("id", "nameDesc")[0];
       if (type == "okay") span.str("eng change okay");
       else span.str("eng change fail");
