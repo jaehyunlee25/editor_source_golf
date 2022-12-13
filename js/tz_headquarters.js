@@ -22,7 +22,6 @@ function main() {
   post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
     golfClubs = JSON.parse(data).golfClubs;
     post(urlHeader + "/clubs", {}, httpHeader, (data) => {
-      log(data);
       const json = JSON.parse(data);
       clubs = json.clubs;
       clubStates = json.clubStates;
@@ -131,8 +130,8 @@ function setBoxes() {
         "</a>"
     );
     log(club);
-    window[club].onclick = engClick;
-    window["kor_" + club].onclick = korClick;
+    //window[club].onclick = engClick;
+    //window["kor_" + club].onclick = korClick;
     box.onclick = boxclick;
     box.onselect = () => {
       return false;
