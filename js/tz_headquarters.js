@@ -1,6 +1,7 @@
 const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
+const webHeader = "https://dev.mnemosyne.co.kr/html";
 const dictClub = {};
 const cf = new jCommon();
 
@@ -218,7 +219,7 @@ function setpopbody({ content: con, close }, club, sign) {
     "width: 95%;height: 90%; border: 0px; background-color: black; color: white; font-size: 15px;";
   if (sign == "L")
     post(
-      "http://dev.mnemosyne.co.kr:1009/login_admin",
+      urlHeader + "/login_admin",
       { club: club.eng_id },
       httpHeader,
       (data) => {
@@ -229,7 +230,7 @@ function setpopbody({ content: con, close }, club, sign) {
     );
   if (sign == "Sd")
     post(
-      "http://dev.mnemosyne.co.kr:1009/searchbots_date_admin",
+      urlHeader + "/searchbots_date_admin",
       { clubs: [club.eng_id] },
       httpHeader,
       (data) => {
@@ -240,7 +241,7 @@ function setpopbody({ content: con, close }, club, sign) {
     );
   if (sign == "St")
     post(
-      "http://dev.mnemosyne.co.kr:1009/searchbots_time_admin",
+      urlHeader + "/searchbots_time_admin",
       { clubs: [club.eng_id], date: "20220831" },
       httpHeader,
       (data) => {
@@ -251,7 +252,7 @@ function setpopbody({ content: con, close }, club, sign) {
     );
   if (sign == "rR")
     post(
-      "http://dev.mnemosyne.co.kr:1009/reservebot",
+      urlHeader + "/reservebot",
       {
         club: club.eng_id,
         year: "2022",
@@ -269,7 +270,7 @@ function setpopbody({ content: con, close }, club, sign) {
     );
   if (sign == "rS")
     post(
-      "http://dev.mnemosyne.co.kr:1009/reserveSearchbot",
+      urlHeader + "/reserveSearchbot",
       { club: club.eng_id },
       httpHeader,
       (data) => {
@@ -280,7 +281,7 @@ function setpopbody({ content: con, close }, club, sign) {
     );
   if (sign == "rC")
     post(
-      "http://dev.mnemosyne.co.kr:1009/reserveCancelbot",
+      urlHeader + "/reserveCancelbot",
       {
         club: club.eng_id,
         year: "2022",
@@ -369,11 +370,9 @@ function clubClick() {
 }
 function setpophead({ content: con, close }, club, sign) {
   const editorUrls = {
-    L:
-      "http://dev.mnemosyne.co.kr:1007/html/loginEditor.html?clubId=" +
-      club.eng_id,
-    Sd: "http://dev.mnemosyne.co.kr:1007/html/editor.html?club_id=" + club.id,
-    St: "http://dev.mnemosyne.co.kr:1007/html/editor.html?club_id=" + club.id,
+    L: webHeader + "/html/loginEditor.html?clubId=" + club.eng_id,
+    Sd: webHeader + "/html/editor.html?club_id=" + club.id,
+    St: webHeader + "/html/editor.html?club_id=" + club.id,
     rR:
       "http://mnemosynesolutions.co.kr/app/project/editor_source_golf/reserveReserve.html?club=" +
       club.eng_id,
