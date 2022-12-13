@@ -79,6 +79,10 @@ function setDetail(row) {
     tr.css("background-color: white;");
   }); */
   if (opt) doc.gba("id", "el_eng_id")[0].disabled = "disabled";
+
+  doc.gba("id", "el_name")[0].onchange = nameChange;
+  doc.gba("id", "el_eng_id")[0].onchange = engIdChange;
+
   btnConfirm.opt = opt;
   btnConfirm.content = content;
   btnConfirm.row = row;
@@ -96,6 +100,12 @@ function setDetail(row) {
 btnNew.onclick = function () {
   setDetail();
 };
+function nameChange() {
+  doc.gba("id", "nameDesc")[0].str("eng change");
+}
+function engIdChange() {
+  doc.gba("id", "engDesc")[0].str("eng change");
+}
 function confirmClick() {
   if (this.opt) {
     // 수정
