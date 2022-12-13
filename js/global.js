@@ -3838,7 +3838,8 @@ HTMLElement.prototype.gbn = function (str) {
   return Array.from(els);
 };
 HTMLElement.prototype.str = function (str) {
-  return this.innerText;
+  if (str) this.innerHTML = str;
+  else return this.innerText;
 };
 HTMLElement.prototype.trav = function (fnc) {
   fnc(this);
