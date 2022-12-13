@@ -101,6 +101,7 @@ btnNew.onclick = function () {
   setDetail();
 };
 function nameChange() {
+  log(this.value);
   post(
     apiHeader + "dbCheckGolfClubName",
     { name: this.value },
