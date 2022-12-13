@@ -1,6 +1,6 @@
 const CLUBS = {};
-const ADDR_HEADER = "http://dev.mnemosyne.co.kr:1006";
-const WS_HEADER = "ws://dev.mnemosyne.co.kr:9001";
+const ADDR_HEADER = "https://dev.mnemosyne.co.kr/api/reservation";
+const WS_HEADER = "wss://dev.mnemosyne.co.kr/wss";
 const socket = new WebSocket(WS_HEADER);
 let wsCount = 1000000;
 
@@ -64,7 +64,7 @@ function wsmessage(event) {
 
     try {
       if (POP) POP.close();
-    } catch (e) {      
+    } catch (e) {
       log("no popup");
     }
     const engname = (
