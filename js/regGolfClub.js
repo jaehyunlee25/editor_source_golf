@@ -80,8 +80,8 @@ function setDetail(row) {
   }); */
   if (opt) doc.gba("id", "el_eng_id")[0].disabled = "disabled";
 
-  doc.gba("id", "el_name")[0].onkeydown = nameChange;
-  doc.gba("id", "el_eng_id")[0].onkeydown = engIdChange;
+  doc.gba("id", "el_name")[0].onkeyup = nameChange;
+  doc.gba("id", "el_eng_id")[0].onkeyup = engIdChange;
 
   btnConfirm.opt = opt;
   btnConfirm.content = content;
