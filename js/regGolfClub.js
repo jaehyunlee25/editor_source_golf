@@ -78,7 +78,7 @@ function setDetail(row) {
   trs.forEach((tr) => {
     tr.css("background-color: white;");
   }); */
-  if (opt) el_eng_id.disabled = "disabled";
+  if (opt) doc.gba("id", "el_eng_id")[0].disabled = "disabled";
   btnConfirm.opt = opt;
   btnConfirm.content = content;
   btnConfirm.row = row;
