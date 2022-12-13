@@ -102,7 +102,7 @@ btnNew.onclick = function () {
 };
 function nameChange() {
   const span = doc.gba("id", "nameDesc")[0];
-  span.css("display:inline-block;width:45%;height:15px;overflow:hidden;");
+  span.css("display:inline-block;width:45%;height:15px;overflow:auto;");
   span.str("");
   if (this.value == "") return;
   post(
@@ -119,7 +119,7 @@ function nameChange() {
 }
 function engIdChange() {
   const span = doc.gba("id", "engDesc")[0];
-  span.css("display:inline-block;width:45%;height:15px;overflow:hidden;");
+  span.css("display:inline-block;width:45%;height:15px;overflow:auto;");
   span.str("");
   if (this.value == "") return;
   post(
