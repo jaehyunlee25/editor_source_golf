@@ -31,6 +31,7 @@ function wsopen() {
   );
 }
 function wsclose(event) {
+  console.dir(event);
   log("socket server cloded!", event.code, event.reason);
 }
 function wserror(e) {
