@@ -66,7 +66,6 @@ function trclick() {
   setDetail(this.item);
 }
 function setDetail(row) {
-  log(row);
   let opt = false;
   if (row) opt = true;
   const { back, content, close } = layerpop();
@@ -79,6 +78,7 @@ function setDetail(row) {
   trs.forEach((tr) => {
     tr.css("background-color: white;");
   }); */
+  if (opt) el_eng_id.disabled = "disabled";
   btnConfirm.opt = opt;
   btnConfirm.content = content;
   btnConfirm.row = row;
