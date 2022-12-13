@@ -20,6 +20,7 @@ let clubAnchor = {};
 main();
 function main() {
   post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
+    log(data);
     golfClubs = JSON.parse(data).golfClubs;
     post(urlHeader + "/clubs", {}, httpHeader, (data) => {
       const json = JSON.parse(data);
