@@ -112,7 +112,7 @@ function nameChange() {
     (resp) => {
       const { type, data } = resp.jp();
       const names = data.map((ob) => ob.name);
-      if (type == "okay") span.str(names.join(","));
+      if (type == "okay") span.str(names.join(", "));
       else span.str("eng change fail");
     }
   );
@@ -129,7 +129,7 @@ function engIdChange() {
     (resp) => {
       const { type, data } = resp.jp();
       const names = data.map((ob) => ob.eng_id);
-      if (type == "okay") span.str(names);
+      if (type == "okay") span.str(names.join(", "));
       else span.str("eng change fail");
     }
   );
