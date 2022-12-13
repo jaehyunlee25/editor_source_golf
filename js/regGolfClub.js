@@ -108,9 +108,9 @@ function nameChange() {
     httpHeader,
     (resp) => {
       const { type, data } = resp.jp();
-      log(type, data);
+      const names = data.map((ob) => ob.name);
       const span = doc.gba("id", "nameDesc")[0];
-      if (type == "okay") span.str("eng change okay");
+      if (type == "okay") span.str(names.join(","));
       else span.str("eng change fail");
     }
   );
@@ -122,8 +122,9 @@ function engIdChange() {
     httpHeader,
     (resp) => {
       const { type, data } = resp.jp();
+      const names = data.map((ob) => ob.eng_id);
       const span = doc.gba("id", "engDesc")[0];
-      if (type == "okay") span.str("eng change");
+      if (type == "okay") span.str(names);
       else span.str("eng change fail");
     }
   );
