@@ -8,15 +8,28 @@ main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
     const { type, golfClubs } = data.jp();
-    clubs = golfClubs;
+    log(golfClubs);
+    clubs = ((golfclubs) => {
+      const res = [];
+      Object.keys(golfclubs).forEach((id) => {
+        res.push(golfclubs[id]);
+      });
+      return res;
+    })(golfClubs);
+    clubs = clubs.sort((a, b) => {
+      const na = new Date(a.updated_at).getTime();
+      const nb = new Date(b.updated_at).getTime();
+      return nb - na;
+    });
     setList();
   });
 }
 function setList() {
   const t = doc.querySelector("#tplItem");
   const tbl = doc.querySelector("#tblList");
-  Object.keys(clubs).forEach((id, j) => {
+  clubs.forEach((club, j) => {
     const {
+      id,
       name,
       phone,
       homepage,
@@ -25,12 +38,12 @@ function setList() {
       address,
       corp_reg_number,
       description,
-    } = clubs[id];
+    } = club;
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
     tr.onclick = trclick;
-    tr.item = clubs[id];
+    tr.item = club;
     tr.css("border-bottom: 1px solid #eee;");
     [
       id,
@@ -53,6 +66,7 @@ function trclick() {
   setDetail(this.item);
 }
 function setDetail(row) {
+  log(row);
   let opt = false;
   if (row) opt = true;
   const { back, content, close } = layerpop();
