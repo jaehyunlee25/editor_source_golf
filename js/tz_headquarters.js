@@ -1,5 +1,5 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "http://dev.mnemosyne.co.kr:1009";
+const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const dictClub = {};
 const cf = new jCommon();
