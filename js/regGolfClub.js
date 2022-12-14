@@ -162,16 +162,41 @@ function confirmClick() {
       window["el_name"].focus();
       return;
     }
+    if (param.eng_id.replace(/\s/g, "") == "") {
+      alert("영문이름은 필수 입력입니다.");
+      window["el_eng_id"].focus();
+      return;
+    }
+    if (param.course_name.replace(/\s/g, "") == "") {
+      alert("코스는 필수 입력입니다.");
+      window["el_course_name"].focus();
+      return;
+    }
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
-      log(type);
       log(data);
-      /* if (type == "okay") {
+      if (type == "okay") {
         log("successfully inserted :: " + param.name + " " + param.id);
       } else {
         log("something wrong :: " + param.name + " " + param.id);
-      } */
+      }
     });
+    /* post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
+      const { type, data } = resp.jp();
+      if (type == "okay") {
+        log("successfully inserted :: " + param.name + " " + param.id);
+      } else {
+        log("something wrong :: " + param.name + " " + param.id);
+      }
+    });
+    post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
+      const { type, data } = resp.jp();
+      if (type == "okay") {
+        log("successfully inserted :: " + param.name + " " + param.id);
+      } else {
+        log("something wrong :: " + param.name + " " + param.id);
+      }
+    }); */
   }
   this.close();
 }
