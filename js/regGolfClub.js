@@ -174,9 +174,18 @@ function confirmClick() {
     }
     post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
       const { type, data } = resp.jp();
+      let obNew;
       log(data);
       if (type == "okay") {
         log("successfully inserted :: " + param.name + " " + param.id);
+        Object.keys(data).some((id) => {
+          const ob = data[id];
+          if (ob.name == param.name && ob.address == param.address) {
+            obNew = ob;
+            return true;
+          }
+        });
+        postWork(obNew, param);
       } else {
         log("something wrong :: " + param.name + " " + param.id);
       }
@@ -199,4 +208,12 @@ function confirmClick() {
     }); */
   }
   this.close();
+}
+function postWork(obNew, param) {
+  log(obNew);
+  param.id = obNew.id;
+  log(param);
+  return;
+  post(apiHeader + "dbNewGolfClubEng", param, httpHeader, (resp) => {});
+  post(apiHeader + "dbNewGolfCourse", param, httpHeader, (resp) => {});
 }
