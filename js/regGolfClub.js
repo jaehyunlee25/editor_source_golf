@@ -78,12 +78,7 @@ function setDetail(row) {
   trs.forEach((tr) => {
     tr.css("background-color: white;");
   }); */
-  if (opt) {
-    doc.gba("id", "el_eng_id")[0].disabled = "disabled";
-    log(doc.gba("id", "el_course_name")[0].value);
-    if (doc.gba("id", "el_course_name")[0].value != "")
-      doc.gba("id", "el_course_name")[0].disabled = "disabled";
-  }
+  if (opt) doc.gba("id", "el_eng_id")[0].disabled = "disabled";
 
   doc.gba("id", "el_name")[0].onkeyup = nameChange;
   doc.gba("id", "el_eng_id")[0].onkeyup = engIdChange;
@@ -101,6 +96,8 @@ function setDetail(row) {
     if (!window["el_" + key]) return;
     window["el_" + key].value = row[key];
   });
+  if (doc.gba("id", "el_course_name")[0].value != "")
+    doc.gba("id", "el_course_name")[0].disabled = "disabled";
 }
 btnNew.onclick = function () {
   setDetail();
