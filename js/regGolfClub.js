@@ -78,7 +78,11 @@ function setDetail(row) {
   trs.forEach((tr) => {
     tr.css("background-color: white;");
   }); */
-  if (opt) doc.gba("id", "el_eng_id")[0].disabled = "disabled";
+  if (opt) {
+    doc.gba("id", "el_eng_id")[0].disabled = "disabled";
+    if (doc.gba("id", "el_course_name")[0].value != "")
+      doc.gba("id", "el_course_name")[0].disabled = "disabled";
+  }
 
   doc.gba("id", "el_name")[0].onkeyup = nameChange;
   doc.gba("id", "el_eng_id")[0].onkeyup = engIdChange;
@@ -206,9 +210,9 @@ function postWork(obNew, param) {
   post(apiHeader + "dbNewGolfCourse", param, httpHeader, (resp) => {
     const { type, data } = resp.jp();
     if (type == "okay") {
-      log("cousrses successfully inserted :: " + param.name + " " + param.id);
+      log("courses successfully inserted :: " + param.name + " " + param.id);
     } else {
-      log("cousrses something wrong :: " + param.name + " " + param.id);
+      log("courses something wrong :: " + param.name + " " + param.id);
     }
   });
 }
