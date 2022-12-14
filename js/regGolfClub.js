@@ -139,63 +139,74 @@ function engIdChange() {
 function confirmClick() {
   if (this.opt) {
     // 수정
-    const param = this.row;
-    Object.keys(param).forEach((key) => {
-      if (!window["el_" + key]) return;
-      param[key] = window["el_" + key].value.replace(/"/g, "'");
-    });
-    post(apiHeader + "dbSetGolfClub", param, httpHeader, (resp) => {
-      const { type, data } = resp.jp();
-      if (type == "okay") {
-        log("successfully updated :: " + param.name + " " + param.id);
-      } else {
-        log("something wrong :: " + param.name + " " + param.id);
-      }
-    });
+    clubModify(this.row);
   } else {
     // 등록
-    const els = doc.body.gba("id", "el_", true);
-    const param = {};
-    els.forEach((el) => {
-      param[el.id.ch(3)] = el.value;
-    });
-    if (param.name.replace(/\s/g, "") == "") {
-      alert("이름은 필수 입력입니다.");
-      window["el_name"].focus();
-      return;
-    }
-    if (param.eng_id.replace(/\s/g, "") == "") {
-      alert("영문이름은 필수 입력입니다.");
-      window["el_eng_id"].focus();
-      return;
-    }
-    if (param.course_name.replace(/\s/g, "") == "") {
-      alert("코스는 필수 입력입니다.");
-      window["el_course_name"].focus();
-      return;
-    }
-    post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
-      const { type, data } = resp.jp();
-      let obNew;
-      log(data);
-      if (type == "okay") {
-        log("successfully inserted :: " + param.name + " " + param.id);
-        Object.keys(data).some((id) => {
-          const ob = data[id];
-          if (ob.name == param.name && ob.address == param.address) {
-            obNew = ob;
-            return true;
-          }
-        });
-        postWork(obNew, param);
-      } else {
-        log("something wrong :: " + param.name + " " + param.id);
-      }
-    });
+    clubRegister();
   }
   this.close();
 }
-function postWork(obNew, param) {
+function clubRegister() {
+  const els = doc.body.gba("id", "el_", true);
+  const param = {};
+  els.forEach((el) => {
+    param[el.id.ch(3)] = el.value;
+  });
+  if (param.name.replace(/\s/g, "") == "") {
+    alert("이름은 필수 입력입니다.");
+    window["el_name"].focus();
+    return;
+  }
+  if (param.eng_id.replace(/\s/g, "") == "") {
+    alert("영문이름은 필수 입력입니다.");
+    window["el_eng_id"].focus();
+    return;
+  }
+  if (param.course_name.replace(/\s/g, "") == "") {
+    alert("코스는 필수 입력입니다.");
+    window["el_course_name"].focus();
+    return;
+  }
+  post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    let obNew;
+    log(data);
+    if (type == "okay") {
+      log("successfully inserted :: " + param.name + " " + param.id);
+      Object.keys(data).some((id) => {
+        const ob = data[id];
+        if (ob.name == param.name && ob.address == param.address) {
+          obNew = ob;
+          return true;
+        }
+      });
+      newClubEng(obNew, param);
+      newClubCourse(obNew, param);
+    } else {
+      log("something wrong :: " + param.name + " " + param.id);
+    }
+  });
+}
+function clubModify(param) {
+  Object.keys(param).forEach((key) => {
+    if (!window["el_" + key]) return;
+    param[key] = window["el_" + key].value.replace(/"/g, "'");
+  });
+  post(apiHeader + "dbSetGolfClub", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("successfully updated :: " + param.name + " " + param.id);
+    } else {
+      log("something wrong :: " + param.name + " " + param.id);
+    }
+  });
+  const [a, b] = [
+    doc.gba("id", "el_course_name")[0].disabled,
+    doc.gba("id", "el_course_name")[0].value == "",
+  ];
+  if (!a && !b) newClubCourse(param, param);
+}
+function newClubEng(obNew, param) {
   param.id = obNew.id;
   post(apiHeader + "dbNewGolfClubEng", param, httpHeader, (resp) => {
     const { type, data } = resp.jp();
@@ -205,6 +216,9 @@ function postWork(obNew, param) {
       log("eng_name something wrong :: " + param.name + " " + param.id);
     }
   });
+}
+function newClubCourse(obNew, param) {
+  param.id = obNew.id;
   post(apiHeader + "dbNewGolfCourse", param, httpHeader, (resp) => {
     const { type, data } = resp.jp();
     if (type == "okay") {
