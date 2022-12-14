@@ -190,30 +190,25 @@ function confirmClick() {
         log("something wrong :: " + param.name + " " + param.id);
       }
     });
-    /* post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
-      const { type, data } = resp.jp();
-      if (type == "okay") {
-        log("successfully inserted :: " + param.name + " " + param.id);
-      } else {
-        log("something wrong :: " + param.name + " " + param.id);
-      }
-    });
-    post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
-      const { type, data } = resp.jp();
-      if (type == "okay") {
-        log("successfully inserted :: " + param.name + " " + param.id);
-      } else {
-        log("something wrong :: " + param.name + " " + param.id);
-      }
-    }); */
   }
   this.close();
 }
 function postWork(obNew, param) {
-  log(obNew);
   param.id = obNew.id;
-  log(param);
-  return;
-  post(apiHeader + "dbNewGolfClubEng", param, httpHeader, (resp) => {});
-  post(apiHeader + "dbNewGolfCourse", param, httpHeader, (resp) => {});
+  post(apiHeader + "dbNewGolfClubEng", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("eng_name successfully inserted :: " + param.name + " " + param.id);
+    } else {
+      log("eng_name something wrong :: " + param.name + " " + param.id);
+    }
+  });
+  post(apiHeader + "dbNewGolfCourse", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("cousrses successfully inserted :: " + param.name + " " + param.id);
+    } else {
+      log("cousrses something wrong :: " + param.name + " " + param.id);
+    }
+  });
 }
