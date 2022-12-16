@@ -210,6 +210,7 @@ function clubsearchkeyup() {
     ["", id, name, eng_id, homepage].forEach((val, i) => {
       if (i == 0) {
         tr.children[i].children[0].clubId = id;
+        tr.children[i].children[0].engId = eng_id;
         return;
       }
       tr.children[i].str(val);
@@ -219,15 +220,24 @@ function clubsearchkeyup() {
   });
   const [btn] = area.gba("id", "btnAddGroup");
   btn.onclick = function () {
-    const param = { clubIds: [] };
+    const param = { clubIds: [], engIds: [] };
     doc.gbn("chkGroup").forEach((ipt) => {
-      if (ipt.checked) param.clubIds.push(ipt.clubId);
+      if (ipt.checked) {
+        param.clubIds.push(ipt.clubId);
+        param.engIds.push(ipt.engId);
+      }
     });
     const [gName] = doc.gba("id", "iptGroupName");
     if (gName.value.reaplce(/\s/g, "") == "") {
       alert("group 이름은 필수입력입니다.");
       gName.focus();
+      return;
     }
+    if (param.clubIds.length == 0) {
+      alert("지정된 골프장이 없습니다.");
+      return;
+    }
+    param.groupName = gName.value;
     post(apiHeader + "dbNewGroup", param, httpHeader, (resp) => {
       if (resp.type == "okay") {
         log("successfully inserted!!");
