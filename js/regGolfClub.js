@@ -2,14 +2,14 @@ const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "https://dev.mnemosyne.co.kr/api/reservation/";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/crawler/";
 const cf = new jCommon();
+let golfClubs;
 let clubs;
 let groups;
 
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
-    const { type, golfClubs } = data.jp();
-    log(golfClubs);
+    const { type, golfClubs: golfClubs } = data.jp();
     clubs = ((golfclubs) => {
       const res = [];
       Object.keys(golfclubs).forEach((id) => {
