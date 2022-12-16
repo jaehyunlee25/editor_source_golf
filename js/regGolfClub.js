@@ -9,7 +9,8 @@ let groups;
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
-    const { type, golfClubs: rawClubs } = data.jp();
+    const { type, golfClubs } = data.jp();
+    rawClubs = golfClubs;
     clubs = ((golfclubs) => {
       const res = [];
       Object.keys(golfclubs).forEach((id) => {
