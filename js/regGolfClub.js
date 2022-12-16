@@ -63,7 +63,7 @@ function setList() {
   });
 }
 function trclick() {
-  setDetail(this.parentNode.item);
+  setDetail(this.item);
 }
 function setDetail(row) {
   let opt = false;
