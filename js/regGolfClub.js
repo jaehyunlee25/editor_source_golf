@@ -142,7 +142,7 @@ function setGroup() {
   });
   const tab = tabs.add("span");
   tab.css(
-    "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;margin-right:3px;"
+    "display:inline-block;border:1px solid lightgray;padding:5px;font-size: 12px;margin-right:3px;background-color: #eee;"
   );
   tab.str("그룹추가");
   // FOOT
