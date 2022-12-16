@@ -205,7 +205,10 @@ function clubsearchkeyup() {
     const row = doc.importNode(tpl.content, true);
     const [tr] = row.querySelectorAll("tr");
     ["", id, name, eng_id, homepage].forEach((val, i) => {
-      if (i == 0) return;
+      if (i == 0) {
+        tr.children[i].clubId = id;
+        return;
+      }
       tr.children[i].str(val);
       tr.children[i].css("overflow-wrap: break-word;text-align:left;");
     });
@@ -213,7 +216,9 @@ function clubsearchkeyup() {
   });
   const [btn] = area.gba("id", "btnAddGroup");
   btn.onclick = function () {
-    log(11);
+    tbl.gbn("chkGroup").forEach((ipt) => {
+      log(ipt.clubId);
+    });
   };
 }
 function grouptabclick() {
