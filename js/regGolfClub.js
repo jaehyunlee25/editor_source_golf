@@ -202,10 +202,10 @@ function clubsearchkeyup() {
   res.forEach((ob) => {
     const { id, name, eng_id, homepage } = ob;
     const row = doc.importNode(tpl.content, true);
-    log(row);
+    const trs = row.querySelectorAll("tr");
     ["", id, name, eng_id, homepage].forEach((val, i) => {
       if (i == 0) return;
-      row.children[i].str(val);
+      trs[i].str(val);
     });
     tbl.appendChild(row);
   });
