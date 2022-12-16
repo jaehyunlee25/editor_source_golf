@@ -174,14 +174,13 @@ function groupaddclick() {
 function clubsearchkeyup() {
   const str = this.value;
   if (str.replace(/\s/g, "") == "") return;
-  log(str);
   const strs = str.split(",");
   const res = [];
   Object.keys(clubs).forEach((key) => {
     const ob = clubs[key];
     Object.keys(ob).forEach((name) => {
       const val = ob[name];
-      strs.split(",").forEach((str) => {
+      strs.forEach((str) => {
         str = str.trim();
         if (val.indexOf(str) != -1) res.push(ob);
       });
