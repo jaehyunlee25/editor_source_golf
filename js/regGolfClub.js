@@ -104,7 +104,7 @@ btnNew.onclick = function () {
 };
 btnGroup.onclick = function () {
   post(apiHeader + "dbGetGroup", {}, httpHeader, (data) => {
-    log(data);
+    log(data.jp());
     setGroup();
   });
 };
