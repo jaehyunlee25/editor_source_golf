@@ -3815,6 +3815,13 @@ String.prototype.gup = function () {
   return param;
 };
 HTMLElement.prototype.css = function (str) {
+  if (typeof str != "string") {
+    const res = [];
+    Object.keys(str).forEach((key) => {
+      res.push(key + ":" + str[key] + ";");
+    });
+    str = res.join("");
+  }
   this.style.cssText += str;
 };
 HTMLElement.prototype.add = function (tag) {
