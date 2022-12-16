@@ -197,7 +197,7 @@ function clubsearchkeyup() {
 
   // 표시
   const { area } = this;
-  const [tbl] = area.gba("id", "tplSearchList");
+  const [tbl] = area.gba("id", "tblSearchList");
   const [tpl] = area.gba("id", "tplSearchList");
   res.forEach((ob) => {
     const { id, name, eng_id, homepage } = ob;
