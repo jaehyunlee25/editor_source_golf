@@ -203,7 +203,6 @@ function clubsearchkeyup() {
     const { id, name, eng_id, homepage } = ob;
     const row = doc.importNode(tpl.content, true);
     const [tr] = row.querySelectorAll("tr");
-    log(tr);
     ["", id, name, eng_id, homepage].forEach((val, i) => {
       if (i == 0) return;
       tr.children[i].str(val);
