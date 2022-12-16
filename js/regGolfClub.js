@@ -46,6 +46,7 @@ function setList() {
     tr.item = club;
     tr.css("border-bottom: 1px solid #eee;");
     [
+      "",
       id,
       name,
       address,
@@ -56,7 +57,6 @@ function setList() {
       corp_reg_number,
       description,
     ].forEach((con, i) => {
-      if (i == 0) return;
       tds[i].textContent = con;
       tds[i].css("overflow-wrap: break-word;text-align:left;");
     });
