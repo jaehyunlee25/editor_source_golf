@@ -223,6 +223,11 @@ function clubsearchkeyup() {
     doc.gbn("chkGroup").forEach((ipt) => {
       if (ipt.checked) param.clubIds.push(ipt.clubId);
     });
+    const [gName] = doc.gba("id", "iptGroupName");
+    if (gName.value.reaplce(/\s/g, "") == "") {
+      alert("group 이름은 필수입력입니다.");
+      gName.focus();
+    }
     post(apiHeader + "dbNewGroup", param, httpHeader, (resp) => {
       if (resp.type == "okay") {
         log("successfully inserted!!");
