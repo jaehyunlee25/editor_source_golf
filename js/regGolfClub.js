@@ -3,6 +3,7 @@ const urlHeader = "https://dev.mnemosyne.co.kr/api/reservation/";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/crawler/";
 const cf = new jCommon();
 let clubs;
+let groups;
 
 main();
 function main() {
@@ -103,8 +104,15 @@ btnNew.onclick = function () {
   setDetail();
 };
 btnGroup.onclick = function () {
-  post(apiHeader + "dbGetGroup", {}, httpHeader, (data) => {
-    log(data.jp());
+  post(apiHeader + "dbGetGroup", {}, httpHeader, (resp) => {
+    groups = {};
+    const { type, data } = resp.jp();
+    Object.keys(data).forEach((id) => {
+      const group = data[id];
+      if (!groups[group]) groups[group] = {};
+      groups[group][id] = true;
+    });
+    log(groups);
     setGroup();
   });
 };
