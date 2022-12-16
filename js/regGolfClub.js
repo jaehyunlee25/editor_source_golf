@@ -195,6 +195,17 @@ function clubsearchkeyup() {
   });
 
   // 표시
+  const [tbl] = area.gba("id", "tplSearchList");
+  const [tpl] = area.gba("id", "tplSearchList");
+  res.forEach((ob) => {
+    const { id, name, eng_id, homepage } = ob;
+    const row = doc.importNode(tpl.content, true);
+    ["", id, name, eng_id, homepage].forEach((val, i) => {
+      if (i == 0) return;
+      row.children[i].str(val);
+    });
+    tbl.appendChild(row);
+  });
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
