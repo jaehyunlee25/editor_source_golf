@@ -102,6 +102,15 @@ function setDetail(row) {
 btnNew.onclick = function () {
   setDetail();
 };
+btnGroup.onclick = function () {
+  setGroup();
+};
+function setGroup() {
+  const { back, content, close } = layerpop();
+  const div = content.add("div");
+  div.css("margin:auto;width: 80%;padding-bottom: 20px;");
+  div.onclick = close;
+}
 function nameChange() {
   const span = doc.gba("id", "nameDesc")[0];
   span.css("display:inline-block;width:45%;height:15px;overflow:auto;");
