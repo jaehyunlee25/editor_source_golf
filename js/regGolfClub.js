@@ -111,7 +111,7 @@ btnGroup.onclick = function () {
     Object.keys(data).forEach((id) => {
       const group = data[id];
       if (!groups[group]) groups[group] = {};
-      groups[group][id] = true;
+      groups[group][id] = rawClubs[id];
     });
     log(groups);
     log(rawClubs);
