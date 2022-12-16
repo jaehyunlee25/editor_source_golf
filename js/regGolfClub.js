@@ -207,6 +207,7 @@ function clubsearchkeyup() {
     ["", id, name, eng_id, homepage].forEach((val, i) => {
       if (i == 0) return;
       tr.children[i].str(val);
+      tr.children[i].css("overflow-wrap: break-word;text-align:left;");
     });
     tbl.appendChild(row);
   });
