@@ -163,6 +163,7 @@ function groupaddclick() {
   });
   this.css("background-color:lightgray;color:white;");
   const { area } = this;
+  area.css({ "padding-top": "5px" });
   area.str("");
   const tmplt = doc.querySelector("#tplGroup");
   const dtl = doc.importNode(tmplt.content, true);
