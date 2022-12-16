@@ -57,6 +57,7 @@ function setList() {
       corp_reg_number,
       description,
     ].forEach((con, i) => {
+      if (i == 0) return;
       tds[i].textContent = con;
       tds[i].css("overflow-wrap: break-word;text-align:left;");
     });
