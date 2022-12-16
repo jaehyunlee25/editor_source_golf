@@ -150,9 +150,9 @@ function grouptabclick() {
   const { clubs, area } = this;
   area.str("");
   Object.keys(clubs).forEach((id) => {
-    const { name, eng_id, id } = clubs[id];
+    const { name, eng_id } = clubs[id];
     const el = area.add("div");
-    el.str([name, eng_id, id].join(""));
+    el.str([name, eng_id, id].join(" "));
   });
 }
 function nameChange() {
