@@ -176,13 +176,17 @@ function clubsearchkeyup() {
   if (str.replace(/\s/g, "") == "") return;
   const strs = str.split(",");
   const res = [];
+  const chk = {};
   Object.keys(clubs).forEach((key) => {
     const ob = clubs[key];
     Object.keys(ob).forEach((name) => {
       const val = ob[name];
       strs.forEach((str) => {
         str = str.trim();
-        if (val.indexOf(str) != -1) res.push(ob);
+        if (val.indexOf(str) != -1 && !chk[key]) {
+          res.push(ob);
+          chk[key] = true;
+        }
       });
     });
   });
