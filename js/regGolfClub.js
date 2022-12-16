@@ -228,7 +228,7 @@ function clubsearchkeyup() {
       }
     });
     const [gName] = doc.gba("id", "iptGroupName");
-    if (gName.value.reaplce(/\s/g, "") == "") {
+    if (gName.value.replace(/\s/g, "") == "") {
       alert("group 이름은 필수입력입니다.");
       gName.focus();
       return;
