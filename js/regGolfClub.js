@@ -158,6 +158,10 @@ function setGroup() {
   btnClose.onclick = close;
 }
 function groupaddclick() {
+  Array.from(this.parentNode.children).forEach((tab) => {
+    tab.css("background-color:white;color:black;");
+  });
+  this.css("background-color:lightgray;color:white;");
   const { area } = this;
   area.str("");
 }
