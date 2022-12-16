@@ -142,9 +142,9 @@ function setGroup() {
   });
   const tab = tabs.add("span");
   tab.css(
-    "display:inline-block;border:1px solid lightskyblue;border-radius:50%;width:15px;height:15px;"
+    "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;margin-right:3px;"
   );
-  tab.str("+");
+  tab.str("그룹추가");
   // FOOT
   const btnClose = foot.add("button");
   btnClose.str("취소");
