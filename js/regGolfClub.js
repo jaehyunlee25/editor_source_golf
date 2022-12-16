@@ -151,6 +151,7 @@ function setGroup() {
     "background-color": "#eee",
   });
   tab.str("그룹추가");
+  tab.close = close;
   tab.onclick = groupaddclick;
   // FOOT
   const btnClose = foot.add("button");
@@ -170,9 +171,11 @@ function groupaddclick() {
   area.appendChild(dtl);
   const [ipt] = area.gba("id", "iptGroupSearch");
   ipt.area = area;
+  ipt.close = this.close;
   ipt.onkeyup = clubsearchkeyup;
 }
 function clubsearchkeyup() {
+  const close = this.close;
   const [tbl] = doc.gba("id", "tblSearchList");
   tbl.str("");
   const str = this.value;
@@ -216,8 +219,15 @@ function clubsearchkeyup() {
   });
   const [btn] = area.gba("id", "btnAddGroup");
   btn.onclick = function () {
+    const param = { clubIds: [] };
     doc.gbn("chkGroup").forEach((ipt) => {
-      log(ipt.checked, ipt.clubId);
+      if (ipt.checked) param.clubIds.push(ipt.clubId);
+    });
+    post(apiHeader + "dbNewGroup", param, httpHeader, (resp) => {
+      if (resp.type == "okay") {
+        log("successfully inserted!!");
+        close();
+      }
     });
   };
 }
