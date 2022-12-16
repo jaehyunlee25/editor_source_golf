@@ -146,7 +146,7 @@ function grouptabclick() {
   area.str("");
   Object.keys(clubs).forEach((id) => {
     const { name } = clubs[id];
-    const el = area.add("span");
+    const el = area.add("div");
     el.str(name);
   });
 }
