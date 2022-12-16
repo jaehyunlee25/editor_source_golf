@@ -169,6 +169,7 @@ function groupaddclick() {
   const dtl = doc.importNode(tmplt.content, true);
   area.appendChild(dtl);
   const [ipt] = area.gba("id", "iptGroupSearch");
+  ipt.area = area;
   ipt.onkeyup = clubsearchkeyup;
 }
 function clubsearchkeyup() {
@@ -195,6 +196,7 @@ function clubsearchkeyup() {
   });
 
   // 표시
+  const { area } = this;
   const [tbl] = area.gba("id", "tplSearchList");
   const [tpl] = area.gba("id", "tplSearchList");
   res.forEach((ob) => {
