@@ -141,6 +141,9 @@ function setGroup() {
     tab.onclick = grouptabclick;
   });
   const tab = tabs.add("span");
+  tab.css(
+    "display:inline-block;border:1px solid lightskyblue;border-radius:50%;"
+  );
   tab.str("+");
   // FOOT
   const btnClose = foot.add("button");
