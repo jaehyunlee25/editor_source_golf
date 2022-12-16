@@ -173,7 +173,7 @@ function groupaddclick() {
   ipt.onkeyup = clubsearchkeyup;
 }
 function clubsearchkeyup() {
-  const [tbl] = area.gba("id", "tblSearchList");
+  const [tbl] = doc.gba("id", "tblSearchList");
   tbl.str("");
   const str = this.value;
   if (str.replace(/\s/g, "") == "") return;
