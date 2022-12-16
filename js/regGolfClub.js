@@ -113,7 +113,7 @@ btnGroup.onclick = function () {
       groups[group][id] = true;
     });
     log(groups);
-    log(golfClubs);
+    log(rawClubs);
     setGroup();
   });
 };
