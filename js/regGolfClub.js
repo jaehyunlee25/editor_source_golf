@@ -206,7 +206,7 @@ function clubsearchkeyup() {
     const [tr] = row.querySelectorAll("tr");
     ["", id, name, eng_id, homepage].forEach((val, i) => {
       if (i == 0) {
-        tr.children[i].clubId = id;
+        tr.children[i].children[0].clubId = id;
         return;
       }
       tr.children[i].str(val);
