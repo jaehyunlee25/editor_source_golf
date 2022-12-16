@@ -120,8 +120,9 @@ function setGroup() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
   div.css("margin:auto;width: 80%;padding-bottom: 20px;padding:10px;");
-  div.onclick = close;
   const tabs = div.add("div");
+  const names = div.add("div");
+  const foot = div.add("div");
   Object.keys(groups).forEach((group) => {
     const tab = tabs.add("span");
     tab.css(
@@ -131,6 +132,9 @@ function setGroup() {
     tab.clubs = groups[group];
     tab.onclick = grouptabclick;
   });
+  const btnClose = foot.add("button");
+  btnClose.str("취소");
+  btnClose.onclick = close;
 }
 function grouptabclick() {
   log(this.clubs);
