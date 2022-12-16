@@ -183,6 +183,7 @@ function clubsearchkeyup() {
       const val = ob[name];
       strs.forEach((str) => {
         str = str.trim();
+        if (str == "") return;
         if (val.indexOf(str) != -1 && !chk[key]) {
           res.push(ob);
           chk[key] = true;
