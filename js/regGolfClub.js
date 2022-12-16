@@ -125,6 +125,8 @@ function setGroup() {
   const tabs = div.add("div");
   const names = div.add("div");
   const foot = div.add("div");
+
+  //TAB
   tabs.css("border-bottom:1px solid gray;padding-bottom: 5px;");
   foot.css("text-align:center;border-top:1px solid gray;padding-top: 5px;");
   names.css("font-size: 15px;min-height: 400px;");
@@ -138,6 +140,9 @@ function setGroup() {
     tab.area = names;
     tab.onclick = grouptabclick;
   });
+  const tab = tabs.add("span");
+  tab.str("+");
+  // FOOT
   const btnClose = foot.add("button");
   btnClose.str("취소");
   btnClose.onclick = close;
