@@ -141,6 +141,7 @@ function setGroup() {
     tab.onclick = grouptabclick;
   });
   const tab = tabs.add("span");
+  tab.area = names;
   tab.css({
     display: "inline-block",
     border: "1px solid lightgray",
@@ -150,10 +151,15 @@ function setGroup() {
     "background-color": "#eee",
   });
   tab.str("그룹추가");
+  tab.onclick = groupaddclick;
   // FOOT
   const btnClose = foot.add("button");
   btnClose.str("취소");
   btnClose.onclick = close;
+}
+function groupaddclick() {
+  const { area } = this;
+  area.str("");
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
