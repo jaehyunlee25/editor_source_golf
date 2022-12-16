@@ -164,6 +164,9 @@ function groupaddclick() {
   this.css("background-color:lightgray;color:white;");
   const { area } = this;
   area.str("");
+  const tmplt = doc.querySelector("#tplGroup");
+  const dtl = doc.importNode(tmplt.content, true);
+  area.appendChild(dtl);
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
