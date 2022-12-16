@@ -127,7 +127,7 @@ function setGroup() {
   const foot = div.add("div");
   tabs.css("border-bottom:1px solid gray;padding-bottom: 5px;");
   foot.css("text-align:center;border-top:1px solid gray;padding-top: 5px;");
-  names.css("font-size: 20px;min-height: 400px;");
+  names.css("font-size: 15px;min-height: 400px;");
   Object.keys(groups).forEach((group) => {
     const tab = tabs.add("span");
     tab.css(
