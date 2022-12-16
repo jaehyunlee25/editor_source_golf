@@ -143,15 +143,13 @@ function setGroup() {
   btnClose.onclick = close;
 }
 function grouptabclick() {
+  this.css("background-color:lightskyblue;color:white;");
   const { clubs, area } = this;
   area.str("");
   Object.keys(clubs).forEach((id) => {
     const { name } = clubs[id];
     const el = area.add("div");
     el.str(name);
-    el.onclick = function () {
-      this.css("background-color:lightskyblue;color:white;");
-    };
   });
 }
 function nameChange() {
