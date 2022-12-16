@@ -16,7 +16,7 @@ function main() {
         res.push(golfclubs[id]);
       });
       return res;
-    })(golfClubs);
+    })(rawClubs);
     clubs = clubs.sort((a, b) => {
       const na = new Date(a.updated_at).getTime();
       const nb = new Date(b.updated_at).getTime();
