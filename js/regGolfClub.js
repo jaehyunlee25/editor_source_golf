@@ -103,7 +103,10 @@ btnNew.onclick = function () {
   setDetail();
 };
 btnGroup.onclick = function () {
-  setGroup();
+  post(apiHeader + "dbGetGroup", {}, httpHeader, (data) => {
+    log(data);
+    setGroup();
+  });
 };
 function setGroup() {
   const { back, content, close } = layerpop();
