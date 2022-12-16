@@ -142,7 +142,7 @@ function setGroup() {
   });
   const tab = tabs.add("span");
   tab.css(
-    "display:inline-block;border:1px solid lightskyblue;border-radius:50%;width:10px;height:10px;"
+    "display:inline-block;border:1px solid lightskyblue;border-radius:50%;width:15px;height:15px;"
   );
   tab.str("+");
   // FOOT
