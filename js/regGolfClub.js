@@ -173,6 +173,8 @@ function groupaddclick() {
   ipt.onkeyup = clubsearchkeyup;
 }
 function clubsearchkeyup() {
+  const [tbl] = area.gba("id", "tblSearchList");
+  tbl.str("");
   const str = this.value;
   if (str.replace(/\s/g, "") == "") return;
 
@@ -197,8 +199,6 @@ function clubsearchkeyup() {
 
   // 표시
   const { area } = this;
-  const [tbl] = area.gba("id", "tblSearchList");
-  tbl.str("");
   const [tpl] = doc.gba("id", "tplSearchList");
   res.forEach((ob) => {
     const { id, name, eng_id, homepage } = ob;
