@@ -122,7 +122,7 @@ function setGroup() {
   div.css("margin:auto;width: 80%;padding-bottom: 20px;");
   div.onclick = close;
   const tabs = div.add("div");
-  groups.forEach((group) => {
+  Object.keys(groups).forEach((group) => {
     const tab = tabs.add("span");
     tab.css("display:inline-block;border:1px solid gray;");
     tab.str(group);
