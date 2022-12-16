@@ -128,7 +128,12 @@ function setGroup() {
       "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;margin-right:3px;"
     );
     tab.str(group);
+    tab.clubs = groups[group];
+    tab.onclick = grouptabclick;
   });
+}
+function grouptabclick() {
+  log(this.clubs);
 }
 function nameChange() {
   const span = doc.gba("id", "nameDesc")[0];
