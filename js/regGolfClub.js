@@ -130,6 +130,7 @@ function setGroup() {
     );
     tab.str(group);
     tab.clubs = groups[group];
+    tab.area = names;
     tab.onclick = grouptabclick;
   });
   const btnClose = foot.add("button");
@@ -137,7 +138,12 @@ function setGroup() {
   btnClose.onclick = close;
 }
 function grouptabclick() {
-  log(this.clubs);
+  const { clubs, area } = this;
+  Object.keys(clubs).forEach((id) => {
+    const { name } = clubs[id];
+    const el = area.add("span");
+    el.str(name);
+  });
 }
 function nameChange() {
   const span = doc.gba("id", "nameDesc")[0];
