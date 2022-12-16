@@ -174,6 +174,8 @@ function groupaddclick() {
 function clubsearchkeyup() {
   const str = this.value;
   if (str.replace(/\s/g, "") == "") return;
+
+  // 검색
   const strs = str.split(",");
   const res = [];
   const chk = {};
@@ -191,7 +193,8 @@ function clubsearchkeyup() {
       });
     });
   });
-  log(res);
+
+  // 표시
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
