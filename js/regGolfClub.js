@@ -113,8 +113,6 @@ btnGroup.onclick = function () {
       if (!groups[group]) groups[group] = {};
       groups[group][id] = rawClubs[id];
     });
-    log(groups);
-    log(rawClubs);
     setGroup();
   });
 };
@@ -123,6 +121,12 @@ function setGroup() {
   const div = content.add("div");
   div.css("margin:auto;width: 80%;padding-bottom: 20px;");
   div.onclick = close;
+  const tabs = div.add("div");
+  groups.forEach((group) => {
+    const tab = tabs.add("span");
+    tab.css("display:inline-block;border:1px solid gray;");
+    tab.str(group);
+  });
 }
 function nameChange() {
   const span = doc.gba("id", "nameDesc")[0];
