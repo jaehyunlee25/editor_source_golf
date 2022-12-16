@@ -144,6 +144,7 @@ function setGroup() {
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
+    log(tab);
     tab.css(
       "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;margin-right:3px;"
     );
