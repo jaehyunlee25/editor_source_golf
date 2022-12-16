@@ -119,12 +119,14 @@ btnGroup.onclick = function () {
 function setGroup() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
-  div.css("margin:auto;width: 80%;padding-bottom: 20px;");
+  div.css("margin:auto;width: 80%;padding-bottom: 20px;padding:10px;");
   div.onclick = close;
   const tabs = div.add("div");
   Object.keys(groups).forEach((group) => {
     const tab = tabs.add("span");
-    tab.css("display:inline-block;border:1px solid gray;");
+    tab.css(
+      "display:inline-block;border:1px solid gray;padding:5px;font-size: 12px;"
+    );
     tab.str(group);
   });
 }
