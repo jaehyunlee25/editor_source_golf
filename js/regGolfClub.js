@@ -141,9 +141,14 @@ function setGroup() {
     tab.onclick = grouptabclick;
   });
   const tab = tabs.add("span");
-  tab.css(
-    "display:inline-block;border:1px solid lightgray;padding:5px;font-size: 12px;margin-right:3px;background-color: #eee;"
-  );
+  tab.css({
+    display: "inline-block",
+    border: "1px solid lightgray",
+    padding: "5px",
+    "font-size": "12px",
+    "margin-right": "3px",
+    "background-color": "#eee",
+  });
   tab.str("그룹추가");
   // FOOT
   const btnClose = foot.add("button");
