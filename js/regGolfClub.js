@@ -119,7 +119,9 @@ btnGroup.onclick = function () {
 function setGroup() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
-  div.css("margin:auto;width: 80%;padding-bottom: 20px;padding:10px;");
+  div.css(
+    "margin:auto;width: 80%;min-height: 50%;padding-bottom: 20px;padding:10px;"
+  );
   const tabs = div.add("div");
   const names = div.add("div");
   const foot = div.add("div");
