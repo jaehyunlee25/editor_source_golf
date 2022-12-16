@@ -125,7 +125,7 @@ function setGroup() {
   Object.keys(groups).forEach((group) => {
     const tab = tabs.add("span");
     tab.css(
-      "display:inline-block;border:1px solid gray;padding:5px;font-size: 12px;"
+      "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;"
     );
     tab.str(group);
   });
