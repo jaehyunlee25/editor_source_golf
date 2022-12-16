@@ -216,6 +216,7 @@ function clubsearchkeyup() {
   });
   const [btn] = area.gba("id", "btnAddGroup");
   btn.onclick = function () {
+    log(tbl);
     tbl.gbn("chkGroup").forEach((ipt) => {
       log(ipt.clubId);
     });
