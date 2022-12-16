@@ -211,6 +211,10 @@ function clubsearchkeyup() {
     });
     tbl.appendChild(row);
   });
+  const [btn] = area.gba("id", "btnAddGroup");
+  btn.onclick = function () {
+    log(11);
+  };
 }
 function grouptabclick() {
   Array.from(this.parentNode.children).forEach((tab) => {
