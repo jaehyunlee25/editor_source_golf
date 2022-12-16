@@ -141,6 +141,7 @@ function setGroup() {
 }
 function grouptabclick() {
   const { clubs, area } = this;
+  area.str("");
   Object.keys(clubs).forEach((id) => {
     const { name } = clubs[id];
     const el = area.add("span");
