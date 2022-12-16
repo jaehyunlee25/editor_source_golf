@@ -143,9 +143,7 @@ function setGroup() {
   btnClose.onclick = close;
 }
 function grouptabclick() {
-  log(this.parentNode.children);
   Array.from(this.parentNode.children).forEach((tab) => {
-    log(tab);
     tab.css("background-color:white;color:black;");
   });
   this.css("background-color:lightskyblue;color:white;");
