@@ -239,7 +239,7 @@ function clubsearchkeyup() {
     }
     param.groupName = gName.value;
     post(apiHeader + "dbNewGroup", param, httpHeader, (resp) => {
-      if (resp.type == "okay") {
+      if (resp.jp().type == "okay") {
         log("successfully inserted!!");
         close();
       }
