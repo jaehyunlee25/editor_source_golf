@@ -143,6 +143,11 @@ function setGroup() {
   btnClose.onclick = close;
 }
 function grouptabclick() {
+  Array.from(this.parentNode.children).forEach((tab) => {
+    tab.css(
+      "display:inline-block;border:1px solid lightskyblue;padding:5px;font-size: 12px;margin-right:3px;"
+    );
+  });
   this.css("background-color:lightskyblue;color:white;");
   const { clubs, area } = this;
   area.str("");
