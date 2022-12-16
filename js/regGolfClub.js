@@ -42,7 +42,7 @@ function setList() {
     const row = doc.importNode(t.content, true);
     const tds = row.querySelectorAll("td");
     const [tr] = row.querySelectorAll("tr");
-    tr.onclick = trclick;
+    // tr.onclick = trclick;
     tr.item = club;
     tr.css("border-bottom: 1px solid #eee;");
     [
@@ -60,12 +60,13 @@ function setList() {
       if (i == 0) return;
       tds[i].textContent = con;
       tds[i].css("overflow-wrap: break-word;text-align:left;");
+      tds[i].onclick = trclick;
     });
     tbl.appendChild(row);
   });
 }
 function trclick() {
-  setDetail(this.item);
+  setDetail(this.parentNode.item);
 }
 function setDetail(row) {
   let opt = false;
