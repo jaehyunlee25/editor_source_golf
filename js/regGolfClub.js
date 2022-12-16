@@ -149,6 +149,9 @@ function grouptabclick() {
     const { name } = clubs[id];
     const el = area.add("div");
     el.str(name);
+    el.onclick = function () {
+      this.css("background-color:lightskyblue;color:white;");
+    };
   });
 }
 function nameChange() {
