@@ -102,6 +102,7 @@ function setDetail(row) {
       log("succeeded in checking server file");
       if (!data.check) {
         btnServerfile.css("display:inline;");
+        btnServerfile.param = row;
         btnServerfile.onclick = serverfileclick;
       }
     } else {
@@ -131,7 +132,8 @@ btnGroup.onclick = function () {
   });
 };
 function serverfileclick() {
-  post(apiHeader + "dbNewServerfile", row, httpHeader, (resp) => {
+  const { param } = this;
+  post(apiHeader + "dbNewServerfile", param, httpHeader, (resp) => {
     const { type, data } = resp.jp();
     if (type == "okay") {
       log("succeeded in inserting server file");
