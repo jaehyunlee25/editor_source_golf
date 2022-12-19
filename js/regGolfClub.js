@@ -99,10 +99,13 @@ function setDetail(row) {
   post(apiHeader + "dbCheckServerfile", row, httpHeader, (resp) => {
     const { type, data } = resp.jp();
     if (type == "okay") {
-      log("success in checking server file");
-      if (!data.check) btnServerfile.css("display:inline;");
+      log("succeeded in checking server file");
+      if (!data.check) {
+        btnServerfile.css("display:inline;");
+        btnServerfile.onclick = serverfileclick;
+      }
     } else {
-      log("fail to check server file.");
+      log("failed to check server file.");
     }
   });
   Object.keys(row).forEach((key) => {
@@ -127,6 +130,17 @@ btnGroup.onclick = function () {
     setGroup();
   });
 };
+function serverfileclick() {
+  post(apiHeader + "dbNewServerfile", row, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("succeeded in inserting server file");
+      btnServerfile.css("display:nnone;");
+    } else {
+      log("failed to insert server file.");
+    }
+  });
+}
 function setGroup() {
   const { back, content, close } = layerpop();
   const div = content.add("div");
