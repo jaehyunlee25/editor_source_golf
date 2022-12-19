@@ -105,6 +105,7 @@ function deviceClick() {
 function setBoxes() {
   elBody.innerHTML = "";
   boxes = [];
+  log(clubs);
   clubs.forEach((club, i) => {
     const golfclub = objGolfClubs[club];
     const hdr = doc.gcn("cover")[1].add("div");

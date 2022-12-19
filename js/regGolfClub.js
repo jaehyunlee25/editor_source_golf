@@ -307,7 +307,7 @@ function clubRegister() {
   const els = doc.body.gba("id", "el_", true);
   const param = {};
   els.forEach((el) => {
-    param[el.id.ch(3)] = el.value;
+    param[el.id.ch(3)] = el.value.replace(/"/g, "'");
   });
   if (param.name.replace(/\s/g, "") == "") {
     alert("이름은 필수 입력입니다.");
@@ -327,7 +327,6 @@ function clubRegister() {
   post(apiHeader + "dbNewGolfClub", param, httpHeader, (resp) => {
     const { type, data } = resp.jp();
     let obNew;
-    log(data);
     if (type == "okay") {
       log("successfully inserted :: " + param.name + " " + param.id);
       Object.keys(data).some((id) => {
@@ -339,6 +338,9 @@ function clubRegister() {
       });
       newClubEng(obNew, param);
       newClubCourse(obNew, param);
+      newClubDetail(obNew, param);
+      newClubUsability(obNew, param);
+      newClubOrder(obNew, param);
     } else {
       log("something wrong :: " + param.name + " " + param.id);
     }
@@ -362,6 +364,43 @@ function clubModify(param) {
     doc.gba("id", "el_course_name")[0].value == "",
   ];
   if (!a && !b) newClubCourse(param, param);
+}
+function newClubUsability(obNew, param) {
+  param.id = obNew.id;
+  post(apiHeader + "dbNewGolfClubUsability", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log(
+        "club_Usability successfully inserted :: " + param.name + " " + param.id
+      );
+    } else {
+      log("club_Usability something wrong :: " + param.name + " " + param.id);
+    }
+  });
+}
+function newClubOrder(obNew, param) {
+  param.id = obNew.id;
+  post(apiHeader + "dbNewGolfClubOrder", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("club_Order successfully inserted :: " + param.name + " " + param.id);
+    } else {
+      log("club_Order something wrong :: " + param.name + " " + param.id);
+    }
+  });
+}
+function newClubDetail(obNew, param) {
+  param.id = obNew.id;
+  post(apiHeader + "dbNewGolfClubDetail", param, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log(
+        "club_detail successfully inserted :: " + param.name + " " + param.id
+      );
+    } else {
+      log("club_detail something wrong :: " + param.name + " " + param.id);
+    }
+  });
 }
 function newClubEng(obNew, param) {
   param.id = obNew.id;
