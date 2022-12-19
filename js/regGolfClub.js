@@ -94,6 +94,17 @@ function setDetail(row) {
   btnCancel.onclick = close;
 
   if (!opt) return;
+
+  //서버파일
+  post(apiHeader + "dbCheckServerfile", row, httpHeader, (resp) => {
+    const { type, data } = resp.jp();
+    if (type == "okay") {
+      log("success in checking server file");
+      if (!data.check) btnServerfile.css("display:inline;");
+    } else {
+      log("fail to check server file.");
+    }
+  });
   Object.keys(row).forEach((key) => {
     if (!window["el_" + key]) return;
     window["el_" + key].value = row[key];
