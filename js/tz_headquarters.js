@@ -22,6 +22,7 @@ main();
 function main() {
   post(apiHeader + "/getGolfClubs", {}, httpHeader, (data) => {
     golfClubs = JSON.parse(data).golfClubs;
+    log(golfClubs);
     post(urlHeader + "/clubs", {}, httpHeader, (data) => {
       const json = JSON.parse(data);
       clubs = json.clubs;
