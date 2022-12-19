@@ -137,7 +137,7 @@ function serverfileclick() {
     const { type, data } = resp.jp();
     if (type == "okay") {
       log("succeeded in inserting server file");
-      btnServerfile.css("display:nnone;");
+      btnServerfile.css("display:none;");
     } else {
       log("failed to insert server file.");
     }
