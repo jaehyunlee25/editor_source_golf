@@ -96,7 +96,9 @@ function setDetail(row) {
   if (!opt) return;
 
   //서버파일
+  log(111);
   post(apiHeader + "dbCheckServerfile", row, httpHeader, (resp) => {
+    log(resp);
     const { type, data } = resp.jp();
     if (type == "okay") {
       log("succeeded in checking server file");
