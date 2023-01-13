@@ -89,8 +89,10 @@ function setClubLog(list) {
       const taParam = body.add("textarea");
       taParam.value = parameter;
       const foot = div.add("div");
-      const nt = new Date(new Date(created_at).getTime() + 9 * 60 * 60 * 1000);
-      foot.str([nt, nt.getTime()].join(" "));
+      const nt = new Date(new Date(created_at).getTime() - 9 * 60 * 60 * 1000);
+      // const nt = new Date(created_at);
+      foot.str(nt);
+      //foot.str([nt, nt.getTime()].join(" "));
     });
   });
 }
