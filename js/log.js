@@ -91,8 +91,7 @@ function setClubLog(list) {
       const foot = div.add("div");
       const nt = new Date(new Date(created_at).getTime() - 9 * 60 * 60 * 1000);
       // const nt = new Date(created_at);
-      foot.str(nt);
-      //foot.str([nt, nt.getTime()].join(" "));
+      foot.str([nt, nt.getTime()].join(" "));
     });
   });
 }
