@@ -7,6 +7,7 @@ const cf = new jCommon();
 
 const clubs = {};
 let selectedClub;
+let selectedSearchClub;
 let selectedDevice;
 const deviceColor = "lightblue";
 
@@ -24,6 +25,34 @@ function main() {
     golfClubs.forEach((ob) => {
       clubs[ob.id] = ob;
     });
+  });
+  iptClub.onkeyup = clubsearchkeyup;
+  iptClub.onfocus = function () {
+    this.select();
+  };
+}
+function clubsearchkeyup() {
+  clearData();
+  const word = this.value;
+  if (word.trim() == "") return;
+  const res = [];
+  Object.keys(clubs).forEach((id) => {
+    const club = clubs[id];
+    if (club.name.has(word)) res.push(club);
+    if (club.eng_id.has(word)) res.push(club);
+  });
+  res.forEach((club) => {
+    const span = elSearchClubList.add("span");
+    span.className = "searchClub";
+    span.str(club.name);
+    span.onmousemove = devicemousemove;
+    span.onmouseout = devicemouseout;
+    span.onclick = function () {
+      cssInit(this, elSearchClubList);
+      selectedSearchClub = this;
+      iptClub.value = club.eng_id;
+      elSearchClubList.str("");
+    };
   });
 }
 function setDeviceList(list) {
@@ -89,16 +118,13 @@ function setClubLog(list) {
       const taParam = body.add("textarea");
       taParam.value = parameter;
       const foot = div.add("div");
-      const nt = new Date(new Date(created_at).getTime() + 9 * 60 * 60 * 1000);
+      const nt = new Date(new Date(created_at).getTime());
       foot.str([nt, nt.getTime()].join(" "));
     });
   });
 }
 function clubclick() {
-  Array.from(elClubList.children).forEach((club) => {
-    club.css({ "background-color": "white" });
-  });
-  this.css({ "background-color": deviceColor });
+  cssInit(this, elClubList);
   selectedClub = this;
 
   const { device_id, golf_club_id } = this;
@@ -112,25 +138,6 @@ function clubclick() {
     (resp) => {
       const { data } = resp.jp();
       setClubLog(data);
-    }
-  );
-}
-function deviceclick() {
-  Array.from(elDeviceList.children).forEach((device) => {
-    device.css({ "background-color": "white" });
-  });
-  this.css({ "background-color": deviceColor });
-  selectedDevice = this;
-  const { device_id } = this;
-  elClubList.str("");
-  const date = iptYear.value + iptMonth.value + iptDate.value;
-  post(
-    urlHeader + "/getLogClubList",
-    { date, device_id },
-    httpHeader,
-    (resp) => {
-      const { data } = resp.jp();
-      setClubList(device_id, data);
     }
   );
 }
@@ -154,23 +161,62 @@ function iptonkeyup(e) {
     this.select();
   }
 }
+function deviceclick() {
+  cssInit(this, elDeviceList);
+  selectedDevice = this;
+  const { device_id } = this;
+  elClubList.str("");
+  const date = iptYear.value + iptMonth.value + iptDate.value;
+  post(
+    urlHeader + "/getLogClubList",
+    { date, device_id },
+    httpHeader,
+    (resp) => {
+      const { data } = resp.jp();
+      setClubList(device_id, data);
+    }
+  );
+}
 function devicemousemove() {
   if (this == selectedDevice) return;
   if (this == selectedClub) return;
+  if (this == selectedSearchClub) return;
   this.css({ "background-color": deviceColor });
 }
 function devicemouseout() {
   if (this == selectedDevice) return;
   if (this == selectedClub) return;
+  if (this == selectedSearchClub) return;
   this.css({ "background-color": "white" });
 }
-btnSearch.onclick = function () {
-  const date = iptYear.value + iptMonth.value + iptDate.value;
-  post(urlHeader + "/getLogDeviceList", { date }, httpHeader, (resp) => {
-    const { data } = resp.jp();
-    elDeviceList.str("");
-    elClubList.str("");
-    elClubLog.str("");
-    setDeviceList(data);
+function cssInit(el, cover, target) {
+  Array.from(cover.children).forEach((club) => {
+    club.css({ "background-color": "white" });
   });
+  el.css({ "background-color": deviceColor });
+}
+function clearData() {
+  elDeviceList.str("");
+  elClubList.str("");
+  elClubLog.str("");
+  elSearchClubList.str("");
+}
+btnSearch.onclick = function () {
+  const date = (iptYear.value + iptMonth.value + iptDate.value).datify();
+  let res = Object.entries(clubs).filter(
+    ([, ob]) => ob.eng_id == iptClub.value
+  );
+  if (res.length == 0) res = [["", { eng_id: "acro" }]]; //acro는 별의미가 없다.
+  [[clubId, { eng_id: club }]] = res;
+  post(
+    urlHeader + "/getLogDeviceList",
+    { date, club, clubId },
+    httpHeader,
+    (resp) => {
+      const { data } = resp.jp();
+      clearData();
+      if (!data) return;
+      setDeviceList(data);
+    }
+  );
 };

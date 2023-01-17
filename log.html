@@ -49,26 +49,58 @@
                 font-weight: bold;
                 margin-top: 10px;
             }
+            .searchClub {
+                display: inline-block;
+                margin-top: 5px;
+                margin-right: 5px;
+                max-height: 200px;
+                overflow: auto;
+                padding: 5px;
+                border: 1px solid lightblue;
+                font-size: 12px;
+                text-align: center;
+                min-width: 70px;
+            }
         </style>
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
     </head>
     <body>        
         <div class="cover">
-            <h3 style="text-align: center;">TZ LOG</h3>
-            Year: <input id="iptYear" />
-            Month: <input id="iptMonth" />
-            Date: <input id="iptDate" />
-            <button id="btnSearch">검색하기</button>
+            <div>
+                <h3 style="text-align: center;">TZ LOG</h3>
+                Year: <input id="iptYear" />
+                Month: <input id="iptMonth" />
+                Date: <input id="iptDate" />
+            </div>
+            <div>
+                <div class="title">찾고자 하는 골프클럽:</div>
+                <div>
+                    <input id="iptClub" style="width: 200px;" />
+                    <button id="btnSearch">검색하기</button>
+                </div>
+                <div id="elSearchClubList"></div>
+            </div>
         </div>
         <div id="elBody" class="cover">
             <div class="title">디바이스 리스트:</div>
             <div id="elDeviceList"></div>
-            <div class="title">골프클럽 리스트:</div>
+            <div class="title">위 디바이스의 골프클럽 리스트:</div>
             <div id="elClubList"></div>
             <div class="title">로그</div>
             <div id="elClubLog"></div>
         </div>
+        <template id="tplSearchList">
+            <tr>
+                <td>
+                    <input type="checkbox" name="chkGroup" />
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </template>
         <script src="js/log.js"></script>
     </body>
 </html>
