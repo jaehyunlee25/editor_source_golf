@@ -118,7 +118,12 @@ function setClubLog(list) {
       const taParam = body.add("textarea");
       taParam.value = parameter;
       const foot = div.add("div");
+<<<<<<< HEAD
       const nt = new Date(new Date(created_at).getTime());
+=======
+      const nt = new Date(new Date(created_at).getTime() - 9 * 60 * 60 * 1000);
+      // const nt = new Date(created_at);
+>>>>>>> 85c38f714fd992d71abf64f6a88079ccb0c75047
       foot.str([nt, nt.getTime()].join(" "));
     });
   });
