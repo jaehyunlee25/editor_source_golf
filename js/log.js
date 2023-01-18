@@ -166,7 +166,20 @@ function deviceclick() {
   selectedDevice = this;
   const { device_id } = this;
   elClubList.str("");
-  const date = iptYear.value + iptMonth.value + iptDate.value;
+  const date = (iptYear.value + iptMonth.value + iptDate.value).datify();
+  log(date, device_id);
+  post(
+    urlHeader + "/getDeviceRound",
+    { date, device_id },
+    httpHeader,
+    (resp) => {
+      const { data } = resp.jp();
+      data.forEach((ob) => {
+        // log(ob);
+        log(JSON.parse(ob.message).message, ob.created_at);
+      });
+    }
+  );
   post(
     urlHeader + "/getLogClubList",
     { date, device_id },
@@ -214,6 +227,7 @@ btnSearch.onclick = function () {
     httpHeader,
     (resp) => {
       const { data } = resp.jp();
+      log(data);
       clearData();
       if (!data) return;
       setDeviceList(data);
