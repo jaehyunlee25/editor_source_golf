@@ -10,6 +10,7 @@ main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
     const { type, golfClubs } = data.jp();
+    log(golfClubs);
     rawClubs = golfClubs;
     clubs = ((golfclubs) => {
       const res = [];
@@ -379,6 +380,7 @@ function clubModify(param) {
     param[key] = window["el_" + key].value.replace(/"/g, "'");
   });
   post(apiHeader + "dbSetGolfClub", param, httpHeader, (resp) => {
+    log(resp.jp());
     const { type, data } = resp.jp();
     if (type == "okay") {
       log("successfully updated :: " + param.name + " " + param.id);
