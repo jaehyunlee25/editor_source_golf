@@ -33,7 +33,7 @@ function main() {
       });
       clubs.sort();
       tabCode.onclick();
-      getLogInfo();
+      // getLogInfo();
     });
   });
 }
