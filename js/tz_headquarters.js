@@ -39,7 +39,7 @@ function main() {
 }
 function getLogInfo() {
   const param = {
-    date: "",
+    date: "2023-02-06",
     device_id: "",
     golf_club_id: "",
   };
