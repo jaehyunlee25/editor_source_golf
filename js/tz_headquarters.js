@@ -39,6 +39,7 @@ function main() {
 }
 function getLogInfo() {
   post(urlHeader + "/getLog", {}, httpHeader, (data) => {
+    log(JSON.parse(data));
     const { resultCode, message, data: rows } = JSON.parse(data);
     rows.forEach((row) => {
       const club =
