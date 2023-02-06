@@ -33,12 +33,18 @@ function main() {
       });
       clubs.sort();
       tabCode.onclick();
-      getLogInfo();
+      // getLogInfo();
     });
   });
 }
 function getLogInfo() {
-  post(urlHeader + "/getLog", {}, httpHeader, (data) => {
+  const param = {
+    date: "2023-02-05",
+    device_id: "",
+    golf_club_id: "",
+  };
+  post(urlHeader + "/getLog", param, httpHeader, (data) => {
+    log(JSON.parse(data));
     const { resultCode, message, data: rows } = JSON.parse(data);
     rows.forEach((row) => {
       const club =
