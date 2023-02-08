@@ -75,7 +75,7 @@ function wsmessage(event) {
     if (!LOG[row.device_id]) LOG[row.device_id] = {};
     if (!LOG[row.device_id][engname]) LOG[row.device_id][engname] = [];
     LOG[row.device_id][engname].push(row);
-    tabLog.onclick();
+    //tabLog.onclick();
     deviceDiv[row.device_id].onclick();
     clubAnchor[engname].onclick();
   } catch (e) {
