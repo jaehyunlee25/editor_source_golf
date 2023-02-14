@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TZ_LOG_REPORT</title>
+        <meta charset="utf-8" />
+        <style>
+            .cover {
+                width: 80%;
+                margin: auto;
+                text-align: center;
+                text-align: left;
+            }
+            .device {
+                display: inline-block;
+                padding: 5px;
+                border: 1px solid gray;
+                margin-right: 10px;
+                cursor: pointer;
+                min-width: 50px;
+                text-align: center;
+                margin-top: 5px;
+                font-size: 12px;
+            }
+            #elClubList {
+                margin-top: 10px;
+                max-height: 200px;
+                overflow: auto;
+                padding: 5px;
+                border: 1px solid lightblue;
+            }
+            table {
+                font-size: 12px;
+                text-align: center;
+                width: 100%;
+            }
+            .header {
+                background-color: aquamarine;
+            }
+        </style>
+        <script src="js/jCommonSE.js"></script>
+        <script src="js/global.js"></script>
+    </head>
+    <body>        
+        <div class="cover">            
+        </div>
+        <div id="elBody" class="cover">
+            <div class="title">디바이스 리스트:</div>
+            <div id="elDeviceList"></div>
+            <div class="title">위 디바이스의 골프클럽 리스트:</div>
+            <div id="elClubList"></div>
+            <div class="title">로그</div>
+            <div id="elClubLog"></div>
+        </div>
+        <div class="cover">
+            <table>
+                <thead>
+                    <tr class="header">
+                        <td>매크로아이디</td>
+                        <td>클럽명</td>
+                        <td>기기종류</td>
+                        <td>검색종류</td>
+                        <td>검색결과</td>
+                        <td>참고사항</td>
+                        <td>검색일시</td>
+                    </tr>
+                </thead>
+                <tbody id="elTable"></tbody>
+            </table>
+        </div>
+        <template id="tplSearchList">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </template>
+        <script src="js/log_report.js"></script>
+    </body>
+</html>
