@@ -75,6 +75,7 @@ function macroclick() {
   });
 }
 function setResultTable(data) {
+  log("data length", data.length);
   elTable.str("");
   data.forEach((row) => {
     if (row.script_action_result == "normal") return;
@@ -82,7 +83,6 @@ function setResultTable(data) {
   });
 }
 function insertRow(template, element, object) {
-  log(object);
   const ROW = doc.importNode(template.content, true);
   const [TR] = ROW.querySelectorAll("tr");
   const tr = TR.children;

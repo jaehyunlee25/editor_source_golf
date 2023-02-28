@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GOLF_CLUB_EVENT</title>
+        <meta charset="utf-8" />
+        <style>
+            .cover {
+                width: 80%;
+                margin: auto;
+                text-align: center;
+                text-align: left;
+            }
+            textarea{
+                width: 100%;
+                height: 200px;
+            }
+            input {
+                width: 100%;
+            }
+            h3, h4 {
+                text-align: center;
+            }
+            #spList {
+                color: white;
+                font-size: 12px;
+            }
+            a {
+                display: inline-block;
+                margin-right: 10px;
+                font-size: 12px;
+            }
+            span {
+                font-size: 11px;
+            }
+            table {
+                font-size: 12px;
+            }
+        </style>
+        <script src="js/jCommonSE.js"></script>
+        <script src="js/global.js"></script>
+    </head>
+    <body>        
+        <div class="cover">
+            <h3>골프장 이벤트 등록<br>(허접해도 있을 건 다 있음)</h3>
+            <div style="background-color:darkseagreen;">
+                <h4>
+                    <span style="font-size: 17px;" id="h4Mode">등록모드</span>
+                    <button id="regNew" style = "display:none;">신규등록</button>
+                </h4>
+                <table style="width: 90%;">
+                    <thead>
+                        <tr>
+                            <td style="width: 10%;"></td>
+                            <td style="width: 90%;"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;">golf club</td>
+                            <td>
+                                <div>
+                                    <input style="width: 200px;" id="iptClub" />
+                                    <span id="spClubId"></span>
+                                </div>
+                                <div id="spList"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;">title</td>
+                            <td><input id="iptTitle" /></td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: top;text-align: right;">content</td>
+                            <td><textarea id="txtContent"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: right;">
+                                <button id="regMod">등록</button>                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table style="width: 100%;text-align: center;">
+                    <thead>
+                        <tr style="background-color: goldenrod;">
+                            <td>id</td>
+                            <td>golf club</td>
+                            <td>title</td>
+                            <td>reg date</td>
+                            <td>mod date</td>
+                            <td>button</td>
+                        </tr>
+                    </thead>
+                    <tbody id="elList"></tbody>
+                </table>
+            </div>
+        </div>
+        <template id="tpListItem">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button>수정</button>
+                    <button>삭제</button>
+                </td>
+            </tr>
+        </template>
+        <script src="js/event.js"></script>
+    </body>
+</html>

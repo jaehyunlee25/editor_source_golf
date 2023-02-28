@@ -6,6 +6,8 @@ let rawClubs;
 let clubs;
 let groups;
 
+log(11);
+
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
@@ -356,6 +358,7 @@ function clubRegister() {
     const { type, data } = resp.jp();
     let obNew;
     if (type == "okay") {
+      log(data);
       log("successfully inserted :: " + param.name + " " + param.id);
       Object.keys(data).some((id) => {
         const ob = data[id];
@@ -403,6 +406,7 @@ function newClubUsability(obNew, param) {
         "club_Usability successfully inserted :: " + param.name + " " + param.id
       );
     } else {
+      log(resp.jp());
       log("club_Usability something wrong :: " + param.name + " " + param.id);
     }
   });
@@ -414,6 +418,7 @@ function newClubOrder(obNew, param) {
     if (type == "okay") {
       log("club_Order successfully inserted :: " + param.name + " " + param.id);
     } else {
+      log(resp.jp());
       log("club_Order something wrong :: " + param.name + " " + param.id);
     }
   });
@@ -427,6 +432,7 @@ function newClubDetail(obNew, param) {
         "club_detail successfully inserted :: " + param.name + " " + param.id
       );
     } else {
+      log(resp.jp());
       log("club_detail something wrong :: " + param.name + " " + param.id);
     }
   });
@@ -438,6 +444,7 @@ function newClubEng(obNew, param) {
     if (type == "okay") {
       log("eng_name successfully inserted :: " + param.name + " " + param.id);
     } else {
+      log(resp.jp());
       log("eng_name something wrong :: " + param.name + " " + param.id);
     }
   });
@@ -449,6 +456,7 @@ function newClubCourse(obNew, param) {
     if (type == "okay") {
       log("courses successfully inserted :: " + param.name + " " + param.id);
     } else {
+      log(resp.jp());
       log("courses something wrong :: " + param.name + " " + param.id);
     }
   });
