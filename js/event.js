@@ -60,8 +60,8 @@ function insertRow(template, element, object) {
     if (key == "content") return;
     tr[i++].str(val);
   });
-  TR.nm(0, 5, 0).objEvent = object;
-  TR.nm(0, 5, 0).onclick = changemode;
+  TR.nm(0, 6, 0).objEvent = object;
+  TR.nm(0, 6, 0).onclick = changemode;
   element.appendChild(ROW);
 }
 function changemode() {
@@ -69,7 +69,7 @@ function changemode() {
   h4Mode.str("수정모드");
   regMod.str("수정");
   const { objEvent } = this;
-  const { title, content, id } = objEvent;
+  const { title, content, id, link } = objEvent;
   const club = clubs[objEvent.golf_club_id];
   iptClub.value = club.name;
   iptClub.onkeyup();
@@ -77,6 +77,7 @@ function changemode() {
   iptTitle.value = title;
   txtContent.value = content;
   regMod.eventId = id;
+  iptLink.value = link;
   regNew.style.display = "inline-block";
 }
 function regEvent() {
@@ -99,8 +100,9 @@ function regEvent() {
     golf_club_id: spClubId.str(),
     title: iptTitle.value,
     content: txtContent.value,
+    link: iptLink.value,
   };
-  post(urlHeader + "/regGolfClubEvent", param, httpHeader, (resp) => {
+  post(urlHeader + "/newGolfClubEvent", param, httpHeader, (resp) => {
     const { data } = resp.jp();
     log(data);
   });
@@ -126,6 +128,7 @@ function modEvent(event_id) {
     golf_club_id: spClubId.str(),
     title: iptTitle.value,
     content: txtContent.value,
+    link: iptLink.value,
   };
   post(urlHeader + "/modGolfClubEvent", param, httpHeader, (resp) => {
     const { data } = resp.jp();
@@ -153,6 +156,7 @@ iptClub.onkeyup = function () {
     const a = spList.add("a");
     a.str(ob.name);
     a.clubId = ob.id;
+    a.homepage = ob.homepage;
     a.href = "javascript: ()=>{};";
     a.onclick = itemclick;
   });
@@ -160,5 +164,6 @@ iptClub.onkeyup = function () {
 function itemclick() {
   spClubId.str(this.clubId);
   iptClub.value = this.str();
+  iptLink.value = this.homepage;
   iptClub.onkeyup();
 }
