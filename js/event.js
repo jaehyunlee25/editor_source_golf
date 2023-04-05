@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
-//const urlHeader = "http://localhost:8080";
+//const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
+const urlHeader = "http://localhost:8080";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
 const dictClub = {};
@@ -28,10 +28,21 @@ function main() {
 regMod.onclick = function () {
   funcs[STATE.mode](this.eventId);
 };
+delMod.onclick = function () {
+  const { eventId } = this;
+  const param = {
+    eventId,
+  };
+  post(urlHeader + "/delGolfClubEvent", param, httpHeader, (resp) => {
+    const { data } = resp.jp();
+    log(data);
+  });
+};
 regNew.onclick = function () {
   STATE.mode = "reg";
   h4Mode.str("등록모드");
   regMod.str("등록");
+  delMod.style.display = "none";
 
   iptClub.value = "";
   spClubId.str("");
@@ -58,6 +69,7 @@ function insertRow(template, element, object) {
   Object.entries(object).forEach(([key, val]) => {
     if (key == "golf_club_id") val = clubs[val].name;
     if (key == "content") return;
+    if (key == "isDel") return;
     tr[i++].str(val);
   });
   TR.nm(0, 6, 0).objEvent = object;
@@ -68,6 +80,7 @@ function changemode() {
   STATE.mode = "mod";
   h4Mode.str("수정모드");
   regMod.str("수정");
+  delMod.style.display = "inline-block";
   const { objEvent } = this;
   const { title, content, id, link } = objEvent;
   const club = clubs[objEvent.golf_club_id];
@@ -77,6 +90,7 @@ function changemode() {
   iptTitle.value = title;
   txtContent.value = content;
   regMod.eventId = id;
+  delMod.eventId = id;
   iptLink.value = link;
   regNew.style.display = "inline-block";
 }
