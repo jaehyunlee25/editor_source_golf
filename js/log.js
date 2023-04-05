@@ -1,5 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
+const urlHeader = "https://dev.mnemosyne.co.kr/api/backup";
+//const urlHeader = "http://localhost:8080/crawler";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
 const dictClub = {};
@@ -167,19 +168,17 @@ function deviceclick() {
   const { device_id } = this;
   elClubList.str("");
   const date = (iptYear.value + iptMonth.value + iptDate.value).datify();
-  log(date, device_id);
-  post(
+  /* post(
     urlHeader + "/getDeviceRound",
     { date, device_id },
     httpHeader,
     (resp) => {
       const { data } = resp.jp();
       data.forEach((ob) => {
-        // log(ob);
-        log(JSON.parse(ob.message).message, ob.created_at);
+        log(ob);
       });
     }
-  );
+  ); */
   post(
     urlHeader + "/getLogClubList",
     { date, device_id },
@@ -227,7 +226,6 @@ btnSearch.onclick = function () {
     httpHeader,
     (resp) => {
       const { data } = resp.jp();
-      log(data);
       clearData();
       if (!data) return;
       setDeviceList(data);
