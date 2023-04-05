@@ -36,6 +36,8 @@ delMod.onclick = function () {
   post(urlHeader + "/delGolfClubEvent", param, httpHeader, (resp) => {
     const { data } = resp.jp();
     log(data);
+    alert("삭제되었습니다.");
+    location.href = location.href;
   });
 };
 regNew.onclick = function () {
