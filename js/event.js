@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-//const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
-const urlHeader = "http://localhost:8080";
+const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
+//const urlHeader = "http://localhost:8080";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
 const dictClub = {};
