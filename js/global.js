@@ -71,6 +71,9 @@
   };
   //about Array
   var ap = Array.prototype;
+  ap.lo = function () {
+    return this[this.length - 1];
+  };
   ap.between = function (num, col) {
     var min = 0,
       max = this.length - 1,
