@@ -3,14 +3,15 @@ const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "http://localhost:8080";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
+const fileHeader = "https://mnemosynesolutions.co.kr/boardFile";
 const dictClub = {};
 const cf = new jCommon();
 const STATE = {
   mode: "reg",
 };
 const funcs = {
-  reg: regEvent,
-  mod: modEvent,
+  reg: regFashion,
+  mod: modFashion,
 };
 const clubs = {};
 
@@ -68,16 +69,6 @@ iptThumbnail.onchange = function (e) {
     e.target.value = "";
     return;
   }
-  var fd = new FormData();
-  fd.append("fileName", name);
-  fd.append("target", "fashion");
-  fd.append("file", file);
-  fd.append("stamp", new Date().getTime());
-  var addr = "https://mnemosynesolutions.co.kr/boardFile";
-  jFile(addr, fd, (data) => {
-    data = JSON.parse(data);
-    log(data);
-  });
 };
 function setEventList() {
   post(urlHeader + "/getGolfFashion", {}, httpHeader, (resp) => {
@@ -121,12 +112,7 @@ function changemode() {
   iptLink.value = link;
   regNew.style.display = "inline-block";
 }
-function regEvent() {
-  if (spClubId.str() == "") {
-    alert("You need to select a golf club.");
-    iptClub.focus();
-    return;
-  }
+function regFashion() {
   if (iptTitle.value == "") {
     alert("You need to write the title.");
     iptTitle.focus();
@@ -137,23 +123,31 @@ function regEvent() {
     txtContent.focus();
     return;
   }
-  const param = {
-    golf_club_id: spClubId.str(),
-    title: iptTitle.value,
-    content: txtContent.value,
-    link: iptLink.value,
-  };
-  post(urlHeader + "/newGolfClubEvent", param, httpHeader, (resp) => {
-    const { data } = resp.jp();
-    log(data);
+  if (iptThumbnail.files.length == 0) {
+    alert("썸네일은 반드시 등록해야 합니다.");
+    return;
+  }
+
+  const [file] = iptThumbnail.files;
+  const fd = new FormData();
+  fd.append("target", "fashion");
+  fd.append("file", file);
+  jFile(fileHeader, fd, (data) => {
+    const json = data.jp();
+    const param = {
+      title: iptTitle.value,
+      content: txtContent.value,
+      thumbnail: json.filename,
+    };
+    post(urlHeader + "/newGolfFashion", param, httpHeader, (resp) => {
+      const { data } = resp.jp();
+      log(data);
+    });
   });
 }
-function modEvent(event_id) {
-  if (spClubId.str() == "") {
-    alert("You need to select a golf club.");
-    iptClub.focus();
-    return;
-  }
+function modFashion(fashion_id) {
+  log("mod");
+  return;
   if (iptTitle.value == "") {
     alert("You need to write the title.");
     iptTitle.focus();
@@ -165,13 +159,13 @@ function modEvent(event_id) {
     return;
   }
   const param = {
-    event_id,
+    fashion_id,
     golf_club_id: spClubId.str(),
     title: iptTitle.value,
     content: txtContent.value,
     link: iptLink.value,
   };
-  post(urlHeader + "/modGolfClubEvent", param, httpHeader, (resp) => {
+  post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
     const { data } = resp.jp();
     setEventList();
   });
