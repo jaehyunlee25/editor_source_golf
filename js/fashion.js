@@ -17,13 +17,7 @@ const clubs = {};
 
 main();
 function main() {
-  /* post(apiHeader + "/getGolfClubs", {}, httpHeader, (resp) => {
-    const { golfClubs } = resp.jp();
-    golfClubs.forEach((ob) => {
-      clubs[ob.id] = ob;
-    });
-  }); */
-  setEventList();
+  setFashionList();
 }
 
 regMod.onclick = function () {
@@ -70,11 +64,12 @@ iptThumbnail.onchange = function (e) {
     return;
   }
 };
-function setEventList() {
+function setFashionList() {
   post(urlHeader + "/getGolfFashion", {}, httpHeader, (resp) => {
     const { data } = resp.jp();
     elList.str("");
     data.forEach((row) => {
+      log(row);
       if (row.script_action_result == "normal") return;
       insertRow(tpListItem, elList, row);
     });
@@ -86,8 +81,11 @@ function insertRow(template, element, object) {
   const tr = TR.children;
   let i = 0;
   Object.entries(object).forEach(([key, val]) => {
-    if (key == "content") return;
     if (key == "isDel") return;
+    if (key == "thumbnail") {
+      tr[i++].children[0].src = "img/upload/" + val;
+      return;
+    }
     tr[i++].str(val);
   });
   TR.nm(0, 6, 0).objEvent = object;
@@ -129,25 +127,19 @@ function regFashion() {
   }
 
   const [file] = iptThumbnail.files;
-  const fd = new FormData();
-  fd.append("target", "fashion");
-  fd.append("file", file);
-  jFile(fileHeader, fd, (data) => {
-    const json = data.jp();
+  fileUpload(file, (thumbnail) => {
     const param = {
       title: iptTitle.value,
       content: txtContent.value,
-      thumbnail: json.filename,
+      thumbnail,
     };
     post(urlHeader + "/newGolfFashion", param, httpHeader, (resp) => {
       const { data } = resp.jp();
-      log(data);
+      location.href = location.href;
     });
   });
 }
 function modFashion(fashion_id) {
-  log("mod");
-  return;
   if (iptTitle.value == "") {
     alert("You need to write the title.");
     iptTitle.focus();
@@ -158,16 +150,39 @@ function modFashion(fashion_id) {
     txtContent.focus();
     return;
   }
-  const param = {
-    fashion_id,
-    golf_club_id: spClubId.str(),
-    title: iptTitle.value,
-    content: txtContent.value,
-    link: iptLink.value,
-  };
-  post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
-    const { data } = resp.jp();
-    setEventList();
+  if (iptThumbnail.files.length > 0) {
+    fileUpload(file, (thumbnail) => {
+      const param = {
+        fashion_id,
+        title: iptTitle.value,
+        content: txtContent.value,
+        thumbnail,
+      };
+      post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
+        const { data } = resp.jp();
+        setEventList();
+      });
+    });
+  } else {
+    const param = {
+      fashion_id,
+      title: iptTitle.value,
+      content: txtContent.value,
+      thumbnail,
+    };
+    post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
+      const { data } = resp.jp();
+      setEventList();
+    });
+  }
+}
+function fileUpload(file, callback) {
+  const fd = new FormData();
+  fd.append("target", "fashion");
+  fd.append("file", file);
+  jFile(fileHeader, fd, (data) => {
+    const { filename: thumbnail } = data.jp();
+    callback(thumbnail);
   });
 }
 function itemclick() {
