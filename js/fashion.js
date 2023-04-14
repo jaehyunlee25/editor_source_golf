@@ -80,7 +80,7 @@ function insertRow(template, element, object) {
   Object.entries(object).forEach(([key, val]) => {
     if (key == "isDel") return;
     if (key == "thumbnail") {
-      tr[i++].children[0].src = "img/upload/" + val;
+      tr[i++].children[0].src = val;
       return;
     }
     tr[i++].str(val);
