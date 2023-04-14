@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-//const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
-const urlHeader = "http://localhost:8080";
+const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
+//const urlHeader = "http://localhost:8080";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
 const fileHeader = "https://mnemosynesolutions.co.kr/boardFile";
@@ -21,12 +21,12 @@ function main() {
 }
 
 regMod.onclick = function () {
-  funcs[STATE.mode](this.eventId);
+  funcs[STATE.mode](this.objFashion);
 };
 delMod.onclick = function () {
-  const { eventId } = this;
+  const { id: fashionId } = this.objFashion;
   const param = {
-    eventId,
+    fashionId,
   };
   post(urlHeader + "/delGolfClubEvent", param, httpHeader, (resp) => {
     const { data } = resp.jp();
@@ -88,7 +88,7 @@ function insertRow(template, element, object) {
     }
     tr[i++].str(val);
   });
-  TR.nm(0, 6, 0).objEvent = object;
+  TR.nm(0, 6, 0).objFashion = object;
   TR.nm(0, 6, 0).onclick = changemode;
   element.appendChild(ROW);
 }
@@ -97,17 +97,12 @@ function changemode() {
   h4Mode.str("수정모드");
   regMod.str("수정");
   delMod.style.display = "inline-block";
-  const { objEvent } = this;
-  const { title, content, id, link } = objEvent;
-  const club = clubs[objEvent.golf_club_id];
-  iptClub.value = club.name;
-  iptClub.onkeyup();
-  spList.children[0].click();
+  const { objFashion } = this;
+  const { title, content, id } = objFashion;
   iptTitle.value = title;
   txtContent.value = content;
-  regMod.eventId = id;
-  delMod.eventId = id;
-  iptLink.value = link;
+  regMod.objFashion = objFashion;
+  delMod.objFashion = objFashion;
   regNew.style.display = "inline-block";
 }
 function regFashion() {
@@ -139,7 +134,7 @@ function regFashion() {
     });
   });
 }
-function modFashion(fashion_id) {
+function modFashion(objFashion) {
   if (iptTitle.value == "") {
     alert("You need to write the title.");
     iptTitle.focus();
@@ -150,20 +145,17 @@ function modFashion(fashion_id) {
     txtContent.focus();
     return;
   }
+
+  let { thumbnail, id: fashion_id } = objFashion;
   if (iptThumbnail.files.length > 0) {
+    const [file] = iptThumbnail.files;
     fileUpload(file, (thumbnail) => {
-      const param = {
-        fashion_id,
-        title: iptTitle.value,
-        content: txtContent.value,
-        thumbnail,
-      };
-      post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
-        const { data } = resp.jp();
-        setEventList();
-      });
+      modExec(thumbnail);
     });
   } else {
+    modExec(thumbnail);
+  }
+  function modExec(thumbnail) {
     const param = {
       fashion_id,
       title: iptTitle.value,
@@ -172,7 +164,7 @@ function modFashion(fashion_id) {
     };
     post(urlHeader + "/modGolfFashion", param, httpHeader, (resp) => {
       const { data } = resp.jp();
-      setEventList();
+      setFashionList();
     });
   }
 }
