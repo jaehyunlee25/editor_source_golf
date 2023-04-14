@@ -98,6 +98,7 @@ function changemode() {
   const { title, content, id } = objFashion;
   iptTitle.value = title;
   txtContent.value = content;
+  iptThumbnail.value = "";
   regMod.objFashion = objFashion;
   delMod.objFashion = objFashion;
   regNew.style.display = "inline-block";
