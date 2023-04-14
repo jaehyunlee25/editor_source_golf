@@ -24,11 +24,11 @@ regMod.onclick = function () {
   funcs[STATE.mode](this.objFashion);
 };
 delMod.onclick = function () {
-  const { id: fashionId } = this.objFashion;
+  const { id: fashion_id } = this.objFashion;
   const param = {
-    fashionId,
+    fashion_id,
   };
-  post(urlHeader + "/delGolfClubEvent", param, httpHeader, (resp) => {
+  post(urlHeader + "/delGolfFashion", param, httpHeader, (resp) => {
     const { data } = resp.jp();
     log(data);
     alert("삭제되었습니다.");
