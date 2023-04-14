@@ -41,11 +41,9 @@ regNew.onclick = function () {
   regMod.str("등록");
   delMod.style.display = "none";
 
-  iptClub.value = "";
-  spClubId.str("");
-  spList.str("");
   iptTitle.value = "";
   txtContent.value = "";
+  iptThumbnail.value = "";
   this.style.display = "none";
 };
 iptThumbnail.onchange = function (e) {
