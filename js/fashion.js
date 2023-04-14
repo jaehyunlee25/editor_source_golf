@@ -67,7 +67,6 @@ function setFashionList() {
     const { data } = resp.jp();
     elList.str("");
     data.forEach((row) => {
-      log(row);
       if (row.script_action_result == "normal") return;
       insertRow(tpListItem, elList, row);
     });
