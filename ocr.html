@@ -5,9 +5,45 @@
         <meta charset="utf-8" />
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
+        <style>
+            textarea {
+                background-color: black;
+                color: white;
+                padding: 5px;
+                width: 30%;
+                height: 500px;
+            }
+            #cover {
+                position: relative;
+            }
+            .box {
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                width: 10px;
+                height: 10px;
+                --border: 1px solid red;
+            }
+            table {
+                font-size: 11px;
+            }
+        </style>
     </head>
     <body>
         <input type="file" id="iptFile" />
+        <div id="cover">
+            <img id="img" />
+        </div>
+        <div style="position: relative;" id="reprod">
+
+        </div>
+        <table border="1" style="display: none;">
+            <tbody id="tbl"></tbody>
+        </table>
+        <div style="display:none;">
+            <textarea id="ta"></textarea>
+
+        </div>
         <script src="js/ocr.js"></script>
     </body>
 </html>
