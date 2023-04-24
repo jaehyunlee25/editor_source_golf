@@ -3,9 +3,21 @@ const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "http://localhost:8080";
 const cf = new jCommon();
 let letters = [];
+const hLines = [];
+const vLines = {};
 main();
 function main() {}
+function display() {
+  letters.forEach((ob) => {
+    const { width: w, height: h, min } = ob.vertices.vnx();
+    const { x, y } = min;
+    const div = reprod.mkbox({ x, y, w, h });
+    div.style.fontSize = 10 + "px";
+    div.str(ob.text);
+  });
+}
 function mining() {
+  display();
   const minmax = letters.minmax();
   const param = {
     x: minmax.min.x,
@@ -14,60 +26,155 @@ function mining() {
     h: minmax.height,
   };
   cover.mkbox(param, "yellow");
-  cover.hline(param, "red");
-  let line;
-  let lng;
-  let lines = [];
-  for (let i = 0; i < param.h; i++) {
-    const res = letters.catch(i);
-    lng ??= res.length;
-    if (res.length > lng) {
-      lng = res.length;
-      line = i;
-    }
-    if (line > 0 && res.length == 0) {
-      lines.push(line);
-      lng = undefined;
-      line = undefined;
-    }
-  }
-  lines.forEach((line) => {
-    const obs = letters.catch(line);
-    const str = obs.mkstr();
-    let prev;
-    const diffs = [];
-    obs.forEach((ob, i) => {
-      prev ??= ob;
-      if (i == 0) return;
-      diffs.push(ob.vertices[0].x - prev.vertices[1].x);
-      prev = ob;
+  guess();
+}
+function guess(param) {
+  guessHorizontal(() => {
+    guessVertical(() => {
+      log("end");
     });
-    const sum = diffs.reduce((accumulator, currentValue) => {
-      return accumulator + currentValue;
-    });
-    const average = parseInt(sum / diffs.length);
-    // log(average);
-    prev = undefined;
-    let word = [];
-    const words = [];
-    obs.forEach((ob, i) => {
-      if (i == 0) {
-        word.push(ob);
-        prev = ob;
-        return;
-      }
-      const diff = ob.vertices[0].x - prev.vertices[1].x;
-      //log(ob.text, diff, average);
-      if (diff > 7) {
-        words.push(word);
-        word = [];
-      }
-      word.push(ob);
-      prev = ob;
-    });
-    if (word.length > 0) words.push(word);
-    log(words);
   });
+}
+function guessVertical(callback) {
+  let prev;
+  hLines.forEach((obj, idxLine) => {
+    //if (idxLine > 1) return;
+    const minmax = letters.minmax();
+    const param = {
+      x: minmax.min.x,
+      y: minmax.min.y,
+      w: minmax.width,
+      h: minmax.height,
+    };
+    let probe = reprod.vline(param, "red");
+    const originX = param.x;
+    const num = param.w;
+    //timerAround(num, (i) => {
+    around(num, (i) => {
+      //if (i > 1) return;
+      param.x = originX + i;
+      probe = reprod.vline(param, "red", probe);
+      //라인과 라인 사이의 영역이 글자가 위치한 영역이다.
+      let minY; //라인의 시작점
+      let maxY; //라인의 끝점
+      if (prev == undefined) {
+        minY = -1;
+        maxY = obj.middle;
+      } else {
+        minY = prev.middle;
+        maxY = obj.middle;
+      }
+      if (letters.vcatch(param.x, minY, maxY).length == 0) {
+        param.y = minY;
+        param.h = maxY - minY;
+
+        guessVLine(param, param.x, idxLine);
+      }
+      if (i == num - 1) {
+        dpVLines(idxLine);
+        callback();
+      }
+    });
+    prev = obj;
+  });
+}
+function guessHorizontal(callback) {
+  const minmax = letters.minmax();
+  const param = {
+    x: minmax.min.x,
+    y: minmax.min.y,
+    w: minmax.width,
+    h: minmax.height,
+  };
+
+  let probe = reprod.hline(param, "red");
+  const originY = param.y;
+  const num = param.h;
+  around(num, (i) => {
+    param.y = originY + i;
+    probe = reprod.hline(param, "red", probe);
+    if (letters.catch(param.y).length == 0) guessHLine(param, param.y);
+    if (i == num - 1) {
+      dpHLines();
+      callback();
+    }
+  });
+}
+function dpVLines(line) {
+  vLines[line].forEach((ob) => {
+    if (ob.weight < 6) return;
+    const param = {
+      x: ob.middle,
+      y: ob.startY,
+      w: 1,
+      h: ob.endY,
+    };
+    reprod.vline(param, "brown");
+  });
+  //log(vLines);
+}
+function dpHLines() {
+  hLines.forEach((ob) => {
+    const param = {
+      x: ob.startX,
+      y: ob.middle,
+      w: ob.endX,
+      h: 1,
+    };
+    reprod.hline(param, "blue");
+  });
+}
+function guessVLine(param, i, line) {
+  //백지영역의 범위를 넓히는 함수
+  vLines[line] ??= [];
+  const startY = param.y;
+  const endY = param.h; // 라인의 높이를 나타내기 때문에 좌표를 지정하면 안 된다(길이만 지정한다).
+
+  let flg = true;
+  vLines[line].forEach((ob) => {
+    if (i == ob.min - 1) {
+      ob.min = i;
+      ob.weight++;
+      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+      flg = false;
+    } else if (i == ob.max + 1) {
+      ob.max = i;
+      ob.weight++;
+      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+      flg = false;
+    }
+  });
+  if (flg) {
+    vLines[line].push({ min: i, max: i, weight: 1, middle: i, startY, endY });
+  }
+}
+function guessHLine(param, i) {
+  //백지영역의 범위를 넓히는 함수
+  const startX = param.x;
+  const endX = param.x + param.w;
+  let flg = true;
+  hLines.forEach((ob) => {
+    if (i == ob.min - 1) {
+      ob.min = i;
+      ob.weight++;
+      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+      flg = false;
+    } else if (i == ob.max + 1) {
+      ob.max = i;
+      ob.weight++;
+      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
+      flg = false;
+    }
+  });
+  if (flg) hLines.push({ min: i, max: i, weight: 1, middle: i, startX, endX });
+}
+function timerAround(num, callback) {
+  let i = 0;
+  const t = setInterval(() => {
+    if (i == num) return;
+    callback(i);
+    i++;
+  }, 10);
 }
 Array.prototype.mkstr = function () {
   const str = [];
@@ -83,6 +190,19 @@ Array.prototype.catch = function (y) {
     if (y >= minmax.min.y && y <= minmax.max.y) res.push({ text, vertices });
   });
   res.sort((a, b) => a.vertices[0].x - b.vertices[0].x);
+  return res;
+};
+Array.prototype.vcatch = function (x, yMin, yMax) {
+  //log(yMin, yMax);
+  const res = [];
+  this.forEach(({ text, vertices }) => {
+    const minmax = vertices.vnx();
+    //우선 라인의 y 조건에 맞지 않는 객체들은 제외한다.
+    if (minmax.min.y <= yMin || minmax.min.y >= yMax) return;
+
+    if (x >= minmax.min.x && x <= minmax.max.x) res.push({ text, vertices });
+  });
+  res.sort((a, b) => a.vertices[0].y - b.vertices[0].y);
   return res;
 };
 Array.prototype.vnx = function () {
@@ -141,8 +261,10 @@ HTMLElement.prototype.mkbox = function (size, color) {
   div.style.width = size.w + "px";
   div.style.height = size.h + "px";
   if (color) div.style.border = "1px solid " + color;
+  return div;
 };
-HTMLElement.prototype.hline = function (size, color) {
+HTMLElement.prototype.hline = function (size, color, prev) {
+  if (prev) this.removeChild(prev);
   const div = this.add("div");
   div.className = "box";
   div.style.left = size.x + "px";
@@ -150,19 +272,25 @@ HTMLElement.prototype.hline = function (size, color) {
   div.style.width = size.w + "px";
   div.style.height = 1 + "px";
   if (color) div.style.borderTop = "1px solid " + color;
+  return div;
+};
+HTMLElement.prototype.vline = function (size, color, prev) {
+  if (prev) this.removeChild(prev);
+  const div = this.add("div");
+  div.className = "box";
+  div.style.left = size.x + "px";
+  div.style.top = size.y + "px";
+  div.style.width = 1 + "px";
+  div.style.height = size.h + "px";
+  if (color) div.style.borderLeft = "1px solid " + color;
+  return div;
 };
 function gravity(a, b, r) {
   if (r == 0) return a;
   return (a * b) / Math.pow(r, 2);
 }
-iptFile.onchange = function () {
+btnGo.onclick = function () {
   letters = [];
-  const reader = new FileReader();
-  reader.readAsDataURL(iptFile.files[0]);
-  reader.onload = function () {
-    img.src = reader.result;
-  };
-
   const param = new FormData();
   param.append("data", 1);
   param.append("file", iptFile.files[0]);
@@ -204,6 +332,14 @@ iptFile.onchange = function () {
     mining();
   });
 };
+iptFile.onchange = function () {
+  const reader = new FileReader();
+  reader.readAsDataURL(iptFile.files[0]);
+  reader.onload = function () {
+    img.src = reader.result;
+  };
+};
+function exec() {}
 function mkBox(vertices, color) {
   const [lt, rt, rb, lb] = vertices;
   const x = lt.x;
