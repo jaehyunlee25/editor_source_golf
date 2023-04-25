@@ -30,52 +30,65 @@ function mining() {
 }
 function guess(param) {
   guessHorizontal(() => {
-    guessVertical(() => {
-      log("end");
-    });
+    //vertical 분석(= column 분석)은 라인별로 한다.
+    guessVertical();
   });
 }
 function guessVertical(callback) {
+  //첫번째부터 끝라인까지의 분석
   let prev;
   hLines.forEach((obj, idxLine) => {
-    //if (idxLine > 1) return;
-    const minmax = letters.minmax();
-    const param = {
-      x: minmax.min.x,
-      y: minmax.min.y,
-      w: minmax.width,
-      h: minmax.height,
-    };
-    let probe = reprod.vline(param, "red");
-    const originX = param.x;
-    const num = param.w;
-    //timerAround(num, (i) => {
-    around(num, (i) => {
-      //if (i > 1) return;
-      param.x = originX + i;
-      probe = reprod.vline(param, "red", probe);
-      //라인과 라인 사이의 영역이 글자가 위치한 영역이다.
-      let minY; //라인의 시작점
-      let maxY; //라인의 끝점
-      if (prev == undefined) {
-        minY = -1;
-        maxY = obj.middle;
-      } else {
-        minY = prev.middle;
-        maxY = obj.middle;
-      }
-      if (letters.vcatch(param.x, minY, maxY).length == 0) {
-        param.y = minY;
-        param.h = maxY - minY;
-
-        guessVLine(param, param.x, idxLine);
-      }
-      if (i == num - 1) {
-        dpVLines(idxLine);
-        callback();
-      }
+    guessLine(obj, prev, idxLine, () => {
+      log("end of line ", idxLine);
     });
     prev = obj;
+  });
+  // 끝라인 이후의 공간에 대한 분석
+  guessLine(undefined, prev, hLines.length, () => {
+    log("end of line ", hLines.length);
+  });
+}
+function guessLine(obj, prev, idxLine, callback) {
+  const minmax = letters.minmax();
+  const param = {
+    x: minmax.min.x,
+    y: minmax.min.y,
+    w: minmax.width,
+    h: minmax.height,
+  };
+  let probe = reprod.vline(param, "red");
+  const originX = param.x;
+  const num = param.w;
+  around(num, (i) => {
+    param.x = originX + i;
+    probe = reprod.vline(param, "red", probe);
+
+    //라인과 라인 사이의 영역이 글자가 위치한 영역이다.
+    let minY; //라인의 시작점
+    let maxY; //라인의 끝점
+    if (prev == undefined) {
+      // 첫번째 라인
+      minY = -1;
+      maxY = obj.middle;
+    } else if (obj == undefined) {
+      //끝라인(마지막 라인 이후의 공간)
+      minY = prev.middle;
+      maxY = param.y + param.h;
+    } else {
+      //첫번째와 끝라인 중간의 모든 라인들
+      minY = prev.middle;
+      maxY = obj.middle;
+    }
+    if (letters.vcatch(param.x, minY, maxY).length == 0) {
+      param.y = minY;
+      param.h = maxY - minY;
+
+      guessVLine(param, param.x, idxLine);
+    }
+    if (i == num - 1) {
+      dpVLines(idxLine);
+      callback();
+    }
   });
 }
 function guessHorizontal(callback) {
