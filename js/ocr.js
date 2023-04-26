@@ -3,8 +3,8 @@ const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "http://localhost:8080";
 const cf = new jCommon();
 let letters = [];
-const hLines = [];
-const vLines = {};
+let vertices;
+
 main();
 function main() {}
 function display() {
@@ -17,105 +17,124 @@ function display() {
   });
 }
 function mining() {
+  arVertices = letters.getVerticesArray();
+  letters.giveId();
+  // 특정 영역의 라인을 찾아서 object로 만들어 주는 함수이다.
+  // 라인은 오브젝트들이 점유하고 있지 않은 공간의 평균선이다.
+
+  // 글자들을 영역에 표시한다.
+  // 분석을 시각적으로 확인하기 위한 절차이다.
+  // 알고리즘에는 영향을 미치지 않는다.
   display();
-  const minmax = letters.minmax();
+
+  /* 
+  // object들의 vertices 정보를 바탕으로 모든 object들을 포괄하는
+  // 전체영역 박스 좌표를 생성한다.
+  const minmax = vertices.minmax();
   const param = {
     x: minmax.min.x,
     y: minmax.min.y,
     w: minmax.width,
     h: minmax.height,
   };
-  cover.mkbox(param, "yellow");
-  guess();
-}
-function guess(param) {
-  guessHorizontal(() => {
-    //vertical 분석(= column 분석)은 라인별로 한다.
-    guessVertical();
+  // 전체박스를 화면에 표시해서 정확한지 살펴본다.
+  cover.mkbox(param, "yellow"); */
+
+  // 라인들을 횡분석, 종분석 방법으로 찾는다.
+  // 라인을 먼저 찾고,
+  // 라인별로 횡분석을 실시한다.
+  const { hLines, vLines, rows, colsByLine } = guess(arVertices);
+  // 횡라인과 종라인을 표시한다.
+  dpHLines(hLines);
+  Object.entries(vLines).forEach(([key, val]) => {
+    dpVLines(vLines, key);
   });
-}
-function guessVertical(callback) {
-  //첫번째부터 끝라인까지의 분석
-  let prev;
-  hLines.forEach((obj, idxLine) => {
-    guessLine(obj, prev, idxLine, () => {
-      log("end of line ", idxLine);
+
+  // log(colsByLine);
+
+  // 특정 row에 해당하는 object들을 구한다.
+  const lettersByLine = {};
+  Object.entries(rows).forEach(([, row]) => {
+    letters.forEach((letter) => {
+      const { text, vertices } = letter;
+      const [{ x, y }] = vertices;
+
+      if (y >= row.min) {
+        if (row.max == -1) {
+          // 맨 끝행일때,
+          lettersByLine[row.id] ??= [];
+          lettersByLine[row.id].push(letter);
+          return;
+        }
+        if (y <= row.max) {
+          lettersByLine[row.id] ??= [];
+          lettersByLine[row.id].push(letter);
+        }
+      }
     });
-    prev = obj;
   });
-  // 끝라인 이후의 공간에 대한 분석
-  guessLine(undefined, prev, hLines.length, () => {
-    log("end of line ", hLines.length);
-  });
-}
-function guessLine(obj, prev, idxLine, callback) {
-  const minmax = letters.minmax();
-  const param = {
-    x: minmax.min.x,
-    y: minmax.min.y,
-    w: minmax.width,
-    h: minmax.height,
-  };
-  let probe = reprod.vline(param, "red");
-  const originX = param.x;
-  const num = param.w;
-  around(num, (i) => {
-    param.x = originX + i;
-    probe = reprod.vline(param, "red", probe);
 
-    //라인과 라인 사이의 영역이 글자가 위치한 영역이다.
-    let minY; //라인의 시작점
-    let maxY; //라인의 끝점
-    if (prev == undefined) {
-      // 첫번째 라인
-      minY = -1;
-      maxY = obj.middle;
-    } else if (obj == undefined) {
-      //끝라인(마지막 라인 이후의 공간)
-      minY = prev.middle;
-      maxY = param.y + param.h;
-    } else {
-      //첫번째와 끝라인 중간의 모든 라인들
-      minY = prev.middle;
-      maxY = obj.middle;
-    }
-    if (letters.vcatch(param.x, minY, maxY).length == 0) {
-      param.y = minY;
-      param.h = maxY - minY;
-
-      guessVLine(param, param.x, idxLine);
-    }
-    if (i == num - 1) {
-      dpVLines(idxLine);
-      callback();
-    }
+  // 특정 col에 있는 object 들을 모은다.
+  const tmps = [];
+  Object.entries(colsByLine).forEach(([key, cols], i) => {
+    if (i > 0) return;
+    cols.forEach((col, j) => {
+      if (j > 0) return;
+      letters.forEach((letter) => {
+        const { vertices } = letter;
+        const [lt, , rb] = vertices;
+        if (lt.x >= col.min_x && lt.y >= col.min_y) {
+          if (rb.x <= col.max_x && rb.y <= col.max_y) {
+            tmps.push(letter);
+          }
+        }
+      });
+    });
   });
-}
-function guessHorizontal(callback) {
-  const minmax = letters.minmax();
-  const param = {
-    x: minmax.min.x,
-    y: minmax.min.y,
-    w: minmax.width,
-    h: minmax.height,
-  };
 
-  let probe = reprod.hline(param, "red");
-  const originY = param.y;
-  const num = param.h;
-  around(num, (i) => {
-    param.y = originY + i;
-    probe = reprod.hline(param, "red", probe);
-    if (letters.catch(param.y).length == 0) guessHLine(param, param.y);
-    if (i == num - 1) {
-      dpHLines();
-      callback();
-    }
+  const tmparVertices = tmps.getVerticesArray();
+  const {
+    hLines: tmphLines,
+    vLines: tmpvLines,
+    tmprows,
+    tmpcolsByLine,
+  } = guess(tmparVertices);
+
+  // 횡라인과 종라인을 표시한다.
+  if (tmphLines.length > 0) {
+    dpHLines(tmphLines);
+    Object.entries(tmpvLines).forEach(([key, val]) => {
+      dpVLines(tmpvLines, key);
+    });
+  }
+
+  /*
+  // 특정 row에 있는 object 들의 면적을 구한다.
+  letters.forEach((letter) => {
+    const { vertices } = letter;
+    letter.area = vertices.getArea();
   });
+
+  // 특정 line의 object들의 크기의 표준편차를 구한다.
+  Object.entries(lettersByLine).forEach(([key, value]) => {
+    const areas = [];
+    value.forEach(({ area }) => {
+      areas.push(area);
+    });
+    value.MU = areas.MU(); // 크기평균
+    value.SD = areas.SD(value.MU); // 크기표준편차
+    value.forEach((letter) => {
+      letter.lineArealND = normalDistribution(letter.area, value.MU, value.SD);
+    });
+  });
+
+  log(lettersByLine);
+
+  */
 }
-function dpVLines(line) {
+function dpVLines(vLines, line) {
   vLines[line].forEach((ob) => {
-    if (ob.weight < 6) return;
+    if (ob.weight < 5) return;
     const param = {
       x: ob.middle,
       y: ob.startY,
@@ -126,7 +145,7 @@ function dpVLines(line) {
   });
   //log(vLines);
 }
-function dpHLines() {
+function dpHLines(hLines) {
   hLines.forEach((ob) => {
     const param = {
       x: ob.startX,
@@ -137,50 +156,6 @@ function dpHLines() {
     reprod.hline(param, "blue");
   });
 }
-function guessVLine(param, i, line) {
-  //백지영역의 범위를 넓히는 함수
-  vLines[line] ??= [];
-  const startY = param.y;
-  const endY = param.h; // 라인의 높이를 나타내기 때문에 좌표를 지정하면 안 된다(길이만 지정한다).
-
-  let flg = true;
-  vLines[line].forEach((ob) => {
-    if (i == ob.min - 1) {
-      ob.min = i;
-      ob.weight++;
-      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
-      flg = false;
-    } else if (i == ob.max + 1) {
-      ob.max = i;
-      ob.weight++;
-      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
-      flg = false;
-    }
-  });
-  if (flg) {
-    vLines[line].push({ min: i, max: i, weight: 1, middle: i, startY, endY });
-  }
-}
-function guessHLine(param, i) {
-  //백지영역의 범위를 넓히는 함수
-  const startX = param.x;
-  const endX = param.x + param.w;
-  let flg = true;
-  hLines.forEach((ob) => {
-    if (i == ob.min - 1) {
-      ob.min = i;
-      ob.weight++;
-      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
-      flg = false;
-    } else if (i == ob.max + 1) {
-      ob.max = i;
-      ob.weight++;
-      ob.middle = parseInt(ob.min + (ob.max - ob.min) / 2);
-      flg = false;
-    }
-  });
-  if (flg) hLines.push({ min: i, max: i, weight: 1, middle: i, startX, endX });
-}
 function timerAround(num, callback) {
   let i = 0;
   const t = setInterval(() => {
@@ -189,34 +164,37 @@ function timerAround(num, callback) {
     i++;
   }, 10);
 }
-Array.prototype.mkstr = function () {
-  const str = [];
-  this.forEach(({ text }) => {
-    str.push(text);
-  });
-  return str.join("");
+function normalDistribution(x, mu, sigma) {
+  const sqrt2Pi = Math.sqrt(2 * Math.PI);
+  const exponent = -Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2));
+  return (1 / (sigma * sqrt2Pi)) * Math.exp(exponent);
+}
+Array.prototype.MU = function () {
+  return this.reduce((sum, value) => sum + value, 0) / this.length;
 };
-Array.prototype.catch = function (y) {
-  const res = [];
-  this.forEach(({ text, vertices }) => {
-    const minmax = vertices.vnx();
-    if (y >= minmax.min.y && y <= minmax.max.y) res.push({ text, vertices });
-  });
-  res.sort((a, b) => a.vertices[0].x - b.vertices[0].x);
-  return res;
-};
-Array.prototype.vcatch = function (x, yMin, yMax) {
-  //log(yMin, yMax);
-  const res = [];
-  this.forEach(({ text, vertices }) => {
-    const minmax = vertices.vnx();
-    //우선 라인의 y 조건에 맞지 않는 객체들은 제외한다.
-    if (minmax.min.y <= yMin || minmax.min.y >= yMax) return;
+Array.prototype.SD = function (mean) {
+  // Calculate the mean (average)
+  if (mean == undefined)
+    mean = this.reduce((sum, value) => sum + value, 0) / this.length;
 
-    if (x >= minmax.min.x && x <= minmax.max.x) res.push({ text, vertices });
-  });
-  res.sort((a, b) => a.vertices[0].y - b.vertices[0].y);
-  return res;
+  // Calculate the squared differences
+  const squaredDifferences = this.map((value) => (value - mean) ** 2);
+
+  // Calculate the mean of the squared differences
+  const meanSquaredDifferences =
+    squaredDifferences.reduce((sum, value) => sum + value, 0) /
+    squaredDifferences.length;
+
+  // Calculate the standard deviation (sigma) by taking the square root of the mean of the squared differences
+  const sigma = Math.sqrt(meanSquaredDifferences);
+
+  return sigma;
+};
+Array.prototype.getArea = function () {
+  const [lt, rt, rb, lb] = this;
+  const w = rt.x - lt.x + 1;
+  const h = lb.y - lt.y + 1;
+  return w * h;
 };
 Array.prototype.vnx = function () {
   let res = {
@@ -237,34 +215,28 @@ Array.prototype.vnx = function () {
     if (y > res.max.y) res.max.y = y;
     if (y < res.min.y) res.min.y = y;
   });
-  res.width = res.max.x - res.min.x;
-  res.height = res.max.y - res.min.y;
+
+  // minmax 정보를 바탕으로 한, 전체 박스 영역 정보를 파악한다.
+  res.x = res.min.x;
+  res.y = res.min.y;
+  res.w = res.max.x - res.min.x + 1;
+  res.h = res.max.y - res.min.y + 1;
   return res;
 };
-Array.prototype.minmax = function () {
-  let res = {
-    max: { x: null, y: null },
-    min: { x: null, y: null },
-  };
-  this.forEach(({ vertices }, i) => {
-    vertices.forEach(({ x, y }, j) => {
-      if (i == 0 && j == 0) {
-        res = {
-          max: { x, y },
-          min: { x, y },
-        };
-        return;
-      }
-      if (x > res.max.x) res.max.x = x;
-      if (x < res.min.x) res.min.x = x;
-
-      if (y > res.max.y) res.max.y = y;
-      if (y < res.min.y) res.min.y = y;
-    });
-  });
-  res.width = res.max.x - res.min.x;
-  res.height = res.max.y - res.min.y;
+Array.prototype.giveId = function () {
+  this.forEach((ob, i) => (ob.id = i));
+};
+Array.prototype.getVerticesArray = function () {
+  const res = [];
+  this.forEach(({ vertices }) => res.push(vertices));
   return res;
+};
+Array.prototype.mkstr = function () {
+  const str = [];
+  this.forEach(({ text }) => {
+    str.push(text);
+  });
+  return str.join("");
 };
 HTMLElement.prototype.mkbox = function (size, color) {
   const div = this.add("div");
