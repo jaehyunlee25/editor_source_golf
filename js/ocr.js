@@ -9,10 +9,10 @@ main();
 function main() {}
 function display() {
   letters.forEach((ob) => {
-    const { width: w, height: h, min } = ob.vertices.vnx();
-    const { x, y } = min;
-    const div = reprod.mkbox({ x, y, w, h });
+    const param = ob.vertices.vnx();
+    const div = reprod.mkbox(param);
     div.style.fontSize = 10 + "px";
+    div.style.border = "1px solid yellow";
     div.str(ob.text);
   });
 }
@@ -26,31 +26,18 @@ function mining() {
   // 분석을 시각적으로 확인하기 위한 절차이다.
   // 알고리즘에는 영향을 미치지 않는다.
   display();
-
-  /* 
-  // object들의 vertices 정보를 바탕으로 모든 object들을 포괄하는
-  // 전체영역 박스 좌표를 생성한다.
-  const minmax = vertices.minmax();
-  const param = {
-    x: minmax.min.x,
-    y: minmax.min.y,
-    w: minmax.width,
-    h: minmax.height,
-  };
-  // 전체박스를 화면에 표시해서 정확한지 살펴본다.
-  cover.mkbox(param, "yellow"); */
-
+  log(getObjectsByLine(arVertices));
+}
+function getObjectsByLine(arVertices) {
   // 라인들을 횡분석, 종분석 방법으로 찾는다.
   // 라인을 먼저 찾고,
   // 라인별로 횡분석을 실시한다.
-  const { hLines, vLines, rows, colsByLine } = guess(arVertices);
+  const { hLines, vLines, rows, colsByLine, avgLines } = guess(arVertices);
   // 횡라인과 종라인을 표시한다.
-  dpHLines(hLines);
+  /* dpHLines(hLines);
   Object.entries(vLines).forEach(([key, val]) => {
-    dpVLines(vLines, key);
-  });
-
-  // log(colsByLine);
+    dpVLines(vLines, key, avgLines[key].avgW);
+  }); */
 
   // 특정 row에 해당하는 object들을 구한다.
   const lettersByLine = {};
@@ -74,67 +61,62 @@ function mining() {
     });
   });
 
-  // 특정 col에 있는 object 들을 모은다.
-  const tmps = [];
+  // 특정 col에 있는 object들을 모은다.
+  const columns = [];
   Object.entries(colsByLine).forEach(([key, cols], i) => {
-    if (i > 0) return;
     cols.forEach((col, j) => {
-      if (j > 0) return;
-      letters.forEach((letter) => {
-        const { vertices } = letter;
+      arVertices.forEach((vertices) => {
         const [lt, , rb] = vertices;
         if (lt.x >= col.min_x && lt.y >= col.min_y) {
-          if (rb.x <= col.max_x && rb.y <= col.max_y) {
-            tmps.push(letter);
+          if (col.max_x == -1) {
+            if (rb.y <= col.max_y) {
+              columns.push({
+                row: key,
+                col: j,
+                vertices,
+              });
+            }
+          } else {
+            if (rb.x <= col.max_x && rb.y <= col.max_y) {
+              columns.push({
+                row: key,
+                col: j,
+                vertices,
+              });
+            }
           }
         }
       });
     });
   });
-
-  const tmparVertices = tmps.getVerticesArray();
-  const {
-    hLines: tmphLines,
-    vLines: tmpvLines,
-    tmprows,
-    tmpcolsByLine,
-  } = guess(tmparVertices);
-
-  // 횡라인과 종라인을 표시한다.
-  if (tmphLines.length > 0) {
-    dpHLines(tmphLines);
-    Object.entries(tmpvLines).forEach(([key, val]) => {
-      dpVLines(tmpvLines, key);
-    });
-  }
-
-  /*
-  // 특정 row에 있는 object 들의 면적을 구한다.
-  letters.forEach((letter) => {
-    const { vertices } = letter;
-    letter.area = vertices.getArea();
-  });
-
-  // 특정 line의 object들의 크기의 표준편차를 구한다.
-  Object.entries(lettersByLine).forEach(([key, value]) => {
-    const areas = [];
-    value.forEach(({ area }) => {
-      areas.push(area);
-    });
-    value.MU = areas.MU(); // 크기평균
-    value.SD = areas.SD(value.MU); // 크기표준편차
-    value.forEach((letter) => {
-      letter.lineArealND = normalDistribution(letter.area, value.MU, value.SD);
+  log(columns);
+  const result = {};
+  Object.entries(colsByLine).forEach(([key, cols], i) => {
+    result[key] ??= {};
+    cols.forEach((col, j) => {
+      result[key][j] ??= [];
+      letters.forEach((letter) => {
+        const { vertices } = letter;
+        const [lt, , rb] = vertices;
+        if (lt.x >= col.min_x && lt.y >= col.min_y) {
+          if (col.max_x == -1) {
+            if (rb.y <= col.max_y) {
+              result[key][j].push(letter);
+            }
+          } else {
+            if (rb.x <= col.max_x && rb.y <= col.max_y) {
+              result[key][j].push(letter);
+            }
+          }
+        }
+      });
     });
   });
-
-  log(lettersByLine);
-
-  */
+  return result;
 }
-function dpVLines(vLines, line) {
+function dpVLines(vLines, line, space) {
   vLines[line].forEach((ob) => {
-    if (ob.weight < 5) return;
+    if (ob.weight < space) return;
     const param = {
       x: ob.middle,
       y: ob.startY,

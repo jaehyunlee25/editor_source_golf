@@ -1,8 +1,34 @@
 function guess(arVertices) {
+  //const log = logOpt ? console.log : () => {};
+
   // 횡분석이 끝나면
   // guessVertical 함수에 hLines 배열이 전달된다.
   // hLines는 empty horizontal line(EHL) 배열이다.
 
+  Array.prototype.getAverageSizeWH = function () {
+    let sumW = 0;
+    let sumH = 0;
+    this.forEach((vertices) => {
+      const w = vertices[1].x - vertices[0].x + 1;
+      const h = vertices[2].y - vertices[0].y + 1;
+      sumW += w;
+      sumH += h;
+    });
+    return { avgW: sumW / this.length, avgH: sumH / this.length };
+  };
+  Array.prototype.yCatch = function (min, max) {
+    const res = [];
+    this.forEach((vertices) => {
+      const minmax = vertices.vnx();
+      if (max == -1) {
+        if (minmax.min.y >= min) res.push(vertices);
+      } else {
+        if (minmax.min.y >= min && minmax.min.y <= max) res.push(vertices);
+      }
+    });
+    res.sort((a, b) => a[0].x - b[0].x);
+    return res;
+  };
   Array.prototype.hCatch = function (y) {
     const res = [];
     this.forEach((vertices) => {
@@ -19,7 +45,6 @@ function guess(arVertices) {
       const minmax = vertices.vnx();
       //우선 라인의 y 조건에 맞지 않는 객체들은 제외한다.
       if (minmax.min.y <= yMin || minmax.min.y >= yMax) return;
-
       if (x >= minmax.min.x && x <= minmax.max.x) res.push(vertices);
     });
     res.sort((a, b) => a[0].y - b[0].y);
@@ -83,11 +108,28 @@ function guess(arVertices) {
 
   const hLines = guessHorizontal(arVertices);
   if (hLines.length == 0) return { hLines };
+  const avgLines = getAverageSize(hLines);
   const vLines = guessVertical(hLines);
   const { rows, colsByLine } = getColsByLine(hLines, vLines);
 
-  return { hLines, vLines, rows, colsByLine };
+  return { hLines, vLines, rows, colsByLine, avgLines };
 
+  function getAverageSize(hLines) {
+    const res = {};
+    let prev;
+    hLines.forEach((obj, idxLine) => {
+      const { middle } = obj;
+      if (prev == undefined)
+        res[idxLine] = arVertices.yCatch(0, middle).getAverageSizeWH();
+      else
+        res[idxLine] = arVertices
+          .yCatch(prev.middle, middle)
+          .getAverageSizeWH();
+      prev = obj;
+    });
+    res[hLines.length] = arVertices.yCatch(prev.middle, -1).getAverageSizeWH();
+    return res;
+  }
   function guessVertical(hLines) {
     //첫번째부터 끝라인까지의 분석
     const vLines = {};
@@ -111,7 +153,7 @@ function guess(arVertices) {
         let maxY; //라인의 끝점
         if (prev == undefined) {
           // 첫번째 라인
-          minY = -1;
+          minY = arVertices.minmax().y - 1; // 컨텐츠 area y이므로 반드시 1을 빼준다.
           maxY = obj.middle;
         } else if (obj == undefined) {
           //끝라인(마지막 라인 이후의 공간)
@@ -195,7 +237,7 @@ function guess(arVertices) {
         weight: 1,
         middle: i,
         startX: param.x,
-        endX: param.x + param.w - 1,
+        endX: param.w,
       };
       let flg = true;
 
@@ -249,9 +291,10 @@ function guess(arVertices) {
     //컬럼 area를 뽑아본다.
     const obCols = {};
     Object.entries(vLines).forEach(([key, val], i) => {
+      const space = avgLines[key].avgW;
       let cPrev;
       val.forEach((ob) => {
-        if (ob.weight < 5) return;
+        if (ob.weight < space) return;
         obCols[key] ??= [];
         if (cPrev == undefined) {
           obCols[key].push({
