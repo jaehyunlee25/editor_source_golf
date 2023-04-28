@@ -19,6 +19,14 @@ function display() {
 function mining() {
   arVertices = letters.getVerticesArray();
   letters.giveId();
+  const texts = (() => {
+    const res = {};
+    letters.forEach((letter) => {
+      const key = JSON.stringify(letter.vertices);
+      res[key] = letter.text;
+    });
+    return res;
+  })();
   // 특정 영역의 라인을 찾아서 object로 만들어 주는 함수이다.
   // 라인은 오브젝트들이 점유하고 있지 않은 공간의 평균선이다.
 
@@ -26,94 +34,29 @@ function mining() {
   // 분석을 시각적으로 확인하기 위한 절차이다.
   // 알고리즘에는 영향을 미치지 않는다.
   display();
-  log(getObjectsByLine(arVertices));
+
+  const res = guess(arVertices);
+  Object.entries(res).forEach(([key, cols]) => {
+    const tr = result.add("tr");
+    Object.entries(cols).forEach(([colkey, col]) => {
+      if (col.vertices.length == 0) return;
+      const td = result.add("td");
+      if (col.children) return;
+      td.str(verticesToText(col.vertices));
+    });
+  });
+  function verticesToText(ar) {
+    const str = [];
+    ar.trav((vertices) => {
+      const key = JSON.stringify(vertices);
+      str.push(texts[key]);
+    });
+    return str.join("");
+  }
 }
-function getObjectsByLine(arVertices) {
-  // 라인들을 횡분석, 종분석 방법으로 찾는다.
-  // 라인을 먼저 찾고,
-  // 라인별로 횡분석을 실시한다.
-  const { hLines, vLines, rows, colsByLine, avgLines } = guess(arVertices);
-  // 횡라인과 종라인을 표시한다.
-  /* dpHLines(hLines);
-  Object.entries(vLines).forEach(([key, val]) => {
-    dpVLines(vLines, key, avgLines[key].avgW);
-  }); */
 
-  // 특정 row에 해당하는 object들을 구한다.
-  const lettersByLine = {};
-  Object.entries(rows).forEach(([, row]) => {
-    letters.forEach((letter) => {
-      const { text, vertices } = letter;
-      const [{ x, y }] = vertices;
+let cnt = 0;
 
-      if (y >= row.min) {
-        if (row.max == -1) {
-          // 맨 끝행일때,
-          lettersByLine[row.id] ??= [];
-          lettersByLine[row.id].push(letter);
-          return;
-        }
-        if (y <= row.max) {
-          lettersByLine[row.id] ??= [];
-          lettersByLine[row.id].push(letter);
-        }
-      }
-    });
-  });
-
-  // 특정 col에 있는 object들을 모은다.
-  const columns = [];
-  Object.entries(colsByLine).forEach(([key, cols], i) => {
-    cols.forEach((col, j) => {
-      arVertices.forEach((vertices) => {
-        const [lt, , rb] = vertices;
-        if (lt.x >= col.min_x && lt.y >= col.min_y) {
-          if (col.max_x == -1) {
-            if (rb.y <= col.max_y) {
-              columns.push({
-                row: key,
-                col: j,
-                vertices,
-              });
-            }
-          } else {
-            if (rb.x <= col.max_x && rb.y <= col.max_y) {
-              columns.push({
-                row: key,
-                col: j,
-                vertices,
-              });
-            }
-          }
-        }
-      });
-    });
-  });
-  log(columns);
-  const result = {};
-  Object.entries(colsByLine).forEach(([key, cols], i) => {
-    result[key] ??= {};
-    cols.forEach((col, j) => {
-      result[key][j] ??= [];
-      letters.forEach((letter) => {
-        const { vertices } = letter;
-        const [lt, , rb] = vertices;
-        if (lt.x >= col.min_x && lt.y >= col.min_y) {
-          if (col.max_x == -1) {
-            if (rb.y <= col.max_y) {
-              result[key][j].push(letter);
-            }
-          } else {
-            if (rb.x <= col.max_x && rb.y <= col.max_y) {
-              result[key][j].push(letter);
-            }
-          }
-        }
-      });
-    });
-  });
-  return result;
-}
 function dpVLines(vLines, line, space) {
   vLines[line].forEach((ob) => {
     if (ob.weight < space) return;
@@ -151,6 +94,34 @@ function normalDistribution(x, mu, sigma) {
   const exponent = -Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2));
   return (1 / (sigma * sqrt2Pi)) * Math.exp(exponent);
 }
+Array.prototype.minmax = function () {
+  let res = {
+    max: { x: null, y: null },
+    min: { x: null, y: null },
+  };
+  this.forEach((vertices, i) => {
+    vertices.forEach(({ x, y }, j) => {
+      if (i == 0 && j == 0) {
+        res = {
+          max: { x, y },
+          min: { x, y },
+        };
+        return;
+      }
+      if (x > res.max.x) res.max.x = x;
+      if (x < res.min.x) res.min.x = x;
+
+      if (y > res.max.y) res.max.y = y;
+      if (y < res.min.y) res.min.y = y;
+    });
+  });
+  // minmax 정보를 바탕으로 한, 전체 박스 영역 정보를 파악한다.
+  res.x = res.min.x;
+  res.y = res.min.y;
+  res.w = res.max.x - res.min.x + 1;
+  res.h = res.max.y - res.min.y + 1;
+  return res;
+};
 Array.prototype.MU = function () {
   return this.reduce((sum, value) => sum + value, 0) / this.length;
 };

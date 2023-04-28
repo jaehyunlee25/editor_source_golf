@@ -106,13 +106,11 @@ function guess(arVertices) {
     return res;
   };
 
-  const hLines = guessHorizontal(arVertices);
-  if (hLines.length == 0) return { hLines };
-  const avgLines = getAverageSize(hLines);
-  const vLines = guessVertical(hLines);
-  const { rows, colsByLine } = getColsByLine(hLines, vLines);
+  let LIMIT = 0;
+  const root = {};
+  recursiveGuess(arVertices, root);
 
-  return { hLines, vLines, rows, colsByLine, avgLines };
+  return root;
 
   function getAverageSize(hLines) {
     const res = {};
@@ -170,6 +168,17 @@ function guess(arVertices) {
 
           guessVLine(param, idxLine);
         }
+      });
+
+      vLines[idxLine] ??= [];
+      vLines[idxLine].push({
+        type: "vLine",
+        min: param.x + param.h - 1,
+        max: param.x + param.h - 1,
+        weight: 100,
+        middle: param.x + param.h - 1,
+        startY: param.y,
+        endY: param.h,
       });
     }
     function guessVLine(param, line) {
@@ -257,7 +266,7 @@ function guess(arVertices) {
       if (flg) hLines.push(hLine);
     }
   }
-  function getColsByLine(hLines, vLines) {
+  function getColsByLine(hLines, vLines, avgLines) {
     // 라인과 라인 사이, 즉 row의 영역을 구한다.
     const rows = {};
     let prev;
@@ -313,8 +322,10 @@ function guess(arVertices) {
         cPrev = ob;
       });
 
-      // column line 이 하나도 없을 때는 리턴한다.
+      // column line 이 하나도 없을 때는
+      // 전체를 하나의 column으로 해서 리턴한다.
       if (cPrev == undefined) return;
+
       obCols[key] ??= [];
       obCols[key].push({
         type: "col",
@@ -340,5 +351,120 @@ function guess(arVertices) {
     });
 
     return { rows, colsByLine };
+  }
+  function getObjectsByLine(arVertices) {
+    const hLines = guessHorizontal(arVertices);
+    if (hLines.length == 0) return { hLines };
+    const avgLines = getAverageSize(hLines);
+    const vLines = guessVertical(hLines);
+    const { rows, colsByLine } = getColsByLine(hLines, vLines, avgLines);
+    // 라인들을 횡분석, 종분석 방법으로 찾는다.
+    // 라인을 먼저 찾고,
+    // 라인별로 횡분석을 실시한다.
+    //const { hLines, vLines, rows, colsByLine, avgLines } = guess(arVertices);
+    // 횡라인과 종라인을 표시한다.
+    /* dpHLines(hLines);
+    Object.entries(vLines).forEach(([key, val]) => {
+      dpVLines(vLines, key, avgLines[key].avgW);
+    }); */
+
+    // 특정 row에 해당하는 object들을 구한다.
+    const objectsByLine = {};
+    Object.entries(rows).forEach(([, row]) => {
+      arVertices.forEach((vertices) => {
+        const [{ x, y }] = vertices;
+        if (y >= row.min) {
+          if (row.max == -1) {
+            // 맨 끝행일때,
+            objectsByLine[row.id] ??= [];
+            objectsByLine[row.id].push(vertices);
+            return;
+          }
+          if (y <= row.max) {
+            objectsByLine[row.id] ??= [];
+            objectsByLine[row.id].push(vertices);
+          }
+        }
+      });
+    });
+
+    // 특정 col에 있는 object들을 모은다.
+    const columns = [];
+    Object.entries(colsByLine).forEach(([key, cols], i) => {
+      cols.forEach((col, j) => {
+        arVertices.forEach((vertices) => {
+          const [lt, , rb] = vertices;
+          if (lt.x >= col.min_x && lt.y >= col.min_y) {
+            if (col.max_x == -1) {
+              if (rb.y <= col.max_y) {
+                columns.push({
+                  row: key,
+                  col: j,
+                  vertices,
+                });
+              }
+            } else {
+              if (rb.x <= col.max_x) {
+                if (col.max_y == -1) {
+                  columns.push({
+                    row: key,
+                    col: j,
+                    vertices,
+                  });
+                } else if (rb.y <= col.max_y) {
+                  columns.push({
+                    row: key,
+                    col: j,
+                    vertices,
+                  });
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+
+    const objectsByColumn = {};
+    Object.entries(colsByLine).forEach(([key, cols], i) => {
+      objectsByColumn[key] ??= {};
+      cols.forEach((col, j) => {
+        objectsByColumn[key][j] ??= [];
+        arVertices.forEach((vertices) => {
+          const [lt, , rb] = vertices;
+          if (lt.x >= col.min_x && lt.y >= col.min_y) {
+            if (col.max_x == -1) {
+              if (rb.y <= col.max_y) {
+                objectsByColumn[key][j].push(vertices);
+              }
+            } else {
+              if (rb.x <= col.max_x) {
+                if (col.max_y == -1) {
+                  objectsByColumn[key][j].push(vertices);
+                } else if (rb.y <= col.max_y) {
+                  objectsByColumn[key][j].push(vertices);
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+    return { objectsByLine, columns, objectsByColumn };
+  }
+  function recursiveGuess(param, parent) {
+    const { objectsByColumn } = getObjectsByLine(param);
+    Object.entries(objectsByColumn).forEach(([key, val]) => {
+      parent[key] ??= {};
+      Object.entries(val).forEach(([colkey, col]) => {
+        parent[key][colkey] ??= { vertices: col };
+        const res = getObjectsByLine(col);
+        if (res.hLines) return;
+        if (res.columns.length == 0) return;
+
+        parent[key][colkey].children = {};
+        recursiveGuess(col, parent[key][colkey].children);
+      });
+    });
   }
 }
