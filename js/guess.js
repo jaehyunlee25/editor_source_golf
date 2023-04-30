@@ -1,4 +1,4 @@
-function guess(arVertices) {
+function LINEDETECTOR(letters) {
   //const log = logOpt ? console.log : () => {};
 
   // 횡분석이 끝나면
@@ -105,10 +105,25 @@ function guess(arVertices) {
     res.h = res.max.y - res.min.y + 1;
     return res;
   };
+  Array.prototype.getVerticesArray = function () {
+    const res = [];
+    this.forEach(({ vertices }) => res.push(vertices));
+    return res;
+  };
+
+  const arVertices = letters.getVerticesArray();
+  const texts = (() => {
+    const res = {};
+    letters.forEach((letter) => {
+      const key = JSON.stringify(letter.vertices);
+      res[key] = letter.text;
+    });
+    return res;
+  })();
 
   let LIMIT = 0;
   const root = {};
-  recursiveGuess(arVertices, root);
+  mkString(arVertices, root);
 
   return root;
 
@@ -466,5 +481,38 @@ function guess(arVertices) {
         recursiveGuess(col, parent[key][colkey].children);
       });
     });
+  }
+  function mkString(arVertices, root) {
+    const guessRoot = {};
+    recursiveGuess(arVertices, guessRoot);
+    Object.entries(guessRoot).forEach(([key, cols]) => {
+      root[key] ??= {};
+      Object.entries(cols).forEach(([colkey, col]) => {
+        if (col.vertices.length == 0) return;
+        root[key][colkey] ??= {};
+        if (col.children) {
+          root[key][colkey].children = {};
+          let tmp = [];
+          Object.entries(col.children).forEach(([key, line]) => {
+            Object.entries(line).forEach(([linekey, col]) => {
+              const { vertices } = col;
+              if (vertices.length == 0) return;
+              tmp = tmp.concat(vertices);
+            });
+          });
+          mkString(tmp, root[key][colkey].children);
+          return;
+        }
+        root[key][colkey].text = verticesToText(col.vertices);
+      });
+    });
+  }
+  function verticesToText(ar) {
+    const str = [];
+    ar.trav((vertices) => {
+      const key = JSON.stringify(vertices);
+      str.push(texts[key]);
+    });
+    return str.join("");
   }
 }

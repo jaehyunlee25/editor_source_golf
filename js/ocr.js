@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-//const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
-const urlHeader = "http://localhost:8080";
+const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
+//const urlHeader = "http://localhost:8080";
 const cf = new jCommon();
 let letters = [];
 let vertices;
@@ -17,42 +17,9 @@ function display() {
   });
 }
 function mining() {
-  arVertices = letters.getVerticesArray();
-  letters.giveId();
-  const texts = (() => {
-    const res = {};
-    letters.forEach((letter) => {
-      const key = JSON.stringify(letter.vertices);
-      res[key] = letter.text;
-    });
-    return res;
-  })();
-  // 특정 영역의 라인을 찾아서 object로 만들어 주는 함수이다.
-  // 라인은 오브젝트들이 점유하고 있지 않은 공간의 평균선이다.
-
-  // 글자들을 영역에 표시한다.
-  // 분석을 시각적으로 확인하기 위한 절차이다.
-  // 알고리즘에는 영향을 미치지 않는다.
   display();
 
-  const res = guess(arVertices);
-  Object.entries(res).forEach(([key, cols]) => {
-    const tr = result.add("tr");
-    Object.entries(cols).forEach(([colkey, col]) => {
-      if (col.vertices.length == 0) return;
-      const td = result.add("td");
-      if (col.children) return;
-      td.str(verticesToText(col.vertices));
-    });
-  });
-  function verticesToText(ar) {
-    const str = [];
-    ar.trav((vertices) => {
-      const key = JSON.stringify(vertices);
-      str.push(texts[key]);
-    });
-    return str.join("");
-  }
+  const ld = LINEDETECTOR(letters);
 }
 
 let cnt = 0;
@@ -179,11 +146,7 @@ Array.prototype.vnx = function () {
 Array.prototype.giveId = function () {
   this.forEach((ob, i) => (ob.id = i));
 };
-Array.prototype.getVerticesArray = function () {
-  const res = [];
-  this.forEach(({ vertices }) => res.push(vertices));
-  return res;
-};
+
 Array.prototype.mkstr = function () {
   const str = [];
   this.forEach(({ text }) => {
@@ -228,46 +191,70 @@ function gravity(a, b, r) {
   return (a * b) / Math.pow(r, 2);
 }
 btnGo.onclick = function () {
-  letters = [];
   const param = new FormData();
   param.append("data", 1);
   param.append("file", iptFile.files[0]);
   jFile(urlHeader + "/fileUploadTest", param, (resp) => {
-    const { data, files, fullTextAnnotation: fta } = resp.jp();
-    const { text, pages } = fta;
-    const [page] = pages;
-    const { blocks, confidence, height, width, property } = page;
-    const { detectedBreak, detectedLanguages } = property;
-    ta.value = text;
-    //log(confidence, height, width);
-    detectedLanguages.forEach(({ languageCode, confidence }) => {
-      //log(languageCode, confidence);
-    });
-    blocks.forEach((ob) => {
-      const { blockType, confidence, property, boundingBox, paragraphs } = ob;
-      const { vertices } = boundingBox;
-      /* log(blockType, confidence, property);
-      log(boundingBox);
-      mkBox(vertices);
-      log(paragraphs); */
-
-      paragraphs.forEach(({ words, boundingBox, confidence, property }) => {
-        const { vertices } = boundingBox;
-        //mkBox(vertices, "blue");
-        words.forEach((ob) => {
-          const { boundingBox, confidence, property, symbols } = ob;
-          const { vertices } = boundingBox;
-          //mkBox(vertices, "green");
-          symbols.forEach((ob) => {
-            const { boundingBox, confidence, property, text } = ob;
-            const { vertices } = boundingBox;
-            letters.push({ text, vertices });
-            //mkBox(vertices, "blue");
-          });
-        });
+    log(JSON.stringify(resp.jp()));
+    const { data, files, detectedResult: dr } = resp.jp();
+    log(dr);
+    /* log(dc);
+    Object.entries(dc).forEach(([key, val]) => {
+      const table = result.add("table");
+      table.border = 1;
+      const tr = table.add("tr");
+      for (let i = 0; i < 10; i++) {
+        const td = tr.add("td");
+        td.style.minWidth = 50 + "px";
+      }
+      const line = [];
+      Object.entries(val).forEach(([colkey, col]) => {
+        tr.children[colkey].str(col.text);
+        line.push([colkey, col.text]);
       });
-    });
-    mining();
+      log(line.join(","));
+    }); */
+
+    return;
+
+    if (dc && dc[0] && dc[0][0]) {
+      const title_top = dc[0][0].children[0][0].text;
+      const title_bottom = dc[0][0].children[1][0].text;
+      if (title_top == "SMART" && title_bottom == "SCORE") {
+        const {
+          1: { text: date },
+          2: { text: time },
+          3: { text: userName },
+        } = dc[0];
+        const golf_club_name = dc[1][0].children[0][0].text;
+        const golf_course = dc[1][0].children[1][0].text.split(",");
+        const all_sum = dc[1][1].text;
+        const golf_score = (() => {
+          const res = [];
+          Object.entries(dc).forEach(([key, val]) => {
+            if (key < 2) return;
+            if (Object.entries(val).length < 10) return;
+            const tmp = [];
+            Object.entries(val).forEach(([k, score]) => {
+              const hole = k * 1 + 1;
+              tmp.push(score.text);
+            });
+            res.push(tmp);
+          });
+          return res;
+        })();
+        const res = {
+          date,
+          time,
+          userName,
+          golf_club_name,
+          all_sum,
+          golf_course,
+          golf_score,
+        };
+        log(JSON.stringify(res));
+      }
+    }
   });
 };
 iptFile.onchange = function () {
