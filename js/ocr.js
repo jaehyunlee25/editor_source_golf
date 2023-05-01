@@ -195,66 +195,8 @@ btnGo.onclick = function () {
   param.append("data", 1);
   param.append("file", iptFile.files[0]);
   jFile(urlHeader + "/fileUploadTest", param, (resp) => {
-    log(JSON.stringify(resp.jp()));
+    taResult.value = JSON.stringify(resp.jp());
     const { data, files, detectedResult: dr } = resp.jp();
-    log(dr);
-    /* log(dc);
-    Object.entries(dc).forEach(([key, val]) => {
-      const table = result.add("table");
-      table.border = 1;
-      const tr = table.add("tr");
-      for (let i = 0; i < 10; i++) {
-        const td = tr.add("td");
-        td.style.minWidth = 50 + "px";
-      }
-      const line = [];
-      Object.entries(val).forEach(([colkey, col]) => {
-        tr.children[colkey].str(col.text);
-        line.push([colkey, col.text]);
-      });
-      log(line.join(","));
-    }); */
-
-    return;
-
-    if (dc && dc[0] && dc[0][0]) {
-      const title_top = dc[0][0].children[0][0].text;
-      const title_bottom = dc[0][0].children[1][0].text;
-      if (title_top == "SMART" && title_bottom == "SCORE") {
-        const {
-          1: { text: date },
-          2: { text: time },
-          3: { text: userName },
-        } = dc[0];
-        const golf_club_name = dc[1][0].children[0][0].text;
-        const golf_course = dc[1][0].children[1][0].text.split(",");
-        const all_sum = dc[1][1].text;
-        const golf_score = (() => {
-          const res = [];
-          Object.entries(dc).forEach(([key, val]) => {
-            if (key < 2) return;
-            if (Object.entries(val).length < 10) return;
-            const tmp = [];
-            Object.entries(val).forEach(([k, score]) => {
-              const hole = k * 1 + 1;
-              tmp.push(score.text);
-            });
-            res.push(tmp);
-          });
-          return res;
-        })();
-        const res = {
-          date,
-          time,
-          userName,
-          golf_club_name,
-          all_sum,
-          golf_course,
-          golf_score,
-        };
-        log(JSON.stringify(res));
-      }
-    }
   });
 };
 iptFile.onchange = function () {
