@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>OCR</title>
+        <title>NameCard</title>
         <meta charset="utf-8" />
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
@@ -37,11 +37,16 @@
                 <button id="btnGo">이미지분석</button>
             </div>
         </div>
+        <div style = "height: 500px;">
+            <div>
+                <button id="btnDel">삭제</button>
+            </div>
+            <div style="position: relative;" id="reprod"></div>            
+        </div>
         <div>
             <textarea id="taResult" style="width: 1000px;"></textarea>
         </div>
         <div id="result"></div>
-        <div style="position: relative;" id="reprod"></div>            
         <table border="1" style="display: none;">
             <tbody id="tbl"></tbody>
         </table>
