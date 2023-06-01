@@ -195,6 +195,7 @@ btnGo.onclick = function () {
   param.append("data", 1);
   param.append("file", iptFile.files[0]);
   jFile(urlHeader + "/fileUploadTest", param, (resp) => {
+    //jFile(urlHeader + "/detect", param, (resp) => {
     taResult.value = JSON.stringify(resp.jp());
     const { data, files, detectedResult: dr } = resp.jp();
   });
@@ -203,6 +204,7 @@ iptFile.onchange = function () {
   const reader = new FileReader();
   reader.readAsDataURL(iptFile.files[0]);
   reader.onload = function () {
+    log(11);
     img.src = reader.result;
   };
 };

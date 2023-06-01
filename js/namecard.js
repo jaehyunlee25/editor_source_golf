@@ -90,11 +90,19 @@ btnGo.onclick = function () {
     taResult.value = JSON.stringify(resp.jp());
     const {
       detectedCells,
+      detectedResult,
       letters: detectedLetters,
       checksum: savedchecksum,
     } = resp.jp();
 
     log(detectedCells);
+    const res = [];
+    detectedCells.forEach(({ text }) => {
+      res.push(text);
+    });
+
+    log(res.join(","));
+    log(detectedResult);
     checksum = savedchecksum;
     letters = detectedLetters;
     display();
