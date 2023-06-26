@@ -72,6 +72,13 @@ function insertRow(template, element, object) {
     if (key == "golf_club_id") val = clubs[val].name;
     if (key == "content") return;
     if (key == "isDel") return;
+    if (key == "link") {
+      const a = tr[i].children[0];
+      a.style.width = 100 + "px";
+      a.href = val;
+      tr[i++].children[0].str("바로가기");
+      return;
+    }
     tr[i++].str(val);
   });
   TR.nm(0, 6, 0).objEvent = object;
