@@ -67,7 +67,6 @@ function setFashionList() {
     const { data } = resp.jp();
     elList.str("");
     data.forEach((row) => {
-      log(row);
       if (row.script_action_result == "normal") return;
       insertRow(tpListItem, elList, row);
     });
@@ -82,7 +81,6 @@ function insertRow(template, element, object) {
     if (key == "isDel") return;
     if (key == "created_at") return;
     if (key == "updated_at") return;
-    log(key, val);
     if (key == "thumbnail") {
       tr[i++].children[0].src = val;
       return;
