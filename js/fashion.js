@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
 const urlHeader = "https://dev.mnemosyne.co.kr/api/crawler";
-//const urlHeader = "http://localhost:8080";
+// const urlHeader = "http://localhost:8080";
 const apiHeader = "https://dev.mnemosyne.co.kr/api/reservation";
 const webHeader = "https://dev.mnemosyne.co.kr/html";
 const fileHeader = "https://mnemosynesolutions.co.kr/boardFile";
@@ -67,6 +67,7 @@ function setFashionList() {
     const { data } = resp.jp();
     elList.str("");
     data.forEach((row) => {
+      log(row);
       if (row.script_action_result == "normal") return;
       insertRow(tpListItem, elList, row);
     });
@@ -79,14 +80,24 @@ function insertRow(template, element, object) {
   let i = 0;
   Object.entries(object).forEach(([key, val]) => {
     if (key == "isDel") return;
+    if (key == "created_at") return;
+    if (key == "updated_at") return;
+    log(key, val);
     if (key == "thumbnail") {
       tr[i++].children[0].src = val;
       return;
     }
+    if (key == "link") {
+      if (val) {
+        tr[i].children[0].href = val;
+        tr[i++].children[0].str(val);
+      }
+      return;
+    }
     tr[i++].str(val);
   });
-  TR.nm(0, 6, 0).objFashion = object;
-  TR.nm(0, 6, 0).onclick = changemode;
+  TR.nm(0, 7, 0).objFashion = object;
+  TR.nm(0, 7, 0).onclick = changemode;
   element.appendChild(ROW);
 }
 function changemode() {
@@ -95,9 +106,10 @@ function changemode() {
   regMod.str("수정");
   delMod.style.display = "inline-block";
   const { objFashion } = this;
-  const { title, content, id } = objFashion;
+  const { title, content, id, link } = objFashion;
   iptTitle.value = title;
   txtContent.value = content;
+  iptLink.value = link;
   iptThumbnail.value = "";
   regMod.objFashion = objFashion;
   delMod.objFashion = objFashion;
@@ -114,6 +126,11 @@ function regFashion() {
     txtContent.focus();
     return;
   }
+  if (iptTitle.value == "") {
+    alert("You need to write the link.");
+    iptLink.focus();
+    return;
+  }
   if (iptThumbnail.files.length == 0) {
     alert("썸네일은 반드시 등록해야 합니다.");
     return;
@@ -124,6 +141,7 @@ function regFashion() {
     const param = {
       title: iptTitle.value,
       content: txtContent.value,
+      link: iptLink.value,
       thumbnail,
     };
     post(urlHeader + "/newGolfFashion", param, httpHeader, (resp) => {
@@ -136,6 +154,11 @@ function modFashion(objFashion) {
   if (iptTitle.value == "") {
     alert("You need to write the title.");
     iptTitle.focus();
+    return;
+  }
+  if (iptLink.value == "") {
+    alert("You need to write the link.");
+    iptLink.focus();
     return;
   }
   if (txtContent.value == "") {
@@ -151,12 +174,14 @@ function modFashion(objFashion) {
       modExec(thumbnail);
     });
   } else {
+    thumbnail = thumbnail.split("/").lastOne();
     modExec(thumbnail);
   }
   function modExec(thumbnail) {
     const param = {
       fashion_id,
       title: iptTitle.value,
+      link: iptLink.value,
       content: txtContent.value,
       thumbnail,
     };
