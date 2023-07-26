@@ -6,8 +6,6 @@ let rawClubs;
 let clubs;
 let groups;
 
-log(11);
-
 main();
 function main() {
   post(apiHeader + "dbGetGolfClub", {}, httpHeader, (data) => {
