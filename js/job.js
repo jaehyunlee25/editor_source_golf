@@ -1,5 +1,5 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "http://mnemosynesolutions.co.kr:8038";
+const urlHeader = "https://mnemosynesolutions.co.kr/job";
 // const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
