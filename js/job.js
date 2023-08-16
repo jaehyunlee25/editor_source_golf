@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://mnemosynesolutions.co.kr/job";
-// const urlHeader = "http://localhost:8038";
+// const urlHeader = "https://mnemosynesolutions.co.kr/job";
+const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
   "08월02주": "2023-08-13~2023-08-19",
@@ -12,6 +12,10 @@ const obWeek = {
 setWeek();
 main();
 function main(callback) {
+  getJobsByWeek(callback);
+  getUnsolved();
+}
+function getJobsByWeek(callback) {
   const param = {
     startDate: iptStart.value,
     endDate: iptEnd.value,
@@ -20,6 +24,36 @@ function main(callback) {
     const json = JSON.parse(resp);
     mkTable(json);
     if (callback) callback();
+  });
+}
+function getUnsolved(callback) {
+  post(urlHeader + "/getUnsolved", {}, httpHeader, (resp) => {
+    const json = JSON.parse(resp);
+    mkUnsolvedTable(json);
+    if (callback) callback();
+  });
+}
+function mkUnsolvedTable(json) {
+  unSolvedList.str("");
+  json.forEach((obj) => {
+    const tmpElem = jobElement.content;
+    const trFrag = document.importNode(tmpElem, true);
+    const tr = trFrag.children[0];
+    const tds = tr.children;
+    unSolvedList.appendChild(tr);
+    [
+      obj.id,
+      obj.name,
+      obj.area,
+      obj.progress,
+      obj.status,
+      obj.created_at,
+    ].forEach((str, i) => {
+      if (i == 5) {
+        str = mkDate(str);
+      }
+      tds[i].str(str);
+    });
   });
 }
 function setWeek() {
@@ -33,7 +67,7 @@ function setWeek() {
     const [start, end] = this.value.split("~");
     iptStart.value = start;
     iptEnd.value = end;
-    main();
+    getJobsByWeek();
   };
   selWeek.onchange();
 }
@@ -116,7 +150,7 @@ btnAddReal.onclick = function () {
   };
 
   post(urlHeader + "/addJob", param, httpHeader, (resp) => {
-    main();
+    getJobsByWeek();
   });
 };
 btnModReal.onclick = function () {
@@ -127,7 +161,7 @@ btnModReal.onclick = function () {
   param.status = elStatus.children[0].value;
 
   post(urlHeader + "/modJob", param, httpHeader, (resp) => {
-    main(() => {
+    getJobsByWeek(() => {
       Array.from(jobList.children).forEach((tr) => {
         if (tr.children[0].str() == param.id) tr.click();
       });
