@@ -48,8 +48,9 @@ function mkUnsolvedTable(json) {
       obj.progress,
       obj.status,
       obj.created_at,
+      obj.updated_at,
     ].forEach((str, i) => {
-      if (i == 5) {
+      if (i == 5 || i == 6) {
         str = mkDate(str);
       }
       tds[i].str(str);
@@ -86,8 +87,9 @@ function mkTable(json) {
       obj.progress,
       obj.status,
       obj.created_at,
+      obj.updated_at,
     ].forEach((str, i) => {
-      if (i == 5) {
+      if (i == 5 || i == 6) {
         str = mkDate(str);
       }
       tds[i].str(str);
@@ -109,6 +111,7 @@ function elementclick(e) {
   elProgress.str(this.children[3].str());
   elStatus.str(this.children[4].str());
   elDate.str(this.children[5].str());
+  elDateProc.str(this.children[6].str());
   [elName, elArea, elProgress, elStatus].forEach((el, i) => {
     const str = el.str();
     el.str("");
