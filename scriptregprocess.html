@@ -23,55 +23,63 @@
     <body>
         <div class="cover">
             <h3>골프장 스크립트 등록 프로세스</h3>
+            <h4>0. 프로토콜선택</h4>
+            <div>
+                <span>urlHeader: </span>
+                <select id="selUrlHeader">
+                    <option>https://mnemosynesolutions.co.kr/job</option>
+                    <option>http://localhost:8038</option>
+                </select>
+                <span>serverHeader: </span>
+                <select id="selServerHeader">
+                    <option>https://dev.mnemosyne.co.kr/api/crawler</option>
+                    <option>http://localhost:8080</option>
+                </select>
+            </div>
             <h4>1. 등록이 되어 있지 않은 골프장이라면, 처음부터 등록한다.</h4>
             <div>
                 <a href="http://mnemosynesolutions.co.kr/app/project/editor_source_golf/regGolfClub.html" target="_blank">등록하러가기</a>
             </div>
             <h4>2. 골프장 검색</h4>
             <div>
-                <div><input id="iptSearch"/></div>
                 <div>
-                    <table>
-                        <tbody id="elList"></tbody>
-                    </table>
+                    <span>uuid: </span><input id="iptUUID" style="width: 300px;"/>
+                    <span>engId: </span><input id="iptEngId"/>
+                    <button id="btnSearch">조회하기</button>
                 </div>
             </div>
-            <h4>3. 골프장 테이블 데이터 확인</h4>
             <div>
-                <table border="1">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <td>클럽명</td>
-                            <td>자료존재유무</td>
-                        </tr>
-                    </thead>
-                    <tbody id="tblList">
-                    </tbody>
-                </table>
-            </div>
-            <h4>4. 골프장 서버 데이터 확인</h4>
-            <div>
-                <table border="1">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <td>자료명</td>
-                            <td>자료존재유무</td>
-                        </tr>
-                    </thead>
-                    <tbody id="tblServerList">
-                        <!-- <tr>
-                            <td>script/login</td>
-                        </tr>
-                        <tr>
-                            <td>script/search_core</td>
-                        </tr>
-                        <tr>
-                            <td>script/search_dict</td>
-                        </tr>
-                        <tr>
-                            <td>script/search_logout</td>
-                        </tr> -->
-                    </tbody>
+                <table>
+                    <tr>
+                        <td>
+                            <h4>3. 골프장 테이블 데이터 확인</h4>
+                            <div>
+                                <table border="1">
+                                    <thead>
+                                        <tr style="text-align: center;">
+                                            <td>클럽명</td>
+                                            <td>자료존재유무</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblList"></tbody>
+                                </table>
+                            </div>
+                        </td>
+                        <td style="vertical-align:top;">
+                            <h4>4. 골프장 서버 데이터 확인</h4>
+                            <div>
+                                <table border="1">
+                                    <thead>
+                                        <tr style="text-align: center;">
+                                            <td>자료명</td>
+                                            <td>자료존재유무</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblServerList"></tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
