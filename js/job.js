@@ -120,7 +120,7 @@ function elementclick(e) {
     const ipt = i == 0 ? el.add("textarea") : el.add("input");
     ipt.style.width = 97 + "%";
     if (i == 0) ipt.style.height = 70 + "px";
-    ipt.value = el.rawStr;
+    ipt.value = str;
   });
 
   btnModReal.tr = this;
