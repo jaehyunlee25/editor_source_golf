@@ -107,6 +107,8 @@ function elementclick(e) {
   this.style.backgroundColor = "lightblue";
   this.selected = true;
 
+  const rawCon = this.children[1].rawStr;
+
   elId.str(this.children[0].str());
   elName.str(this.children[1].str());
   elArea.str(this.children[2].str());
@@ -120,7 +122,9 @@ function elementclick(e) {
     const ipt = i == 0 ? el.add("textarea") : el.add("input");
     ipt.style.width = 97 + "%";
     if (i == 0) ipt.style.height = 70 + "px";
-    ipt.value = str;
+
+    if (i == 0) ipt.value = rawCon;
+    else ipt.value = str;
   });
 
   btnModReal.tr = this;
