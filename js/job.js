@@ -94,6 +94,7 @@ function mkTable(json) {
         str = mkDate(str);
       }
       tds[i].str(str);
+      tds[i].rawStr = str;
     });
     tr.onmousemove = mousemove;
     tr.onmouseout = mouseout;
@@ -119,7 +120,7 @@ function elementclick(e) {
     const ipt = i == 0 ? el.add("textarea") : el.add("input");
     ipt.style.width = 97 + "%";
     if (i == 0) ipt.style.height = 70 + "px";
-    ipt.value = str;
+    ipt.value = el.rawStr;
   });
 
   btnModReal.tr = this;
