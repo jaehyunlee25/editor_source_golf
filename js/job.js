@@ -93,7 +93,14 @@ function mkTable(json) {
       if (i == 5 || i == 6) {
         str = mkDate(str);
       }
-      tds[i].str(str);
+
+      if (i == 1) {
+        const pre = tds[i].add("pre");
+        pre.str(str);
+      } else {
+        tds[i].str(str);
+      }
+
       tds[i].rawStr = str;
     });
     tr.onmousemove = mousemove;
