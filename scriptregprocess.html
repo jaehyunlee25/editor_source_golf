@@ -16,6 +16,9 @@
             td {
                 padding: 5px;
             }
+            select {
+                padding: 3px;
+            }
         </style>
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
@@ -77,6 +80,37 @@
                                     </thead>
                                     <tbody id="tblServerList"></tbody>
                                 </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="elClubDetail">
+                                <span>멤버쉽: </span>
+                                <select id="selMembership">
+                                    <option value="0">yes</option>
+                                    <option value="1">no</option>
+                                </select>
+                                <span>등급: </span>
+                                <select id="selGrade">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                </select>
+                                <span>특별회원: </span>
+                                <select id="selPrestige">
+                                    <option value="0">no</option>
+                                    <option value="1">yes</option>
+                                </select>
+                                <span>로그인장벽: </span>
+                                <select id="selLoginWall">
+                                    <option value="0">no</option>
+                                    <option value="1">yes</option>
+                                </select>
                             </div>
                         </td>
                     </tr>
