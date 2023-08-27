@@ -3,6 +3,7 @@ const urlHeader = "https://mnemosynesolutions.co.kr/job";
 // const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
+  "08월04주": "2023-08-27~2023-09-02",
   "08월03주": "2023-08-20~2023-08-26",
   "08월02주": "2023-08-13~2023-08-19",
   "08월01주": "2023-08-06~2023-08-12",
