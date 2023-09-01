@@ -110,6 +110,7 @@ function daybuttonclick() {
   this.className = "daybutton checked";
 
   getJobsByWeekEx(this.firstDay, this.endDay);
+  checkedDayButton = this;
 }
 function setWeek() {
   Object.entries(obWeek).forEach(([key, val], i) => {
@@ -219,7 +220,8 @@ btnAddReal.onclick = function () {
   };
 
   post(urlHeader + "/addJob", param, httpHeader, (resp) => {
-    getJobsByWeek();
+    // getJobsByWeek();
+    if (checkedDayButton) checkedDayButton.click();
   });
 };
 btnModReal.onclick = function () {
