@@ -232,11 +232,23 @@ btnModReal.onclick = function () {
   param.status = elStatus.children[0].value;
 
   post(urlHeader + "/modJob", param, httpHeader, (resp) => {
-    getJobsByWeek(() => {
-      Array.from(jobList.children).forEach((tr) => {
-        if (tr.children[0].str() == param.id) tr.click();
+    if (checkedDayButton) {
+      getJobsByWeekEx(
+        checkedDayButton.firstDay,
+        checkedDayButton.endDay,
+        () => {
+          Array.from(jobList.children).forEach((tr) => {
+            if (tr.children[0].str() == param.id) tr.click();
+          });
+        }
+      );
+    } else {
+      getJobsByWeek(() => {
+        Array.from(jobList.children).forEach((tr) => {
+          if (tr.children[0].str() == param.id) tr.click();
+        });
       });
-    });
+    }
   });
 };
 btnAdd.onclick = function () {
