@@ -34,6 +34,17 @@
             pre {
                 margin: 0px;
             }
+            .daybutton {
+                display: inline-block;
+                padding: 3px;
+                border: 1px solid darkgrey;
+                min-width: 30px;
+                text-align: center;
+                background-color: lightgray;
+            }
+            .checked {
+                background-color: white;
+            }
         </style>
     </head>
     <body>
@@ -49,6 +60,16 @@
                 <span> ~ </span>
                 <span>TO:</span>
                 <input id="iptEnd" placeholder="like yyyy-mm-dd" />
+                <span>
+                    <span class="daybutton">전체</span>
+                    <span class="daybutton">일</span>
+                    <span class="daybutton">월</span>
+                    <span class="daybutton">화</span>
+                    <span class="daybutton">수</span>
+                    <span class="daybutton">목</span>
+                    <span class="daybutton">금</span>
+                    <span class="daybutton">토</span>
+                </span>
             </div>
             <div>
                 <button id="btnAdd">추가</button>

@@ -10,17 +10,30 @@ const obWeek = {
   "07월04주": "2023-07-31~2023-08-05",
   "07월03주": "2023-07-24~2023-07-30",
 };
+let checkedDayButton;
 
 setWeek();
+setDayButton();
 main();
-function main(callback) {
-  getJobsByWeek(callback);
+function main() {
+  getJobsByWeek();
   getUnsolved();
 }
 function getJobsByWeek(callback) {
   const param = {
     startDate: iptStart.value,
-    endDate: iptEnd.value,
+    endDate: addDay(iptEnd.value, 1),
+  };
+  post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
+    const json = JSON.parse(resp);
+    mkTable(json);
+    if (callback) callback();
+  });
+}
+function getJobsByWeekEx(start, end, callback) {
+  const param = {
+    startDate: start,
+    endDate: end,
   };
   post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
     const json = JSON.parse(resp);
@@ -58,6 +71,45 @@ function mkUnsolvedTable(json) {
       tds[i].str(str);
     });
   });
+}
+function addDay(dateString, addNumber) {
+  // Date 객체 생성
+  const date = new Date(dateString);
+  // 하루를 밀리초로 계산 (24시간 * 60분 * 60초 * 1000밀리초)
+  const addDay = 24 * 60 * 60 * 1000 * addNumber;
+  // 주어진 날짜에 하루를 더합니다.
+  date.setTime(date.getTime() + addDay);
+  // 년, 월, 일을 각각 가져옵니다.
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1을 합니다.
+  const day = String(date.getDate()).padStart(2, "0");
+  // yyyy-mm-dd 형식의 문자열로 반환
+  return `${year}-${month}-${day}`;
+}
+function setDayButton() {
+  const week = selWeek.value;
+  const firstDay = week.split("~")[0];
+  const btns = doc.gcn("daybutton");
+  btns.forEach((button, i) => {
+    if (i == 0) {
+      button.firstDay = firstDay;
+      button.endDay = addDay(firstDay, 6);
+    } else {
+      button.firstDay = addDay(firstDay, i - 1);
+      button.endDay = addDay(button.firstDay, 1);
+    }
+    button.onclick = daybuttonclick;
+  });
+  btns[0].click();
+}
+function daybuttonclick() {
+  const btns = doc.gcn("daybutton");
+  btns.forEach((button) => {
+    button.className = "daybutton";
+  });
+  this.className = "daybutton checked";
+
+  getJobsByWeekEx(this.firstDay, this.endDay);
 }
 function setWeek() {
   Object.entries(obWeek).forEach(([key, val], i) => {
