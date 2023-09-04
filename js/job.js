@@ -124,6 +124,7 @@ function setWeek() {
     const [start, end] = this.value.split("~");
     iptStart.value = start;
     iptEnd.value = end;
+    setDayButton();
     getJobsByWeek();
   };
   selWeek.onchange();
