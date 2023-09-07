@@ -61,10 +61,11 @@
             </div>
             <div style="margin-bottom: 10px;">
                 <span>FROM:</span>                
-                <input id="iptStart" placeholder="like yyyy-mm-dd" />
+                <input id="iptStart" placeholder="like yyyy-mm-dd" style="width: 100px;padding: 3px;" />
                 <span> ~ </span>
                 <span>TO:</span>
-                <input id="iptEnd" placeholder="like yyyy-mm-dd" />
+                <input id="iptEnd" placeholder="like yyyy-mm-dd" style="width: 100px;padding: 3px;" />
+                <span>요일: </span>
                 <span>
                     <span class="daybutton">전체</span>
                     <span class="daybutton">일</span>
@@ -75,6 +76,12 @@
                     <span class="daybutton">금</span>
                     <span class="daybutton">토</span>
                 </span>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <span>분야: </span>
+                <select id="selPart" style="padding: 3px;">
+                    <option>전체</option>
+                </select>
             </div>
             <div>
                 <button id="btnAdd">추가</button>

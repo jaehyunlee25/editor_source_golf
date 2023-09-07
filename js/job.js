@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://mnemosynesolutions.co.kr/job";
-// const urlHeader = "http://localhost:8038";
+// const urlHeader = "https://mnemosynesolutions.co.kr/job";
+const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
   "09월01주": "2023-09-03~2023-09-09",
@@ -12,13 +12,27 @@ const obWeek = {
   "07월03주": "2023-07-24~2023-07-30",
 };
 let checkedDayButton;
+let currentList;
 
 setWeek();
+setPart();
 setDayButton();
 main();
 function main() {
   getJobsByWeek();
   getUnsolved();
+}
+function setPart() {
+  const param = {};
+  post(urlHeader + "/getPart", param, httpHeader, (resp) => {
+    const json = JSON.parse(resp);
+    json.forEach((row) => {
+      const { part } = row;
+      const opt = doc.createElement("option");
+      selPart.appendChild(opt);
+      opt.str(part);
+    });
+  });
 }
 function getJobsByWeek(callback) {
   const param = {
@@ -27,6 +41,7 @@ function getJobsByWeek(callback) {
   };
   post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
     const json = JSON.parse(resp);
+    currentList = json;
     mkTable(json);
     if (callback) callback();
   });
@@ -38,6 +53,7 @@ function getJobsByWeekEx(start, end, callback) {
   };
   post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
     const json = JSON.parse(resp);
+    currentList = json;
     mkTable(json);
     if (callback) callback();
   });
@@ -132,6 +148,9 @@ function setWeek() {
 function mkTable(json) {
   jobList.str("");
   json.forEach((obj) => {
+    if (selPart.value != "전체") {
+      if (obj.area != selPart.value) return;
+    }
     const tmpElem = jobElement.content;
     const trFrag = document.importNode(tmpElem, true);
     const tr = trFrag.children[0];
@@ -213,6 +232,9 @@ function mkDate(str) {
   ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   return formatted;
 }
+selPart.onchange = function () {
+  mkTable(currentList);
+};
 btnAddReal.onclick = function () {
   const param = {
     name: iptName.value,
