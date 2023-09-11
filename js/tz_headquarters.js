@@ -153,8 +153,15 @@ function setBoxes() {
 }
 function setBoxStateSelect() {
   boxes.forEach((box) => {
-    const vals = [0, 1, 2, 3, 4];
-    const strs = ["normal", "sys err", "web err", "search", "login"];
+    const vals = [0, 1, 2, 3, 4, -1];
+    const strs = [
+      "normal",
+      "sys err",
+      "web err",
+      "search",
+      "login",
+      "리스트제외",
+    ];
     const par = box.parentNode.children[1];
     const sel = par.add("select");
     sel.club = par.club;
