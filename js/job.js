@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://mnemosynesolutions.co.kr/job";
-// const urlHeader = "http://localhost:8038";
+// const urlHeader = "https://mnemosynesolutions.co.kr/job";
+const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
   "09월02주": "2023-09-10~2023-09-16",
@@ -17,6 +17,7 @@ let currentList;
 
 setWeek();
 setPart();
+setTag();
 setDayButton();
 main();
 function main() {
@@ -32,6 +33,18 @@ function setPart() {
       const opt = doc.createElement("option");
       selPart.appendChild(opt);
       opt.str(part);
+    });
+  });
+}
+function setTag() {
+  const param = {};
+  post(urlHeader + "/getTag", param, httpHeader, (resp) => {
+    const json = JSON.parse(resp);
+    json.forEach((row) => {
+      const { tag } = row;
+      const opt = doc.createElement("option");
+      selTag.appendChild(opt);
+      opt.str(tag);
     });
   });
 }
@@ -152,6 +165,9 @@ function mkTable(json) {
     if (selPart.value != "전체") {
       if (obj.area != selPart.value) return;
     }
+    if (selTag.value != "전체") {
+      if (!obj.name.has("[" + selTag.value + "]")) return;
+    }
     const tmpElem = jobElement.content;
     const trFrag = document.importNode(tmpElem, true);
     const tr = trFrag.children[0];
@@ -234,6 +250,9 @@ function mkDate(str) {
   return formatted;
 }
 selPart.onchange = function () {
+  mkTable(currentList);
+};
+selTag.onchange = function () {
   mkTable(currentList);
 };
 btnAddReal.onclick = function () {
