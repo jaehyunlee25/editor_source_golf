@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-// const urlHeader = "https://mnemosynesolutions.co.kr/job";
-const urlHeader = "http://localhost:8038";
+const urlHeader = "https://mnemosynesolutions.co.kr/job";
+// const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
   "09월02주": "2023-09-10~2023-09-16",
