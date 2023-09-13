@@ -1,6 +1,7 @@
 const httpHeader = { "Content-Type": "application/json" };
 // const urlHeader = "https://mnemosynesolutions.co.kr/job";
-const urlHeader = "http://localhost:8038";
+// const urlHeader = "http://localhost:8038";
+let urlHeader = "https://mnemosynesolutions.co.kr/job";
 const cf = new jCommon();
 const obWeek = {
   "09월02주": "2023-09-10~2023-09-16",
@@ -15,11 +16,16 @@ const obWeek = {
 let checkedDayButton;
 let currentList;
 
-setWeek();
-setPart();
-setTag();
-setDayButton();
-main();
+get(".env", {}, httpHeader, (resp) => {
+  let { urlHeader: url } = JSON.parse(resp);
+  urlHeader = url;
+  setWeek();
+  setPart();
+  setTag();
+  setDayButton();
+  main();
+});
+
 function main() {
   getJobsByWeek();
   getUnsolved();
