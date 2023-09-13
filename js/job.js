@@ -1,6 +1,6 @@
 const httpHeader = { "Content-Type": "application/json" };
-const urlHeader = "https://mnemosynesolutions.co.kr/job";
-// const urlHeader = "http://localhost:8038";
+// const urlHeader = "https://mnemosynesolutions.co.kr/job";
+const urlHeader = "http://localhost:8038";
 const cf = new jCommon();
 const obWeek = {
   "09월02주": "2023-09-10~2023-09-16",
@@ -89,6 +89,7 @@ function mkUnsolvedTable(json) {
     unSolvedList.appendChild(tr);
     [
       obj.id,
+      obj.project,
       obj.name,
       obj.area,
       obj.progress,
@@ -96,7 +97,7 @@ function mkUnsolvedTable(json) {
       obj.created_at,
       obj.updated_at,
     ].forEach((str, i) => {
-      if (i == 5 || i == 6) {
+      if (i == 6 || i == 7) {
         str = mkDate(str);
       }
       tds[i].str(str);
@@ -175,6 +176,7 @@ function mkTable(json) {
     jobList.appendChild(tr);
     [
       obj.id,
+      obj.project,
       obj.name,
       obj.area,
       obj.progress,
@@ -182,11 +184,11 @@ function mkTable(json) {
       obj.created_at,
       obj.updated_at,
     ].forEach((str, i) => {
-      if (i == 5 || i == 6) {
+      if (i == 6 || i == 7) {
         str = mkDate(str);
       }
 
-      if (i == 1) {
+      if (i == 2) {
         const pre = tds[i].add("pre");
         pre.str(str);
       } else {
@@ -206,23 +208,24 @@ function elementclick(e) {
   this.style.backgroundColor = "lightblue";
   this.selected = true;
 
-  const rawCon = this.children[1].rawStr;
+  const rawCon = this.children[2].rawStr;
 
   elId.str(this.children[0].str());
-  elName.str(this.children[1].str());
-  elArea.str(this.children[2].str());
-  elProgress.str(this.children[3].str());
-  elStatus.str(this.children[4].str());
-  elDate.str(this.children[5].str());
-  elDateProc.str(this.children[6].str());
-  [elName, elArea, elProgress, elStatus].forEach((el, i) => {
+  elProject.str(this.children[1].str());
+  elName.str(this.children[2].str());
+  elArea.str(this.children[3].str());
+  elProgress.str(this.children[4].str());
+  elStatus.str(this.children[5].str());
+  elDate.str(this.children[6].str());
+  elDateProc.str(this.children[7].str());
+  [elProject, elName, elArea, elProgress, elStatus].forEach((el, i) => {
     const str = el.str();
     el.str("");
-    const ipt = i == 0 ? el.add("textarea") : el.add("input");
+    const ipt = i == 1 ? el.add("textarea") : el.add("input");
     ipt.style.width = 97 + "%";
-    if (i == 0) ipt.style.height = 70 + "px";
+    if (i == 1) ipt.style.height = 70 + "px";
 
-    if (i == 0) ipt.value = rawCon;
+    if (i == 1) ipt.value = rawCon;
     else ipt.value = str;
   });
 
@@ -257,6 +260,7 @@ selTag.onchange = function () {
 };
 btnAddReal.onclick = function () {
   const param = {
+    project: iptProject.value,
     name: iptName.value,
     area: iptArea.value,
     progress: iptProgress.value,
@@ -270,6 +274,7 @@ btnAddReal.onclick = function () {
 };
 btnModReal.onclick = function () {
   const param = this.tr.obj;
+  param.project = elProject.children[0].value;
   param.name = elName.children[0].value;
   param.area = elArea.children[0].value;
   param.progress = elProgress.children[0].value;

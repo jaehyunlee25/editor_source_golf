@@ -107,6 +107,16 @@
                                         <td></td>
                                     </tr>
                                     <tr>
+                                        <td>프로젝트:</td>
+                                        <td>
+                                            <select id="iptProject" style="padding:3px;">
+                                                <option>티찜</option>
+                                                <option>표찜</option>
+                                                <option>관리</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>업무내용:</td>
                                         <td>
                                             <input id="iptName" />
@@ -143,6 +153,7 @@
                                 <thead>
                                     <tr style="text-align:center;">
                                         <td>아이디</td>
+                                        <td>프로젝트</td>
                                         <td style="max-width: 700px;min-width: 500px;">업무내용</td>
                                         <td>분야</td>
                                         <td>진척율</td>
@@ -162,6 +173,10 @@
                                     <tr>
                                         <td style="min-width: 70px;">아이디:</td>
                                         <td id="elId" style="min-width: 200px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>프로젝트:</td>
+                                        <td id="elProject"></td>
                                     </tr>
                                     <tr>
                                         <td>업무내용:</td>
@@ -206,6 +221,7 @@
         <template id="jobElement">
             <tr>
                 <td><!-- id --></td>
+                <td><!-- project --></td>
                 <td><!-- name --></td>
                 <td><!-- area --></td>
                 <td><!-- progress --></td>
