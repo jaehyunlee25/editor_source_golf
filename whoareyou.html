@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>업무일지</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <script src="js/jCommonSE.js"></script>
+        <script src="js/global.js"></script>
+        <style>
+            body {
+                font-size: 13px;
+            }
+            #cover {
+                width: 1500px;
+                margin: auto;
+            }
+            .member {
+                width: 100px;
+                height: 100px;
+                padding: 50px;
+                border-radius: 50%;
+                background-color: cadetblue;
+                text-align: center;
+                font-size: 18px;
+                border: 5px solid white;
+            }
+            .name {
+                font-size: 25px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="cover">
+            <h1>당신은 누구입니까?</h1>
+            <div>
+                <table>
+                    <tbody>
+                        <tr id="elMember"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <template id="tplMember">
+            <td>
+                <div class="member">
+                    <div><!-- comId --></div>
+                    <div class="name"><!-- name --></div>
+                    <div><!-- alias --></div>
+                    <div><!-- descripton --></div>
+                </div>
+            </td>
+        </template>
+        <script src="js/whoareyou.js"></script>
+    </body>
+</html>

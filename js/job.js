@@ -1,6 +1,4 @@
 const httpHeader = { "Content-Type": "application/json" };
-// const urlHeader = "https://mnemosynesolutions.co.kr/job";
-// const urlHeader = "http://localhost:8038";
 let urlHeader = "https://mnemosynesolutions.co.kr/job";
 const cf = new jCommon();
 const obWeek = {
@@ -15,20 +13,46 @@ const obWeek = {
 };
 let checkedDayButton;
 let currentList;
+let members = {};
+const strSetting = localStorage.getItem("mnemosyne_job_setting");
+const setting = strSetting ? strSetting.jp() : {};
+
+if (!setting.user) {
+  location.href = "whoareyou.html";
+}
 
 get(".env", {}, httpHeader, (resp) => {
-  let { urlHeader: url } = JSON.parse(resp);
+  let { urlHeader: url } = resp.jp();
   urlHeader = url;
+  post(urlHeader + "/getMember", {}, httpHeader, (resp) => {
+    const json = JSON.parse(resp);
+    json.forEach((member) => {
+      members[member.id] = member;
+    });
+    init();
+  });
+});
+
+function init() {
   setWeek();
   setPart();
   setTag();
-  setDayButton();
+  setProcDay();
+  setMember();
+  // setDayButton();
   main();
-});
-
+}
 function main() {
-  getJobsByWeek();
   getUnsolved();
+}
+function setMember() {
+  Object.entries(members).forEach(([id, member], i) => {
+    const option = doc.createElement("option");
+    option.value = id;
+    option.str(member.name + "(" + member.comId + ")");
+    iptWriter.appendChild(option);
+  });
+  if (setting.user) iptWriter.value = setting.user;
 }
 function setPart() {
   const param = {};
@@ -40,7 +64,11 @@ function setPart() {
       selPart.appendChild(opt);
       opt.str(part);
     });
+    if (setting.part) selPart.value = setting.part;
   });
+}
+function setProcDay() {
+  if (setting.procDay) selProcDay.value = setting.procDay;
 }
 function setTag() {
   const param = {};
@@ -52,12 +80,14 @@ function setTag() {
       selTag.appendChild(opt);
       opt.str(tag);
     });
+    if (setting.tag) selTag.value = setting.tag;
   });
 }
 function getJobsByWeek(callback) {
   const param = {
     startDate: iptStart.value,
     endDate: addDay(iptEnd.value, 1),
+    option: selProcDay.value,
   };
   post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
     const json = JSON.parse(resp);
@@ -70,6 +100,7 @@ function getJobsByWeekEx(start, end, callback) {
   const param = {
     startDate: start,
     endDate: end,
+    option: selProcDay.value,
   };
   post(urlHeader + "/getJobsByWeek", param, httpHeader, (resp) => {
     const json = JSON.parse(resp);
@@ -136,11 +167,13 @@ function setDayButton() {
       button.firstDay = addDay(firstDay, i - 1);
       button.endDay = addDay(button.firstDay, 1);
     }
+    button.index = i;
     button.onclick = daybuttonclick;
   });
-  btns[0].click();
+  if (setting.day != null) btns[setting.day].click();
 }
 function daybuttonclick() {
+  saveSetting("day", this.index);
   const btns = doc.gcn("daybutton");
   btns.forEach((button) => {
     button.className = "daybutton";
@@ -158,13 +191,18 @@ function setWeek() {
     selWeek.appendChild(opt);
   });
   selWeek.onchange = function () {
+    saveSetting("week", this.value);
     const [start, end] = this.value.split("~");
     iptStart.value = start;
     iptEnd.value = end;
     setDayButton();
-    getJobsByWeek();
   };
+  if (setting.week) selWeek.value = setting.week;
   selWeek.onchange();
+}
+function saveSetting(key, val) {
+  setting[key] = val;
+  localStorage.setItem("mnemosyne_job_setting", JSON.stringify(setting));
 }
 function mkTable(json) {
   jobList.str("");
@@ -174,6 +212,26 @@ function mkTable(json) {
     }
     if (selTag.value != "전체") {
       if (!obj.name.has("[" + selTag.value + "]")) return;
+    }
+    if (selProcDay.value != "all") {
+      const btns = doc.gcn("daybutton");
+      let start = iptStart.value;
+      let end = addDay(iptEnd.value, 1);
+      if (setting.day) {
+        start = btns[setting.day].firstDay;
+        end = btns[setting.day].endDay;
+      }
+      if (selProcDay.value == "create") {
+        if (obj.created_at >= start && obj.created_at < end) {
+        } else {
+          return;
+        }
+      } else if (selProcDay.value == "update") {
+        if (obj.updated_at >= start && obj.updated_at < end) {
+        } else {
+          return;
+        }
+      }
     }
     const tmpElem = jobElement.content;
     const trFrag = document.importNode(tmpElem, true);
@@ -187,17 +245,24 @@ function mkTable(json) {
       obj.area,
       obj.progress,
       obj.status,
+      obj.writer,
       obj.created_at,
       obj.updated_at,
     ].forEach((str, i) => {
-      if (i == 6 || i == 7) {
-        str = mkDate(str);
-      }
-
       if (i == 2) {
         const pre = tds[i].add("pre");
         pre.str(str);
       } else {
+        if (i == 6) {
+          const member = members[str];
+          str = member.name;
+          tds[i].member = member;
+        } else if (i == 7 || i == 8) {
+          str = mkDate(str);
+        } else if (i == 0) {
+          tds[i].jobId = str;
+          str = str.gh(8) + "...";
+        }
         tds[i].str(str);
       }
 
@@ -216,14 +281,15 @@ function elementclick(e) {
 
   const rawCon = this.children[2].rawStr;
 
-  elId.str(this.children[0].str());
+  elId.str(this.children[0].jobId);
   elProject.str(this.children[1].str());
   elName.str(this.children[2].str());
   elArea.str(this.children[3].str());
   elProgress.str(this.children[4].str());
   elStatus.str(this.children[5].str());
-  elDate.str(this.children[6].str());
-  elDateProc.str(this.children[7].str());
+  elWriter.str(this.children[6].str());
+  elDate.str(this.children[7].str());
+  elDateProc.str(this.children[8].str());
   [elProject, elName, elArea, elProgress, elStatus].forEach((el, i) => {
     const str = el.str();
     el.str("");
@@ -235,7 +301,20 @@ function elementclick(e) {
     else ipt.value = str;
   });
 
+  elWriter.str("");
+  const curMem = this.children[6].member;
+  const sel = elWriter.add("select");
+  sel.style.padding = "3px";
+  Object.entries(members).forEach(([id, mem], i) => {
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.str(mem.name + "(" + mem.comId + ")");
+    sel.appendChild(opt);
+  });
+  sel.value = curMem.id;
+
   btnModReal.tr = this;
+  btnDelReal.tr = this;
 }
 function mousemove(e) {
   if (this.selected) return;
@@ -258,10 +337,16 @@ function mkDate(str) {
   ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   return formatted;
 }
+selProcDay.onchange = function () {
+  saveSetting("procDay", this.value);
+  mkTable(currentList);
+};
 selPart.onchange = function () {
+  saveSetting("part", this.value);
   mkTable(currentList);
 };
 selTag.onchange = function () {
+  saveSetting("tag", this.value);
   mkTable(currentList);
 };
 btnAddReal.onclick = function () {
@@ -271,6 +356,7 @@ btnAddReal.onclick = function () {
     area: iptArea.value,
     progress: iptProgress.value,
     status: iptStatus.value,
+    writer: iptWriter.value,
   };
 
   post(urlHeader + "/addJob", param, httpHeader, (resp) => {
@@ -280,11 +366,19 @@ btnAddReal.onclick = function () {
 };
 btnModReal.onclick = function () {
   const param = this.tr.obj;
+  if (param.writer == "7aa5633c-52b3-11ee-a1bf-f220af5e408d") {
+  } else {
+    if (setting.user != param.writer) {
+      alert("작성자가 아니면 수정할 수 없습니다.");
+      return;
+    }
+  }
   param.project = elProject.children[0].value;
   param.name = elName.children[0].value;
   param.area = elArea.children[0].value;
   param.progress = elProgress.children[0].value;
   param.status = elStatus.children[0].value;
+  param.writer = elWriter.children[0].value;
 
   post(urlHeader + "/modJob", param, httpHeader, (resp) => {
     if (checkedDayButton) {
@@ -304,6 +398,16 @@ btnModReal.onclick = function () {
         });
       });
     }
+  });
+};
+btnDelReal.onclick = function () {
+  const param = this.tr.obj;
+  if (members[setting.user] != param.id) {
+    alert("작성자가 아니면 삭제할 수 없습니다.");
+    return;
+  }
+  post(urlHeader + "/delJob", param, httpHeader, (resp) => {
+    if (checkedDayButton) checkedDayButton.click();
   });
 };
 btnAdd.onclick = function () {
@@ -326,15 +430,6 @@ btnMod.onclick = function () {
     doc.gcn("leftWing")[0].style.display = "none";
     btnAdd.open = false;
 
-    doc.gcn("rightWing")[0].style.display = "block";
-    this.open = true;
-  }
-};
-btnDel.onclick = function () {
-  if (this.open) {
-    doc.gcn("rightWing")[0].style.display = "none";
-    this.open = false;
-  } else {
     doc.gcn("rightWing")[0].style.display = "block";
     this.open = true;
   }

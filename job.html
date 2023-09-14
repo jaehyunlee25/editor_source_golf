@@ -10,12 +10,18 @@
             body {
                 font-size: 13px;
             }
+            td {
+                padding: 3px;
+            }
+            pre {
+                margin: 0px;
+            }
+            input {
+                width: 95%;
+            }
             #cover {
                 width: 1500px;
                 margin: auto;
-            }
-            td {
-                padding: 3px;
             }
             .leftWing {
                 background-color: #faf609;
@@ -30,9 +36,6 @@
                 background-color: #eee;
                 max-height: 500px;
                 display:none;
-            }
-            pre {
-                margin: 0px;
             }
             .daybutton {
                 display: inline-block;
@@ -90,11 +93,18 @@
                         <option>전체</option>
                     </select>
                 </span>
+                <span>
+                    <span>기준일: </span>
+                    <select id="selProcDay" style="padding: 3px;">
+                        <option value="all">전체</option>
+                        <option value="create">등록일</option>
+                        <option value="update">처리일</option>
+                    </select>
+                </span>
             </div>
             <div>
                 <button id="btnAdd">추가</button>
                 <button id="btnMod">수정</button>
-                <button id="btnDel">삭제</button>
             </div>
             <table>
                 <tr>
@@ -109,7 +119,7 @@
                                     <tr>
                                         <td>프로젝트:</td>
                                         <td>
-                                            <select id="iptProject" style="padding:3px;">
+                                            <select id="iptProject" style="padding:3px;width:100%;">
                                                 <option>티찜</option>
                                                 <option>표찜</option>
                                                 <option>관리</option>
@@ -140,6 +150,12 @@
                                             <input id="iptStatus" />
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>작성자:</td>
+                                        <td>
+                                            <select id="iptWriter" style="padding:3px;"></select>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <div style="text-align:right;">
@@ -154,10 +170,11 @@
                                     <tr style="text-align:center;">
                                         <td>아이디</td>
                                         <td>프로젝트</td>
-                                        <td style="max-width: 700px;min-width: 500px;">업무내용</td>
+                                        <td style="max-width: 500px;min-width: 500px;">업무내용</td>
                                         <td>분야</td>
                                         <td>진척율</td>
                                         <td>상태</td>
+                                        <td>작성자</td>
                                         <td>등록일</td>
                                         <td>처리일</td>
                                     </tr>
@@ -195,6 +212,10 @@
                                         <td id="elStatus"></td>
                                     </tr>
                                     <tr>
+                                        <td>작성자:</td>
+                                        <td id="elWriter"></td>
+                                    </tr>
+                                    <tr>
                                         <td>등록일:</td>
                                         <td id="elDate"></td>
                                     </tr>
@@ -205,6 +226,7 @@
                                 </tbody>
                             </table>
                             <div style="text-align:right;">
+                                <button id="btnDelReal">삭제</button>
                                 <button id="btnModReal">수정</button>
                             </div>
                         </div>
@@ -226,6 +248,7 @@
                 <td><!-- area --></td>
                 <td><!-- progress --></td>
                 <td><!-- status --></td>
+                <td><!-- writer --></td>
                 <td><!-- created_at --></td>
                 <td><!-- udpated_at --></td>
             </tr>
