@@ -171,6 +171,7 @@ function setDayButton() {
     button.onclick = daybuttonclick;
   });
   if (setting.day != null) btns[setting.day].click();
+  else btns[0].click();
 }
 function daybuttonclick() {
   saveSetting("day", this.index);
