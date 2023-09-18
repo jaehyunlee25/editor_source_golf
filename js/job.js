@@ -55,7 +55,9 @@ function setMember() {
     selWriter.appendChild(option);
   });
   if (setting.user) iptWriter.value = setting.user;
+
   if (setting.writer) selWriter.value = setting.writer;
+  else selWriter.value = "all";
 }
 function setPart() {
   const param = {};
