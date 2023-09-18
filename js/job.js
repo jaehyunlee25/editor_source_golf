@@ -52,8 +52,10 @@ function setMember() {
     option.value = id;
     option.str(member.name + "(" + member.comId + ")");
     iptWriter.appendChild(option);
+    selWriter.appendChild(option);
   });
   if (setting.user) iptWriter.value = setting.user;
+  if (setting.user) selWriter.value = setting.writer;
 }
 function setPart() {
   const param = {};
@@ -206,35 +208,42 @@ function saveSetting(key, val) {
   setting[key] = val;
   localStorage.setItem("mnemosyne_job_setting", JSON.stringify(setting));
 }
+function checkFilter(obj) {
+  if (selPart.value != "전체") {
+    if (obj.area != selPart.value) return true;
+  }
+  if (selTag.value != "전체") {
+    if (!obj.name.has("[" + selTag.value + "]")) return true;
+  }
+  if (selProcDay.value != "all") {
+    const btns = doc.gcn("daybutton");
+    let start = iptStart.value;
+    let end = addDay(iptEnd.value, 1);
+    if (setting.day) {
+      start = btns[setting.day].firstDay;
+      end = btns[setting.day].endDay;
+    }
+    if (selProcDay.value == "create") {
+      if (obj.created_at >= start && obj.created_at < end) {
+      } else {
+        return true;
+      }
+    } else if (selProcDay.value == "update") {
+      if (obj.updated_at >= start && obj.updated_at < end) {
+      } else {
+        return true;
+      }
+    }
+  }
+  if (selWriter.value != "all") {
+    if (obj.writer != selWriter.value) return true;
+  }
+  return false;
+}
 function mkTable(json) {
   jobList.str("");
   json.forEach((obj) => {
-    if (selPart.value != "전체") {
-      if (obj.area != selPart.value) return;
-    }
-    if (selTag.value != "전체") {
-      if (!obj.name.has("[" + selTag.value + "]")) return;
-    }
-    if (selProcDay.value != "all") {
-      const btns = doc.gcn("daybutton");
-      let start = iptStart.value;
-      let end = addDay(iptEnd.value, 1);
-      if (setting.day) {
-        start = btns[setting.day].firstDay;
-        end = btns[setting.day].endDay;
-      }
-      if (selProcDay.value == "create") {
-        if (obj.created_at >= start && obj.created_at < end) {
-        } else {
-          return;
-        }
-      } else if (selProcDay.value == "update") {
-        if (obj.updated_at >= start && obj.updated_at < end) {
-        } else {
-          return;
-        }
-      }
-    }
+    if (checkFilter(obj)) return;
     const tmpElem = jobElement.content;
     const trFrag = document.importNode(tmpElem, true);
     const tr = trFrag.children[0];
@@ -339,6 +348,10 @@ function mkDate(str) {
   ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   return formatted;
 }
+selWriter.onchange = function () {
+  saveSetting("writer", this.value);
+  mkTable(currentList);
+};
 selProcDay.onchange = function () {
   saveSetting("procDay", this.value);
   mkTable(currentList);
