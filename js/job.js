@@ -48,11 +48,15 @@ function main() {
 }
 function setMember() {
   Object.entries(members).forEach(([id, member], i) => {
-    const option = doc.createElement("option");
-    option.value = id;
-    option.str(member.name + "(" + member.comId + ")");
-    iptWriter.appendChild(option);
-    selWriter.appendChild(option);
+    const option1 = doc.createElement("option");
+    const option2 = doc.createElement("option");
+    option1.value = id;
+    option2.value = id;
+    option1.str(member.name + "(" + member.comId + ")");
+    option2.str(member.name + "(" + member.comId + ")");
+
+    iptWriter.appendChild(option1);
+    selWriter.appendChild(option2);
   });
   if (setting.user) iptWriter.value = setting.user;
 
