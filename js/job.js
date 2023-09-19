@@ -388,6 +388,7 @@ btnAddReal.onclick = function () {
 btnModReal.onclick = function () {
   const param = this.tr.obj;
   if (param.writer == "7aa5633c-52b3-11ee-a1bf-f220af5e408d") {
+  } else if (param.writer == "634b1126-529f-11ee-a1bf-f220af5e408d"){
   } else {
     if (setting.user != param.writer) {
       alert("작성자가 아니면 수정할 수 없습니다.");
