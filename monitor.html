@@ -7,12 +7,21 @@
         <script src="js/jCommonSE.js"></script>
         <script src="js/global.js"></script>
         <style>
-            
+            input { padding: 3px; }
         </style>
     </head>
     <body>
         <div id="cover">
             <h2>티찜모니터v.0.0.1</h2>
+            <div>
+                <span>클럽이름:</span>
+                <input id = 'iptClubSearch' />
+                <span id = 'iptSelect'></span>
+            </div>
+            <div>
+                <span>선택된 클럽:</span>
+                <span id = 'elSelectedClub'></span>
+            </div>
         </div>
         <template id="jobElement">
             <tr>

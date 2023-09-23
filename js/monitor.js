@@ -9,8 +9,12 @@ get(".env", {}, httpHeader, (resp) => {
   main();
 });
 
-function main() {
+async function main() {
+  const list = await getGolfClubList();
+  log(list);
+  return;
   const clubId = "126fd385-ee24-11ec-a93e-0242ac11000a";
+
   conHomepage(clubId, (json) => {
     log(json);
     conLogin(clubId, (json) => {
@@ -20,6 +24,19 @@ function main() {
       });
     });
   });
+}
+function getGolfClubList() {
+  const prom = new Promise((res, rej) => {
+    try {
+      post(monitorHeader + "/getGolfClubList", {}, httpHeader, (resp) => {
+        const json = resp.jp();
+        res(json);
+      });
+    } catch (e) {
+      rej(e.toString());
+    }
+  });
+  return prom;
 }
 function conHomepage(clubId, callback) {
   post(
