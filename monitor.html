@@ -8,19 +8,44 @@
         <script src="js/global.js"></script>
         <style>
             input { padding: 3px; }
+            a { padding: 3px; font-size: 10px; }
+            #elSelectedClub { font-weight: bold; }
+            pre { 
+                width: 50%;
+                background-color: black;
+                color: white;
+                min-height: 100px;
+                max-height: 500px;
+                padding: 5px;
+                overflow: auto;
+            }
         </style>
     </head>
     <body>
         <div id="cover">
             <h2>티찜모니터v.0.0.1</h2>
-            <div>
+            <div style="margin-bottom: 10px;">
                 <span>클럽이름:</span>
                 <input id = 'iptClubSearch' />
-                <span id = 'iptSelect'></span>
+                <span id = 'elSelect'></span>
             </div>
             <div>
                 <span>선택된 클럽:</span>
                 <span id = 'elSelectedClub'></span>
+            </div>
+            <div>
+                <pre id="elDesc"></pre>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <button id="btnConHomepage">홈페이지</button>
+                <button id="btnConLoginpage">로그인페이지</button>
+                <button id="btnConSearchpage">검색페이지</button>
+                <button id="btnExecLogin">로그인실행</button>
+                <button id="btnExecDateSearch">날짜검색실행</button>
+            </div>
+            <div>
+                <div>RESULT:</div>
+                <pre id="elResult"></pre>
             </div>
         </div>
         <template id="jobElement">

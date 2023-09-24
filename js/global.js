@@ -3704,6 +3704,15 @@ function mkGameDetail(ob, p) {
       "</b>";
   }
 }
+Array.prototype.getmap = function (key) {
+  // 동일한 형태의 object를 가지고 있는 array를 대상으로
+  // 특정 유일값을 key로 [key: val] 오브젝트를 리턴해 준다.
+  const res = {};
+  this.forEach((obj) => {
+    res[obj[key]] = obj;
+  });
+  return res;
+};
 String.prototype.gt = function (num) {
   return this.substring(this.length - num, this.length);
 };
