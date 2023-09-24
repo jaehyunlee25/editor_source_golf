@@ -14,7 +14,7 @@ get(".env", {}, httpHeader, (resp) => {
 async function main() {
   clublist = await getGolfClubList();
   mapClublist = clublist.getmap("id");
-  log(clublist);
+  // log(clublist);
   return;
   const clubId = "126fd385-ee24-11ec-a93e-0242ac11000a";
 
@@ -82,7 +82,7 @@ iptClubSearch.onkeyup = function () {
   if (str == "") return;
   const res = [];
   clublist.forEach((club) => {
-    if (!club.name.has(str) && !club.eng.has(str)) return;
+    if (!club.name.has(str) && !club.eng_id.has(str)) return;
     res.push(club);
   });
 
