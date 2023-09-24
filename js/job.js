@@ -2,6 +2,7 @@ const httpHeader = { "Content-Type": "application/json" };
 let urlHeader = "https://mnemosynesolutions.co.kr/job";
 const cf = new jCommon();
 const obWeek = {
+  "09월04주": "2023-09-24~2023-09-30",
   "09월03주": "2023-09-17~2023-09-23",
   "09월02주": "2023-09-10~2023-09-16",
   "09월01주": "2023-09-03~2023-09-09",
@@ -388,7 +389,7 @@ btnAddReal.onclick = function () {
 btnModReal.onclick = function () {
   const param = this.tr.obj;
   if (param.writer == "7aa5633c-52b3-11ee-a1bf-f220af5e408d") {
-  } else if (setting.user == "634b1126-529f-11ee-a1bf-f220af5e408d"){
+  } else if (setting.user == "634b1126-529f-11ee-a1bf-f220af5e408d") {
   } else {
     if (setting.user != param.writer) {
       alert("작성자가 아니면 수정할 수 없습니다.");
