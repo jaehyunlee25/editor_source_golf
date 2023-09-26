@@ -42,8 +42,9 @@ async function main() {
   mkHistory();
 }
 function mkHistory() {
-  log(mapHistory);
+  elHistory.str("");
   const table = elHistory.add("table");
+  table.style.minWidth = "50%";
   table.border = 1;
   const thead = table.add("thead");
   const htr1 = thead.add("tr");
@@ -67,7 +68,12 @@ function mkHistory() {
   const tbody = table.add("tbody");
   Object.entries(mapHistory).forEach(
     ([clubId, { engId, name, main, login, search }]) => {
+      if (!engId.has(iptHistoryClub.value) && !name.has(iptHistoryClub.value))
+        return;
       const tr = tbody.add("tr");
+      tr.onmousemove = historymousemove;
+      tr.onmouseout = historymouseout;
+      tr.onclick = historyclick;
       [clubId, engId, name, main, login, search].forEach((val, i) => {
         const td = tr.add("td");
         td.str(val);
@@ -77,6 +83,13 @@ function mkHistory() {
     }
   );
 }
+function historymousemove() {
+  this.style.backgroundColor = "lightskyblue";
+}
+function historymouseout() {
+  this.style.backgroundColor = "white";
+}
+function historyclick() {}
 function conHomepage(clubId) {
   return new Promise((res, rej) => {
     post(
@@ -164,6 +177,9 @@ iptClubSearch.onkeyup = function () {
     a.club = club;
   });
 };
+iptHistoryClub.onkeyup = function () {
+  mkHistory();
+};
 btnConHomepage.onclick = async function () {
   elResult.str("");
   const { id } = elSelectedClub.club;
@@ -194,10 +210,8 @@ allStart.onclick = function () {
   elProgress.str("전체 골프장 연결테스트를 진행중입니다...");
   if (this.str() == "시작") {
     keyStack = Object.keys(mapClublist);
-    this.str("계속");
-  } else {
-    this.str("시작");
   }
+  this.disabled = true;
   let timercount = 0;
   timer = setInterval(async () => {
     timercount++;
@@ -237,4 +251,12 @@ allStart.onclick = function () {
 };
 allStop.onclick = function () {
   clearInterval(timer);
+  elProgress.str("전체 골프장 연결테스트를 잠시 멈추었습니다...");
+  allStart.str("계속");
+  allStart.disabled = false;
+};
+allReset.onclick = function () {
+  elProgress.str("전체 골프장 연결테스트를 끝내고 설정을 초기화하였습니다.");
+  allStart.str("시작");
+  allStart.disabled = false;
 };
