@@ -9,11 +9,12 @@ let timer;
 let keyStack = [];
 let history;
 let mapHistory = {};
-String.prototype.api = function () {
+String.prototype.api = function (param) {
+  param ??= {};
   const api = this.toString();
   const prom = new Promise((res, rej) => {
     try {
-      post(monitorHeader + "/" + api, {}, httpHeader, (resp) => {
+      post(monitorHeader + "/" + api, param, httpHeader, (resp) => {
         const json = resp.jp();
         res(json);
       });
@@ -71,6 +72,7 @@ function mkHistory() {
       if (!engId.has(iptHistoryClub.value) && !name.has(iptHistoryClub.value))
         return;
       const tr = tbody.add("tr");
+      tr.clubId = clubId;
       tr.onmousemove = historymousemove;
       tr.onmouseout = historymouseout;
       tr.onclick = historyclick;
@@ -89,7 +91,31 @@ function historymousemove() {
 function historymouseout() {
   this.style.backgroundColor = "white";
 }
-function historyclick() {}
+async function historyclick() {
+  const { back, content, close } = layerpop();
+  const { clubId } = this;
+  const res = await "getHistoryByClub".api({ clubId });
+  const data = { main: [], login: [], search: [] };
+  res.forEach((obj) => {
+    data[obj.type].push(obj);
+  });
+
+  const [div, table, pre] = tmPopup.get(content).children;
+
+  popBtnMain.onclick = function () {
+    popBtnDesc.str("Main");
+    pre.str(JSON.stringify(data["main"], null, 4));
+  };
+  popBtnLogin.onclick = function () {
+    popBtnDesc.str("Login");
+    pre.str(JSON.stringify(data["login"], null, 4));
+  };
+  popBtnSearch.onclick = function () {
+    popBtnDesc.str("Search");
+    pre.str(JSON.stringify(data["search"], null, 4));
+  };
+  popBtnMain.click();
+}
 function conHomepage(clubId) {
   return new Promise((res, rej) => {
     post(

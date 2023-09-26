@@ -28,6 +28,10 @@
             .head {
                 text-align: center;
             }
+            .popup {
+                padding: 10px;
+                font-size: 10px;
+            }
         </style>
     </head>
     <body>
@@ -73,18 +77,39 @@
                 <div id="elHistory" style = "margin-top: 5px;"></div>
             </div>
         </div>
-        <template id="jobElement">
-            <tr>
-                <td><!-- id --></td>
-                <td><!-- project --></td>
-                <td><!-- name --></td>
-                <td><!-- area --></td>
-                <td><!-- progress --></td>
-                <td><!-- status --></td>
-                <td><!-- writer --></td>
-                <td><!-- created_at --></td>
-                <td><!-- udpated_at --></td>
-            </tr>
+        <template id="tmPopup">
+            <div class="popup">
+                <div>
+                    <button id="popBtnMain">main</button>
+                    <button id="popBtnLogin">login</button>
+                    <button id="popBtnSearch">search</button>
+                    <span id="popBtnDesc" style="font-weight: bold;font-size: 13px;"></span>
+                </div>
+                <table style="width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%;">
+                                <table border=1 style="width: 100%;">
+                                    <thead>
+                                        <tr style="text-align: center;">
+                                            <td>eng_id</td>
+                                            <td>url</td>
+                                            <td>start</td>
+                                            <td>end</td>
+                                            <td>diff</td>
+                                            <td>created_at</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                        
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td style="width: 50%;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <pre></pre>
+            </div>
         </template>
         <script src="js/monitor.js"></script>
     </body>

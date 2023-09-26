@@ -3898,6 +3898,13 @@ HTMLElement.prototype.nm = function () {
 
   return el;
 };
+HTMLTemplateElement.prototype.get = function (parent) {
+  const content = this.content;
+  const cover = document.importNode(content, true);
+  const el = cover.children[0];
+  if (parent) parent.appendChild(el);
+  return el;
+};
 document.gcn = function (str) {
   const els = this.getElementsByClassName(str);
   return Array.from(els);
