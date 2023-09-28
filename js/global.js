@@ -3826,6 +3826,40 @@ String.prototype.gup = function () {
     });
   return param;
 };
+String.prototype.timestamp = function () {
+  var date = new Date(this);
+
+  var year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var day = String(date.getDate()).padStart(2, "0");
+
+  var hours = String(date.getHours()).padStart(2, "0");
+  var minutes = String(date.getMinutes()).padStart(2, "0");
+  var seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}:${seconds}`,
+    full: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
+  };
+};
+Number.prototype.timestamp = function () {
+  var date = new Date(this);
+
+  var year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var day = String(date.getDate()).padStart(2, "0");
+
+  var hours = String(date.getHours()).padStart(2, "0");
+  var minutes = String(date.getMinutes()).padStart(2, "0");
+  var seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}:${seconds}`,
+    full: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
+  };
+};
 HTMLElement.prototype.css = function (str) {
   if (typeof str != "string") {
     const res = [];

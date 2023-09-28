@@ -16,6 +16,7 @@
                 color: cornflowerblue;
             }
             #elHistory { font-size: 10px; }
+            #elRound { font-size: 10px; }
             pre { 
                 width: 50%;
                 background-color: black;
@@ -31,6 +32,15 @@
             .popup {
                 padding: 10px;
                 font-size: 10px;
+            }
+            .popre {
+                width: 100%;
+                max-width: 500px;
+                overflow: auto;
+            }
+            .popspan {
+                font-size: 15px;
+                font-weight:bold;
             }
         </style>
     </head>
@@ -69,9 +79,17 @@
                 <div>RESULT:</div>
                 <pre id="elResult"></pre>
             </div>
+            <div style = "margin-bottom: 20px;">
+                <div>
+                    <span>Round:</span>
+                    <select id="selRound" style="padding: 5px;"></select>
+                    <input id="iptRoundClub" />
+                </div>
+                <div id="elRound" style = "margin-top: 5px;"></div>
+            </div>
             <div>
                 <div>
-                    <span>HISTORY:</span>
+                    <span>Average:</span>
                     <input id="iptHistoryClub" />
                 </div>
                 <div id="elHistory" style = "margin-top: 5px;"></div>
@@ -79,6 +97,12 @@
         </div>
         <template id="tmPopup">
             <div class="popup">
+                <div style="text-align:center;">
+                    <span id="popClubName" style="font-size:20px;font-weight:bold;"></span>
+                    <span id="popEngId" style="font-size:15px;font-weight:bold;"></span>
+                    <span id="popClubId" style="font-size:15px;font-weight:bold;"></span>
+                    <button id="popEx">닫기</button>
+                </div>
                 <div>
                     <button id="popBtnMain">main</button>
                     <button id="popBtnLogin">login</button>
@@ -88,27 +112,32 @@
                 <table style="width: 100%;">
                     <tbody>
                         <tr>
-                            <td style="width: 50%;">
-                                <table border=1 style="width: 100%;">
-                                    <thead>
-                                        <tr style="text-align: center;">
-                                            <td>eng_id</td>
-                                            <td>url</td>
-                                            <td>start</td>
-                                            <td>end</td>
-                                            <td>diff</td>
-                                            <td>created_at</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>                                        
-                                    </tbody>
-                                </table>
+                            <td style="width: 50%;vertical-align:top;">
+                                <div style="max-height: 1000px;overflow: auto;">
+                                    <table border=1 style="width: 100%;">
+                                        <thead>
+                                            <tr style="text-align: center;">
+                                                <td>created_at</td>
+                                                <td>url</td>
+                                                <td>start</td>
+                                                <td>end</td>
+                                                <td>diff</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="popList">                                        
+                                        </tbody>
+                                    </table>
+                                </div>
                             </td>
-                            <td style="width: 50%;"></td>
+                            <td style="width: 50%;">
+                                <span class="popspan">console.log</span>
+                                <pre id="popLog" class="popre"></pre>
+                                <span class="popspan">dialog</span>
+                                <pre id="popDialog" class="popre"></pre>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-                <pre></pre>
             </div>
         </template>
         <script src="js/monitor.js"></script>
