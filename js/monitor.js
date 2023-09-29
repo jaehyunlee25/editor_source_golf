@@ -34,8 +34,10 @@ String.prototype.api = function (param, serverUrl) {
 };
 
 get(".env", {}, httpHeader, (resp) => {
-  let { monitorHeader: url, domain: serverDomain, port: startPort } = resp.jp();
+  let { monitorHeader: url, domain, port } = resp.jp();
   monitorHeader = url;
+  serverDomain = domain;
+  startPort = port;
   main();
 });
 
