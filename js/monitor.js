@@ -4,21 +4,25 @@ const cf = new jCommon();
 const log = console.log;
 let clublist;
 let mapClublist;
-let FLAG = true;
-let timer;
+
 let keyStack = [];
 let history;
 let mapHistory = {};
-let round;
+let round = new Date().getTime();
 let roundList;
 let roundHistory;
 let mapRoundHistory;
-String.prototype.api = function (param) {
+let timers = [];
+let serverDomain = "https://dev.mnemosyne.co.kr";
+let startPort = "";
+String.prototype.api = function (param, serverUrl) {
   param ??= {};
   const api = this.toString();
+  let url = monitorHeader;
+  if (serverUrl) url = serverUrl;
   const prom = new Promise((res, rej) => {
     try {
-      post(monitorHeader + "/" + api, param, httpHeader, (resp) => {
+      post(url + "/" + api, param, httpHeader, (resp) => {
         const json = resp.jp();
         res(json);
       });
@@ -30,7 +34,7 @@ String.prototype.api = function (param) {
 };
 
 get(".env", {}, httpHeader, (resp) => {
-  let { monitorHeader: url } = resp.jp();
+  let { monitorHeader: url, domain: serverDomain, port: startPort } = resp.jp();
   monitorHeader = url;
   main();
 });
@@ -276,19 +280,19 @@ iptRoundClub.onkeyup = function () {
 btnConHomepage.onclick = async function () {
   elResult.str("");
   const { id } = elSelectedClub.club;
-  const resp = await conHomepage(id);
+  const resp = await "connect".api({ clubId, round: 0, type: "main" });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnConLoginpage.onclick = async function () {
   elResult.str("");
   const { id } = elSelectedClub.club;
-  const resp = await "connect".api({ clubId, round, type: "login" });
+  const resp = await "connect".api({ clubId, round: 0, type: "login" });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnConSearchpage.onclick = async function () {
   elResult.str("");
   const { id } = elSelectedClub.club;
-  const resp = await "connect".api({ clubId, round, type: "search" });
+  const resp = await "connect".api({ clubId, round: 0, type: "search" });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnExecLogin.onclick = function () {
@@ -299,56 +303,50 @@ btnExecDateSearch.onclick = function () {
   elResult.str("");
   alert("구현중입니다.");
 };
+selServerCount.onchange = function () {
+  const lmt = selServerCount.value * 1;
+  timers = [];
+  for (let i = 0; i < lmt; i++) {
+    const url = serverDomain + (startPort + i);
+    timers.push(new TIMER(url, timerMessageCallback));
+  }
+};
+
+function timerMessageCallback(type, json) {
+  if (type == "club") {
+    const { url, clubId } = json;
+    log(url, clubId);
+    clubselect(clubId);
+  } else if (type == "result") {
+    elResult.str(JSON.stringify(json, null, 4));
+  } else if (type == "status") {
+    const { nth, lng } = json;
+    elProgress.str(`${nth}/${lng} 진행중입니다.`);
+  } else if (type == "end") {
+    const { msg } = json;
+    elProgress.str(msg);
+  }
+}
 allStart.onclick = function () {
   elProgress.str("전체 골프장 연결테스트를 진행중입니다...");
   if (this.str() == "시작") {
     round = new Date().getTime();
     keyStack = Object.keys(mapClublist);
+    timers.forEach((timer) => {
+      timer.start(keyStack, 1000);
+    });
+  } else {
+    timers.forEach((timer) => {
+      timer.continue();
+    });
   }
   this.disabled = true;
-  let timercount = 0;
-  timer = setInterval(async () => {
-    timercount++;
-    log(timercount);
-    if (timercount > 20) {
-      timercount = 0;
-      FLAG = true;
-      log("timeout");
-      return;
-    }
-    if (!FLAG) {
-      return;
-    }
-    FLAG = false;
-    const clubId = keyStack.shift();
-    if (!clubId) {
-      log("the end of all work!");
-      clearInterval(timer);
-      return;
-    }
-    log(clubId);
-    const lng = Object.keys(mapClublist).length;
-    const nth = lng - keyStack.length;
-    elProgress.str(`${nth}/${lng} 진행중입니다.`);
-    clubselect(clubId);
-    // const resHomepage = await conHomepage(clubId);
-    const resHomepage = await "connect".api({ clubId, round, type: "main" });
-    elResult.str(JSON.stringify(resHomepage, null, 4));
-    timercount = 0;
-    // await delay(5000);
-    const resLogin = await "connect".api({ clubId, round, type: "login" });
-    elResult.str(JSON.stringify(resLogin, null, 4));
-    timercount = 0;
-    // await delay(5000);
-    const resSearch = await "connect".api({ clubId, round, type: "search" });
-    elResult.str(JSON.stringify(resSearch, null, 4));
-    // await delay(5000);
-    FLAG = true;
-    timercount = 0;
-  }, 1000);
 };
 allStop.onclick = function () {
-  clearInterval(timer);
+  timers.forEach((timer) => {
+    timer.stop();
+  });
+
   elProgress.str("전체 골프장 연결테스트를 잠시 멈추었습니다...");
   allStart.str("계속");
   allStart.disabled = false;
@@ -356,6 +354,11 @@ allStop.onclick = function () {
 allReset.onclick = function () {
   elProgress.str("전체 골프장 연결테스트를 끝내고 설정을 초기화하였습니다.");
   allStart.str("시작");
+
+  timers.forEach((timer) => {
+    timer.init();
+  });
+
   allStart.disabled = false;
 };
 selRound.onchange = async function () {
