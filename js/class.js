@@ -8,13 +8,17 @@ class TIMER {
   isStopped = false;
   messagecallback;
   self;
+  round;
+  cntServer;
   constructor(url, messagecallback) {
     this.url = url;
     this.keyStack = keyStack;
     this.messagecallback = messagecallback;
   }
-  async start(keyStack, millisec) {
+  async start(keyStack, round, cntServer, millisec) {
     this.keyStack = keyStack;
+    this.round = round;
+    this.cntServer = cntServer;
     this.keyStackLength = keyStack.length;
     const self = this;
     this.timer = setInterval(() => {
@@ -64,18 +68,29 @@ class TIMER {
     self.messagecallback("club", { url: self.url, clubId });
     // const resHomepage = await conHomepage(clubId);
 
+    const round = self.round;
+    const cntServer = self.cntServer;
     let type = "main";
-    const resHomepage = await "connect".api({ clubId, round, type }, self.url);
+    const resHomepage = await "connect".api(
+      { clubId, round, cntServer, type },
+      self.url
+    );
     self.messagecallback("result", resHomepage);
     self.timercount = 0;
 
     type = "login";
-    const resLogin = await "connect".api({ clubId, round, type }, self.url);
+    const resLogin = await "connect".api(
+      { clubId, round, cntServer, type },
+      self.url
+    );
     self.messagecallback("result", resLogin);
     self.timercount = 0;
 
     type = "search";
-    const resSearch = await "connect".api({ clubId, round, type }, self.url);
+    const resSearch = await "connect".api(
+      { clubId, round, cntServer, type },
+      self.url
+    );
     self.messagecallback("result", resSearch);
 
     self.timercount = 0;

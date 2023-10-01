@@ -15,6 +15,19 @@ let mapRoundHistory;
 let timers = [];
 let serverDomain = "https://dev.mnemosyne.co.kr";
 let startPort = "";
+const urls = [
+  "https://dev.mnemosyne.co.kr/monitor/1",
+  "https://dev.mnemosyne.co.kr/monitor/2",
+  "https://dev.mnemosyne.co.kr/monitor/3",
+  "https://dev.mnemosyne.co.kr/monitor/4",
+  "https://dev.mnemosyne.co.kr/monitor/5",
+  "https://dev.mnemosyne.co.kr/monitor/6",
+  "https://dev.mnemosyne.co.kr/monitor/7",
+  "https://dev.mnemosyne.co.kr/monitor/8",
+  "https://dev.mnemosyne.co.kr/monitor/9",
+  "https://dev.mnemosyne.co.kr/monitor/10",
+];
+
 String.prototype.api = function (param, serverUrl) {
   param ??= {};
   const api = this.toString();
@@ -95,9 +108,9 @@ function mkRound() {
   //Object.entries(mapHistory).forEach(
   Object.entries(mapClublist).forEach(([clubId, club]) => {
     let { eng_id: engId, name } = club;
-    let main = -1;
-    let login = -1;
-    let search = -1;
+    let main = "no data";
+    let login = "no data";
+    let search = "no data";
     if (mapRoundHistory[clubId]) {
       const hist = mapRoundHistory[clubId];
       main = hist.main && hist.main.diff;
@@ -114,7 +127,9 @@ function mkRound() {
       const td = tr.add("td");
       td.str(val);
       if (i > 2) td.style.textAlign = "right";
-      if (val == -1) td.style.backgroundColor = "pink";
+      if (val == -1) td.style.backgroundColor = "lightgray";
+      if (val == "no data") td.style.backgroundColor = "lightskyblue";
+      if (val == -2) td.style.backgroundColor = "pink";
     });
   });
 }
@@ -146,9 +161,9 @@ function mkHistory() {
   //Object.entries(mapHistory).forEach(
   Object.entries(mapClublist).forEach(([clubId, club]) => {
     let { eng_id: engId, name } = club;
-    let main = -1;
-    let login = -1;
-    let search = -1;
+    let main = "no data";
+    let login = "no data";
+    let search = "no data";
     if (mapHistory[clubId]) {
       main = mapHistory[clubId].main;
       login = mapHistory[clubId].login;
@@ -165,7 +180,9 @@ function mkHistory() {
       const td = tr.add("td");
       td.str(val);
       if (i > 2) td.style.textAlign = "right";
-      if (val == -1) td.style.backgroundColor = "pink";
+      if (val == -1) td.style.backgroundColor = "lightgray";
+      if (val == "no data") td.style.backgroundColor = "lightskyblue";
+      if (val == -2) td.style.backgroundColor = "pink";
     });
   });
 }
@@ -192,7 +209,7 @@ async function historyclick() {
   const [div, btns, table, pre] = tmPopup.get(content).children;
   popClubName.str(res[0].name);
   popEngId.str(res[0].eng_id);
-  popClubId.str("(" + res[0].id + ")");
+  popClubId.str("(" + res[0].golf_club_id + ")");
   popEx.onclick = close;
 
   popBtnMain.onclick = function () {
@@ -221,21 +238,49 @@ function popuphistoryclick() {
 }
 function mkPopList(list) {
   popList.str("");
-  list.forEach((obj) => {
+  const mapList = {};
+  // 단독으로 검사한 내용은 round 번호를 부여한다.
+  list.forEach((obj, i) => {
+    let { round } = obj;
+    if (round == 0) round = 200 + i + 1;
+    obj.round = round;
+    mapList[round] = obj;
+  });
+  // 빠진 round 정보를 채운다.
+  roundList.forEach(({ round }) => {
+    const { date, time, full } = round.timestamp();
+    const rstr = date + "t" + time + "z";
+    mapList[round] ??= {
+      round,
+      url: "",
+      start: 0,
+      end: 0,
+      diff: 0,
+      created_at: round > 10000 ? rstr : "",
+    };
+  });
+  // 새롭게 list를 구성한다.
+  const res = [];
+  Object.entries(mapList).forEach(([round, obj]) => {
+    res.push(obj);
+  });
+  res.desc("created_at");
+  log(res);
+  res.forEach((obj) => {
     const tr = popList.add("tr");
     tr.history = obj;
     tr.onmousemove = historymousemove;
     tr.onmouseout = historymouseout;
     tr.onclick = popuphistoryclick;
 
-    const { created_at, url, start, end, diff } = obj;
-    [created_at, url, start, end, diff].forEach((val, i) => {
+    const { round, url, start, end, diff } = obj;
+    [round, url, start, end, diff].forEach((val, i) => {
       const td = tr.add("td");
+      td.str(val);
       if (i == 0 || i == 2 || i == 3) {
-        td.str(val.timestamp().full);
-      } else {
-        td.str(val);
+        if (val > 10000) td.str(val.timestamp().full);
       }
+      if (val == 0 || val == -1) td.str("");
       if (i > 1) td.style.textAlign = "right";
     });
   });
@@ -281,20 +326,36 @@ iptRoundClub.onkeyup = function () {
 };
 btnConHomepage.onclick = async function () {
   elResult.str("");
-  const { id } = elSelectedClub.club;
-  const resp = await "connect".api({ clubId, round: 0, type: "main" });
+  const { id: clubId } = elSelectedClub.club;
+  const cntServer = selServerCount.value;
+  const resp = await "connect".api({
+    clubId,
+    round: 0,
+    cntServer,
+    type: "main",
+  });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnConLoginpage.onclick = async function () {
   elResult.str("");
-  const { id } = elSelectedClub.club;
-  const resp = await "connect".api({ clubId, round: 0, type: "login" });
+  const { id: clubId } = elSelectedClub.club;
+  const resp = await "connect".api({
+    clubId,
+    round: 0,
+    cntServer,
+    type: "login",
+  });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnConSearchpage.onclick = async function () {
   elResult.str("");
-  const { id } = elSelectedClub.club;
-  const resp = await "connect".api({ clubId, round: 0, type: "search" });
+  const { id: clubId } = elSelectedClub.club;
+  const resp = await "connect".api({
+    clubId,
+    round: 0,
+    cntServer,
+    type: "search",
+  });
   elResult.str(JSON.stringify(resp, null, 4));
 };
 btnExecLogin.onclick = function () {
@@ -308,8 +369,10 @@ btnExecDateSearch.onclick = function () {
 selServerCount.onchange = function () {
   const lmt = selServerCount.value * 1;
   timers = [];
+
   for (let i = 0; i < lmt; i++) {
-    const url = serverDomain + (startPort + i);
+    //const url = serverDomain + (startPort + i);
+    const url = urls[i];
     timers.push(new TIMER(url, timerMessageCallback));
   }
 };
@@ -334,8 +397,9 @@ allStart.onclick = function () {
   if (this.str() == "시작") {
     round = new Date().getTime();
     keyStack = Object.keys(mapClublist);
+    cntServer = selServerCount.value * 1;
     timers.forEach((timer) => {
-      timer.start(keyStack, 1000);
+      timer.start(keyStack, round, cntServer, 1000);
     });
   } else {
     timers.forEach((timer) => {
