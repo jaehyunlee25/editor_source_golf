@@ -339,6 +339,7 @@ btnConHomepage.onclick = async function () {
 btnConLoginpage.onclick = async function () {
   elResult.str("");
   const { id: clubId } = elSelectedClub.club;
+  const cntServer = selServerCount.value;
   const resp = await "connect".api({
     clubId,
     round: 0,
@@ -350,6 +351,7 @@ btnConLoginpage.onclick = async function () {
 btnConSearchpage.onclick = async function () {
   elResult.str("");
   const { id: clubId } = elSelectedClub.club;
+  const cntServer = selServerCount.value;
   const resp = await "connect".api({
     clubId,
     round: 0,
