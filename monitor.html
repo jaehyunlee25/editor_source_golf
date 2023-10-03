@@ -43,10 +43,14 @@
                 font-size: 15px;
                 font-weight:bold;
             }
+            .allstartpop {
+                height: 80vh;
+                overflow: auto;                
+            }
         </style>
     </head>
     <body>
-        <div id="cover">
+        <div id="cover" style="font-size: 12px;">
             <h2>티찜모니터v.0.0.1</h2>
             <div style="margin-bottom: 10px;">
                 <span>서버개수</span>
@@ -61,14 +65,24 @@
                     <option value = 8>8 개</option>
                     <option value = 9>9 개</option>
                     <option value = 10>10 개</option>
+                    <option value = 11>11 개</option>
+                    <option value = 12>12 개</option>
+                    <option value = 13>13 개</option>
+                    <option value = 14>14 개</option>
+                    <option value = 15>15 개</option>
+                    <option value = 16>16 개</option>
+                    <option value = 17>17 개</option>
+                    <option value = 18>18 개</option>
+                    <option value = 19>19 개</option>
+                    <option value = 20>20 개</option>
                 </select>
             </div>
             <div style="margin-bottom: 10px;">
                 <span>전체:</span>
                 <span>
-                    <button id = "allStart">시작</button>
-                    <button id = "allStop">멈춤</button>
-                    <button id = "allReset">끝내기</button>
+                    <button id = "allStart" style="font-size: 12px;">시작</button>
+                    <button id = "allStop" style="font-size: 12px;">멈춤</button>
+                    <button id = "allReset" style="font-size: 12px;">끝내기</button>
                 </span>
                 <span id = "elProgress"></span>
             </div>
@@ -85,21 +99,35 @@
                 <pre id="elDesc"></pre>
             </div>
             <div style="margin-bottom: 10px;">
-                <button id="btnConHomepage">홈페이지</button>
-                <button id="btnConLoginpage">로그인페이지</button>
-                <button id="btnConSearchpage">검색페이지</button>
-                <button id="btnExecLogin">로그인실행</button>
-                <button id="btnExecDateSearch">날짜검색실행</button>
+                <button id="btnConHomepage" style="font-size: 12px;">홈페이지</button>
+                <button id="btnConLoginpage" style="font-size: 12px;">로그인페이지</button>
+                <button id="btnConSearchpage" style="font-size: 12px;">검색페이지</button>
+                <button id="btnExecLogin" style="font-size: 12px;">로그인실행</button>
+                <button id="btnExecDateSearch" style="font-size: 12px;">날짜검색실행</button>
             </div>
             <div>
                 <div>RESULT:</div>
                 <pre id="elResult"></pre>
             </div>
             <div style = "margin-bottom: 20px;">
-                <div>
+                <div style="margin-bottom: 5px;">
                     <span>Round:</span>
-                    <select id="selRound" style="padding: 5px;"></select>
+                    <select id="selRound" style="padding: 5px;font-size: 12px;"></select>
                     <input id="iptRoundClub" />
+                </div>
+                <div>
+                    <table style="width: 30%;font-size: 12px;">
+                        <tbody>
+                            <tr style="background-color: lightgray;text-align: center;">
+                                <td>round</td>
+                                <td>server</td>
+                                <td>start</td>
+                                <td>end</td>
+                                <td>diff(sec)</td>
+                            </tr>
+                            <tr id="elRoundInfo"></tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div id="elRound" style = "margin-top: 5px;"></div>
             </div>

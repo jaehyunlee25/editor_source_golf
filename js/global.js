@@ -3837,9 +3837,12 @@ String.prototype.timestamp = function () {
   var minutes = String(date.getMinutes()).padStart(2, "0");
   var seconds = String(date.getSeconds()).padStart(2, "0");
 
+  var millisec = String(date.getMilliseconds()).padStart(3, "0");
+
   return {
     date: `${year}-${month}-${day}`,
     time: `${hours}:${minutes}:${seconds}`,
+    millisec,
     full: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
   };
 };
@@ -3854,11 +3857,25 @@ Number.prototype.timestamp = function () {
   var minutes = String(date.getMinutes()).padStart(2, "0");
   var seconds = String(date.getSeconds()).padStart(2, "0");
 
+  var millisec = String(date.getMilliseconds()).padStart(3, "0");
+
   return {
     date: `${year}-${month}-${day}`,
     time: `${hours}:${minutes}:${seconds}`,
+    millisec,
     full: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
   };
+};
+Number.prototype.sectotime = function () {
+  const hours = Math.floor(this / 3600);
+  const minutes = Math.floor((this - hours * 3600) / 60);
+  const seconds = this - hours * 3600 - minutes * 60;
+
+  return [
+    hours.toString().padStart(2, "0"),
+    minutes.toString().padStart(2, "0"),
+    seconds.toString().padStart(2, "0"),
+  ].join(":");
 };
 HTMLElement.prototype.css = function (str) {
   if (typeof str != "string") {

@@ -10,16 +10,27 @@ let history;
 let mapHistory = {};
 let round = new Date().getTime();
 let roundList;
+let mapRoundList;
 let roundHistory;
 let mapRoundHistory;
 let timers = [];
 let serverDomain = "https://dev.mnemosyne.co.kr";
 let startPort = "";
 const urls = [
+  "https://monitor.mnemosyne.co.kr/monitor/1",
+  "https://monitor.mnemosyne.co.kr/monitor/2",
   "https://dev.mnemosyne.co.kr/monitor/1",
+  "https://monitor.mnemosyne.co.kr/monitor/3",
+  "https://monitor.mnemosyne.co.kr/monitor/4",
   "https://dev.mnemosyne.co.kr/monitor/2",
+  "https://monitor.mnemosyne.co.kr/monitor/5",
+  "https://monitor.mnemosyne.co.kr/monitor/6",
   "https://dev.mnemosyne.co.kr/monitor/3",
+  "https://monitor.mnemosyne.co.kr/monitor/7",
+  "https://monitor.mnemosyne.co.kr/monitor/8",
   "https://dev.mnemosyne.co.kr/monitor/4",
+  "https://monitor.mnemosyne.co.kr/monitor/9",
+  "https://monitor.mnemosyne.co.kr/monitor/10",
   "https://dev.mnemosyne.co.kr/monitor/5",
   "https://dev.mnemosyne.co.kr/monitor/6",
   "https://dev.mnemosyne.co.kr/monitor/7",
@@ -58,6 +69,7 @@ async function main() {
   clublist = await "getGolfClubList".api();
   mapClublist = clublist.getmap("id");
   roundList = await "getRoundList".api();
+  mapRoundList = roundList.getmap("round");
   history = await "getHistory".api();
   history.forEach((obj) => {
     const { clubId, engId, name, type, average_diff } = obj;
@@ -68,7 +80,8 @@ async function main() {
   mkHistory();
 }
 async function getRound() {
-  roundList.forEach(({ round }, i) => {
+  roundList.forEach((obj, i) => {
+    const { round } = obj;
     const opt = document.createElement("option");
     opt.value = round;
     if (round <= 200) {
@@ -378,7 +391,6 @@ selServerCount.onchange = function () {
     timers.push(new TIMER(url, timerMessageCallback));
   }
 };
-
 function timerMessageCallback(type, json) {
   if (type == "club") {
     const { url, clubId } = json;
@@ -396,6 +408,12 @@ function timerMessageCallback(type, json) {
 }
 allStart.onclick = function () {
   elProgress.str("전체 골프장 연결테스트를 진행중입니다...");
+  const { back, content, close } = layerpop();
+  const div = content.add("div");
+  div.className = "allstartpop";
+  div.str("hello");
+  back.onclick = close;
+  return;
   if (this.str() == "시작") {
     round = new Date().getTime();
     keyStack = Object.keys(mapClublist);
@@ -430,7 +448,24 @@ allReset.onclick = function () {
   allStart.disabled = false;
 };
 selRound.onchange = async function () {
-  roundHistory = await "getRoundHistory".api({ round: selRound.value });
+  elRoundInfo.str("");
+  const { round, cntServer, start, end, diff } = mapRoundList[this.value];
+  [round, cntServer, start, end, diff].forEach((val, i) => {
+    const td = elRoundInfo.add("td");
+    if (i == 2 || i == 3) {
+      const { date, time, millisec, full } = val.timestamp();
+      td.str([date, time + "." + millisec].join("<br>"));
+    } else if (i == 4) {
+      td.str(val.sectotime());
+    } else {
+      td.str(val);
+    }
+    td.style.border = "1px solid gray";
+    td.style.fontSize = "10px";
+    td.style.textAlign = "center";
+  });
+
+  roundHistory = await "getRoundHistory".api({ round });
   mapRoundHistory = {};
   roundHistory.forEach((hist) => {
     mapRoundHistory[hist.golf_club_id] ??= {};
