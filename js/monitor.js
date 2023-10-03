@@ -4,6 +4,7 @@ const cf = new jCommon();
 const log = console.log;
 let clublist;
 let mapClublist;
+let mapAsCell;
 
 let keyStack = [];
 let history;
@@ -382,41 +383,56 @@ btnExecDateSearch.onclick = function () {
   alert("구현중입니다.");
 };
 selServerCount.onchange = function () {
-  const lmt = selServerCount.value * 1;
+  const servercount = selServerCount.value * 1 - 1;
   timers = [];
-
-  for (let i = 0; i < lmt; i++) {
-    //const url = serverDomain + (startPort + i);
+  servercount.shuffle().forEach((i) => {
     const url = urls[i];
     timers.push(new TIMER(url, timerMessageCallback));
-  }
+  });
 };
 function timerMessageCallback(type, json) {
   if (type == "club") {
     const { url, clubId } = json;
     log(url, clubId);
     clubselect(clubId);
+  } else if (type == "start") {
+    mapAsCell[json.clubId].setStart(json);
   } else if (type == "result") {
     elResult.str(JSON.stringify(json, null, 4));
+    mapAsCell[json.clubId].setResult(json);
+  } else if (type == "timeout") {
+    mapAsCell[json.clubId].setTimeout(json);
   } else if (type == "status") {
     const { nth, lng } = json;
     elProgress.str(`${nth}/${lng} 진행중입니다.`);
   } else if (type == "end") {
     const { msg } = json;
     elProgress.str(msg);
+    allStart.disabled = false;
   }
 }
 allStart.onclick = function () {
   elProgress.str("전체 골프장 연결테스트를 진행중입니다...");
   const { back, content, close } = layerpop();
-  const div = content.add("div");
-  div.className = "allstartpop";
-  div.str("hello");
-  back.onclick = close;
-  return;
+  content.style.width = "90%";
+  tmAllStart.get(content);
+  btnAsClose.onclick = close;
+  asList.str("");
+  mapAsCell = {};
+  clublist.forEach((club, i) => {
+    let tr;
+    if (i % 25 == 0) {
+      tr = asList.add("tr");
+    } else {
+      tr = asList.children[asList.children.length - 1];
+    }
+    const td = tmAsCell.get(tr);
+    mapAsCell[club.id] = new ASCELL(i + 1, club, td);
+  });
+
   if (this.str() == "시작") {
     round = new Date().getTime();
-    keyStack = Object.keys(mapClublist);
+    keyStack = Object.keys(mapClublist).shuffle();
     cntServer = selServerCount.value * 1;
     timers.forEach((timer) => {
       timer.start(keyStack, round, cntServer, 1000);

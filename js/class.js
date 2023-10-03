@@ -10,6 +10,12 @@ class TIMER {
   self;
   round;
   cntServer;
+
+  execStack = [];
+  execClubId;
+  execType;
+
+  challenge = false;
   constructor(url, messagecallback) {
     this.url = url;
     this.keyStack = keyStack;
@@ -32,68 +38,105 @@ class TIMER {
     this.isStopped = false;
   }
   init() {
+    clearInterval(this.timer);
     this.timercount = 0;
     this.FLAG = true;
     this.keyStack = [];
     this.isStopped = false;
-    clearInterval(this.timer);
   }
   async allstart_timeraction(self) {
+    // 멈춤버튼이 눌린 상태에선 실행하지 않는다.
     if (self.isStopped) return;
 
     self.timercount++;
-    log(self.url, self.timercount);
-
     if (self.timercount > 20) {
       self.timercount = 0;
       self.FLAG = true;
-      log(self.url, "timeout");
-      return;
+      self.messagecallback("timeout", {
+        clubId: self.execClubId,
+        type: self.execType,
+      });
+      if (!self.challenge) {
+        // alert("타임아웃, 재시작::" + self.execType);
+        self.execStack.unshift(self.execType);
+        self.challenge = true;
+      } else {
+        // alert("재타임아웃, 끝::" + self.execType);
+        self.challenge = false;
+      }
     }
-
+    log(self.url, self.timercount);
     if (!self.FLAG) return;
 
     self.FLAG = false;
-    const clubId = self.keyStack.shift();
-    if (!clubId) {
-      self.messagecallback("end", { msg: "the end of all work!" });
-      self.init();
-      return;
+    if (self.execStack.length == 0) {
+      self.execClubId = self.keyStack.shift();
+      if (!self.execClubId) {
+        self.messagecallback("end", { msg: "the end of all work!" });
+        self.init();
+        return;
+      }
+      self.execStack = ["main", "login", "search"];
+      const lng = self.keyStackLength;
+      const nth = lng - self.keyStack.length;
+      const clubId = self.execClubId;
+      self.messagecallback("status", { nth, lng });
+      self.messagecallback("club", { url: self.url, clubId });
     }
+    self.execType = self.execStack.shift();
 
-    const lng = self.keyStackLength;
-    const nth = lng - self.keyStack.length;
-
-    self.messagecallback("status", { nth, lng });
-    self.messagecallback("club", { url: self.url, clubId });
-    // const resHomepage = await conHomepage(clubId);
-
+    const clubId = self.execClubId;
+    const type = self.execType;
     const round = self.round;
     const cntServer = self.cntServer;
-    let type = "main";
-    const resHomepage = await "connect".api(
-      { clubId, round, cntServer, type },
+    self.messagecallback("start", { clubId, type });
+    const result = await "connect".api(
+      { clubId, type, round, cntServer },
       self.url
     );
-    self.messagecallback("result", resHomepage);
-    self.timercount = 0;
-
-    type = "login";
-    const resLogin = await "connect".api(
-      { clubId, round, cntServer, type },
-      self.url
-    );
-    self.messagecallback("result", resLogin);
-    self.timercount = 0;
-
-    type = "search";
-    const resSearch = await "connect".api(
-      { clubId, round, cntServer, type },
-      self.url
-    );
-    self.messagecallback("result", resSearch);
-
+    self.messagecallback("result", result);
     self.timercount = 0;
     self.FLAG = true;
+    self.challenge = false;
+  }
+}
+class ASCELL {
+  id;
+  club;
+  td;
+  head;
+  name;
+  login;
+  main;
+  search;
+  constructor(numId, club, td) {
+    this.id = numId;
+    this.club = club;
+    this.td = td;
+    const [asCellHead] = td.gba("class", "asCellHead");
+    const [asCellName] = td.gba("class", "asCellName");
+    const [main, login, search] = td.gba("class", "asButton");
+    this.head = asCellHead;
+    this.name = asCellName;
+    this.main = main;
+    this.login = login;
+    this.search = search;
+
+    asCellHead.str(this.id);
+    asCellName.str(club.name.limit(6));
+  }
+  setStart(json) {
+    const { type } = json;
+    this[type].style.backgroundColor = "orange";
+  }
+  setResult(json) {
+    const { type, diff } = json;
+    if (diff == -1) this[type].style.backgroundColor = "lightgray";
+    else if (diff == -2) this[type].style.backgroundColor = "tomato";
+    else this[type].style.backgroundColor = "lime";
+  }
+  setTimeout(json) {
+    const { type } = json;
+    this[type].style.backgroundColor = "dodgerblue";
   }
 }

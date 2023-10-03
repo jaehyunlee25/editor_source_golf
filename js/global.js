@@ -3713,6 +3713,18 @@ Array.prototype.getmap = function (key) {
   });
   return res;
 };
+Array.prototype.shuffle = function () {
+  // 배열의 복사본을 만들어 원본 배열은 변경하지 않도록 함
+  let newArray = this.slice();
+  for (let i = newArray.length - 1; i > 0; i--) {
+    // 0부터 i 사이의 임의의 인덱스 선택
+    const j = Math.floor(Math.random() * (i + 1));
+    // newArray[i]와 newArray[j]의 값을 교환
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+
+  return newArray;
+};
 String.prototype.gt = function (num) {
   return this.substring(this.length - num, this.length);
 };
@@ -3826,6 +3838,11 @@ String.prototype.gup = function () {
     });
   return param;
 };
+String.prototype.limit = function (num) {
+  let str = this.toString();
+  if (str.length > num) str = str.gh(num / 2) + "..." + str.gt(num / 2);
+  return str;
+};
 String.prototype.timestamp = function () {
   var date = new Date(this);
 
@@ -3876,6 +3893,17 @@ Number.prototype.sectotime = function () {
     minutes.toString().padStart(2, "0"),
     seconds.toString().padStart(2, "0"),
   ].join(":");
+};
+Number.prototype.shuffle = function () {
+  // 0부터 n까지의 숫자로 구성된 배열 생성
+  let array = Array.from({ length: this + 1 }, (_, i) => i);
+  for (let i = array.length - 1; i > 0; i--) {
+    // 0부터 i 사이의 임의의 인덱스 선택
+    const j = Math.floor(Math.random() * (i + 1));
+    // array[i]와 array[j]의 값을 교환
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 };
 HTMLElement.prototype.css = function (str) {
   if (typeof str != "string") {
