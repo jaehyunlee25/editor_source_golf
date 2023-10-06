@@ -148,7 +148,12 @@ function mkUnsolvedTable(json) {
       if (i == 6 || i == 7) {
         str = mkDate(str);
       }
-      tds[i].str(str);
+      if (i == 2) {
+        const pre = tds[i].add("pre");
+        pre.str(str);
+      } else {
+        tds[i].str(str);
+      }
     });
   });
 }
