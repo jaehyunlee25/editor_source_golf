@@ -108,6 +108,7 @@ function getJobsByWeek(callback) {
   });
 }
 function getJobsByWeekEx(start, end, callback) {
+  log(start, end);
   const param = {
     startDate: start,
     endDate: end,
@@ -178,7 +179,7 @@ function setDayButton() {
   btns.forEach((button, i) => {
     if (i == 0) {
       button.firstDay = firstDay;
-      button.endDay = addDay(firstDay, 6);
+      button.endDay = addDay(firstDay, 7);
     } else {
       button.firstDay = addDay(firstDay, i - 1);
       button.endDay = addDay(button.firstDay, 1);
