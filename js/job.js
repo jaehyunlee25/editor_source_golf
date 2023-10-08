@@ -382,7 +382,7 @@ selTag.onchange = function () {
 btnAddReal.onclick = function () {
   const param = {
     project: iptProject.value,
-    name: iptName.value,
+    name: iptName.value.split("'").join("\\'"),
     area: iptArea.value,
     progress: iptProgress.value,
     status: iptStatus.value,
@@ -405,7 +405,7 @@ btnModReal.onclick = function () {
     }
   }
   param.project = elProject.children[0].value;
-  param.name = elName.children[0].value;
+  param.name = elName.children[0].value.split("'").join("\\'");
   param.area = elArea.children[0].value;
   param.progress = elProgress.children[0].value;
   param.status = elStatus.children[0].value;
