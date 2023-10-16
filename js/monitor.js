@@ -45,7 +45,6 @@ String.prototype.api = function (param, serverUrl) {
   const api = this.toString();
   let url = monitorHeader;
   if (serverUrl) url = serverUrl;
-  log(param);
   const prom = new Promise((res, rej) => {
     try {
       post(
@@ -321,20 +320,22 @@ function delay(milliseconds) {
   });
 }
 async function datesearch(list) {
-  /* const club = list.shift();
-  if (!club) {
-    log("the end of work!!");
-    return;
-  } */
-  const result = {};
+  const neolist = list.shuffle().cutto(20);
+  neolist.forEach((ar, i) => {
+    const search = new SEARCH(ar, urls[i]);
+    search.start();
+  });
+
+  /* const result = {};
   list.forEach(async (club, i) => {
     if (i > 19) return;
-    const param = { clubId: club.id };
+    const param = { clubId: club.id, proc: club.proc };
     result[i] = { clubId: club.id, url: urls[i] };
-    const body = await club.proc.api(param, urls[i]);
+    const body = await "datesearch".api(param, urls[i]);
+    log(club.id, body);
     result[i].body = body;
     log(result);
-  });
+  }); */
 
   /* const param = { clubId: club.id };
   const body = await club.proc.api(param, urls[2]);

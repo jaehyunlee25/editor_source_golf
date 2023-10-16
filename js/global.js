@@ -3725,6 +3725,25 @@ Array.prototype.shuffle = function () {
 
   return newArray;
 };
+Array.prototype.cutto = function (m) {
+  let chunks = Array.from({ length: m }, () => []);
+  let baseSize = Math.floor(this.length / m);
+  let remainder = this.length % m;
+
+  for (let i = 0, chunkIndex = 0; i < this.length; i++) {
+    if (
+      chunks[chunkIndex].length <
+      baseSize + (chunkIndex < remainder ? 1 : 0)
+    ) {
+      chunks[chunkIndex].push(this[i]);
+    } else {
+      chunkIndex++;
+      chunks[chunkIndex].push(this[i]);
+    }
+  }
+
+  return chunks;
+};
 String.prototype.gt = function (num) {
   return this.substring(this.length - num, this.length);
 };

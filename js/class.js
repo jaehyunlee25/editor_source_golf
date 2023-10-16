@@ -142,3 +142,45 @@ class ASCELL {
     this[type].style.backgroundColor = "dodgerblue";
   }
 }
+class SEARCH {
+  list;
+  server;
+  result;
+  constructor(ar, addr) {
+    this.list = ar;
+    this.server = addr;
+  }
+  async start() {
+    this.result = [];
+    const copylist = JSON.parse(JSON.stringify(this.list));
+    await this.exec(copylist);
+  }
+  async exec(list) {
+    const club = list.shift();
+    if (!club) {
+      log("end> ", this.server);
+      this.result.forEach((res, i) => {
+        if (!res.body) {
+          log("no body> ", res);
+          return;
+        }
+        if (!res.body.jsonstr) {
+          log("no jsonstr> ", res);
+        }
+      });
+      return;
+    }
+    const i = this.list.length - list.length - 1;
+    const param = { clubId: club.id, proc: club.proc };
+    this.result[i] = { clubId: club.id, url: this.server };
+    let body;
+    try {
+      body = await "datesearch".api(param, this.server);
+    } catch (e) {
+      body = JSON.stringify(param);
+    }
+    this.result[i].body = body;
+
+    await this.exec(list);
+  }
+}
