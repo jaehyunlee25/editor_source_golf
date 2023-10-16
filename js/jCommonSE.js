@@ -18,8 +18,9 @@ function ajaxcallforgeneral() {
     j.xmlHttp = new XMLHttpRequest();
     j.xmlHttp.onreadystatechange = on_ReadyStateChange;
     j.xmlHttp.open("POST", addr, true);
-    j.xmlHttp.onerror = function () {
-      log("error> ", j.xmlHttp.statusText);
+    j.xmlHttp.onerror = function (e) {
+      log("error> ", e.toString());
+      if (j.ajaxerror) j.ajaxerror(e);
     };
     // header :: cors에 결정적
     // j.xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
