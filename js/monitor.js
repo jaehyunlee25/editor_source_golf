@@ -15,8 +15,8 @@ let mapRoundList;
 let roundHistory;
 let mapRoundHistory;
 let timers = [];
-let serverDomain = "https://dev.mnemosyne.co.kr";
-let startPort = "";
+let logfile = [];
+// let serverDomain = "https://dev.mnemosyne.co.kr";
 const urls = [
   "https://monitor.mnemosyne.co.kr/monitor/1",
   "https://monitor.mnemosyne.co.kr/monitor/2",
@@ -47,11 +47,20 @@ String.prototype.api = function (param, serverUrl) {
   if (serverUrl) url = serverUrl;
   const prom = new Promise((res, rej) => {
     try {
-      post(url + "/" + api, param, httpHeader, (resp) => {
-        const json = resp.jp();
-        res(json);
-      });
+      post(
+        url + "/" + api,
+        param,
+        httpHeader,
+        (resp) => {
+          const json = resp.jp();
+          res(json);
+        },
+        (readyState, status) => {
+          log(readyState, status);
+        }
+      );
     } catch (e) {
+      log("error> ", e.toString);
       rej(e.toString());
     }
   });
@@ -61,8 +70,7 @@ String.prototype.api = function (param, serverUrl) {
 get(".env", {}, httpHeader, (resp) => {
   let { monitorHeader: url, domain, port } = resp.jp();
   monitorHeader = url;
-  serverDomain = domain;
-  startPort = port;
+  // serverDomain = domain;
   main();
 });
 
@@ -312,6 +320,34 @@ function delay(milliseconds) {
     setTimeout(res, milliseconds); // return 할 게 없으니, 따로 reject을 설정하지 않는다.
   });
 }
+async function datesearch(list) {
+  /* const club = list.shift();
+  if (!club) {
+    log("the end of work!!");
+    return;
+  } */
+  const result = {};
+  list.forEach(async (club, i) => {
+    if (i > 19) return;
+    const param = { clubId: club.id };
+    result[i] = { clubId: club.id, url: urls[i] };
+    const body = await club.proc.api(param, urls[i]);
+    result[i].body = body;
+    log(result);
+  });
+
+  /* const param = { clubId: club.id };
+  const body = await club.proc.api(param, urls[2]);
+  log(body); */
+
+  /* logfile.push(club.id + "::" + club.eng_id);
+  const param = { clubId: club.id };
+  if (club.proc) proc = club.proc;
+  const body = await proc.api(param);
+
+  logfile.push(JSON.stringify(body));
+  await datesearch(list); */
+}
 iptClubSearch.onkeyup = function () {
   elSelect.str("");
   elDesc.str("");
@@ -378,9 +414,11 @@ btnExecLogin.onclick = function () {
   elResult.str("");
   alert("구현중입니다.");
 };
-btnExecDateSearch.onclick = function () {
+btnExecDateSearch.onclick = async function () {
   elResult.str("");
-  alert("구현중입니다.");
+  logfile = [];
+  const list = await "getClubPass".api();
+  datesearch(list);
 };
 selServerCount.onchange = function () {
   const servercount = selServerCount.value * 1 - 1;

@@ -2,6 +2,8 @@ class TIMER {
   timer;
   url;
   timercount = 0;
+  timercountlimit = 20;
+  apiname = "connect";
   FLAG = true;
   keyStack = [];
   keyStackLength = 0;
@@ -49,7 +51,7 @@ class TIMER {
     if (self.isStopped) return;
 
     self.timercount++;
-    if (self.timercount > 20) {
+    if (self.timercount > self.timercountlimit) {
       self.timercount = 0;
       self.FLAG = true;
       self.messagecallback("timeout", {
@@ -90,7 +92,7 @@ class TIMER {
     const round = self.round;
     const cntServer = self.cntServer;
     self.messagecallback("start", { clubId, type });
-    const result = await "connect".api(
+    const result = await self.apiname.api(
       { clubId, type, round, cntServer },
       self.url
     );

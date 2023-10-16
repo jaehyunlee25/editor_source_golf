@@ -18,7 +18,9 @@ function ajaxcallforgeneral() {
     j.xmlHttp = new XMLHttpRequest();
     j.xmlHttp.onreadystatechange = on_ReadyStateChange;
     j.xmlHttp.open("POST", addr, true);
-
+    j.xmlHttp.onerror = function () {
+      log("error> ", j.xmlHttp.statusText);
+    };
     // header :: cors에 결정적
     // j.xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
     if (header) {
@@ -38,8 +40,14 @@ function ajaxcallforgeneral() {
         "application/x-www-form-urlencoded"
       );
     }
-
-    j.xmlHttp.send(prm);
+    try {
+      j.xmlHttp.send(prm);
+    } catch (e) {
+      if (j.ajaxerror) {
+        j.ajaxerror(j.xmlHttp.readyState, j.xmlHttp.status);
+        log(e.toString());
+      }
+    }
   };
   this.file = function (addr, prm) {
     j.xmlHttp = new XMLHttpRequest();
@@ -52,6 +60,8 @@ function ajaxcallforgeneral() {
       if (j.xmlHttp.status == 200) {
         var data = j.xmlHttp.responseText;
         j.ajaxcallback(data);
+      } else if (j.xmlHttp.status == 504) {
+        if (j.ajaxerror) j.ajaxerror(j.xmlHttp.readyState, j.xmlHttp.status);
       } else {
         if (j.ajaxerror) j.ajaxerror(j.xmlHttp.readyState, j.xmlHttp.status);
       }
