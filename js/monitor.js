@@ -45,6 +45,7 @@ String.prototype.api = function (param, serverUrl) {
   const api = this.toString();
   let url = monitorHeader;
   if (serverUrl) url = serverUrl;
+  log(param);
   const prom = new Promise((res, rej) => {
     try {
       post(
@@ -56,11 +57,10 @@ String.prototype.api = function (param, serverUrl) {
           res(json);
         },
         (readyState, status) => {
-          log(readyState, status);
+          rej(readyState, status);
         }
       );
     } catch (e) {
-      log("error> ", e.toString);
       rej(e.toString());
     }
   });
