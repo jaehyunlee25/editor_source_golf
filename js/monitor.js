@@ -319,22 +319,100 @@ function delay(milliseconds) {
     setTimeout(res, milliseconds); // return 할 게 없으니, 따로 reject을 설정하지 않는다.
   });
 }
+function countIsWorking() {
+  let count = 0;
+  searches.forEach((search) => {
+    if (search.isWorking) count++;
+  });
+  return count;
+}
+function onsearchprogress(param) {
+  const { type } = param;
+  const { url, club } = param;
+  const { eng_id } = club;
+  if (type == "start") {
+    const span = this.element.children[1].add("span");
+    span.className = "dsSpan";
+    span.style.backgroundColor = "yellow";
+    span.str(eng_id);
+  } else if (type == "end") {
+    const { result } = param;
+    const { club: eng_id, jsonstr, message } = result;
+    const span = this.element.children[1].lc();
+    if (jsonstr) {
+      span.style.backgroundColor = "green";
+      if (neolist.length + countIsWorking() == 0) popupclose();
+    } else {
+      if (message == "timeout") span.style.backgroundColor = "red";
+      else span.style.backgroundColor = "pink";
+      span.style.display = "none";
+      log(message);
+      neolist.push(club);
+    }
+    availables.push(this);
+    const newclub = neolist.shift();
+    log("progress> ", neolist.length + countIsWorking());
+    if (newclub) {
+      availables.shift().start(newclub);
+    }
+  }
+}
+let searches = [];
+let allerrors = [];
+let popupclose;
+let neolist;
+let availables = [];
+function onsearchfinish(param) {
+  const { type, errors } = param;
+  const errList = [];
+  errors.forEach((err) => {
+    const { body: club } = err;
+    errList.push(club);
+  });
+  if (type == "finish") {
+    let cnt = 0;
+    searches.forEach((search) => {
+      if (search.isFinish) cnt++;
+    });
+    log(cnt + "/" + 10);
+    allerrors.push(...errList);
+    if (cnt == 10) {
+      popupclose();
+      datesearch(allerrors);
+    }
+  }
+}
 async function datesearch(list) {
-  const neolist = list.shuffle().cutto(20);
-  neolist.forEach((ar, i) => {
-    const search = new SEARCH(ar, urls[i]);
-    search.start();
+  searches = [];
+  allerrors = [];
+  const { back, content, close } = layerpop();
+  popupclose = close;
+  content.style.width = "90%";
+  content.style.padding = "10px";
+  content.style.fontSize = "10px";
+  tmDateSearch.get(content);
+
+  for (let i = 0; i < 20; i++) {
+    const search = new SEARCH(i, urls[i]);
+    searches.push(search);
+    search.onprogress = onsearchprogress;
+    search.onfinish = onsearchfinish;
+    search.setElement(dsList.add("div"));
+  }
+  neolist = list.shuffle();
+  searches.forEach((search, i) => {
+    const club = neolist.shift();
+    if (club) search.start(club);
   });
 
-  /* const result = {};
-  list.forEach(async (club, i) => {
-    if (i > 19) return;
-    const param = { clubId: club.id, proc: club.proc };
-    result[i] = { clubId: club.id, url: urls[i] };
-    const body = await "datesearch".api(param, urls[i]);
-    log(club.id, body);
-    result[i].body = body;
-    log(result);
+  /* const neolist = list.shuffle().cutto(10); */
+  /* neolist.forEach((ar, i) => {
+    const search = new SEARCH(i, ar, urls[i]);
+    searches.push(search);
+    search.onprogress = onsearchprogress;
+    search.onfinish = onsearchfinish;
+    search.setElement(dsList.add("div"));
+    search.start();
   }); */
 
   /* const param = { clubId: club.id };
@@ -418,7 +496,20 @@ btnExecLogin.onclick = function () {
 btnExecDateSearch.onclick = async function () {
   elResult.str("");
   logfile = [];
-  const list = await "getClubPass".api();
+  const rawlist = await "getClubPass".api();
+  const list = [];
+  rawlist.forEach((club) => {
+    if (
+      club.eng_id == "asecovalley" ||
+      club.eng_id == "rockgarden" ||
+      club.eng_id == "dyhills" ||
+      club.eng_id == "leaders" ||
+      club.eng_id == "ariji" ||
+      club.eng_id == "science_daeduk"
+    )
+      return;
+    list.push(club);
+  });
   datesearch(list);
 };
 selServerCount.onchange = function () {

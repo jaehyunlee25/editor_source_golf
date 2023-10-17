@@ -143,44 +143,48 @@ class ASCELL {
   }
 }
 class SEARCH {
-  list;
   server;
   result;
-  constructor(ar, addr) {
-    this.list = ar;
+  errors;
+  element;
+  onprogress;
+  onfinish;
+  id;
+  isWorking = false;
+  constructor(id, addr) {
+    this.id = id;
     this.server = addr;
   }
-  async start() {
-    this.result = [];
-    const copylist = JSON.parse(JSON.stringify(this.list));
-    await this.exec(copylist);
+  setElement(elm) {
+    this.element = elm;
+    const div = this.element.add("div");
+    this.element.add("div"); // for result output
+    const strar = [(this.id + 1 + "").addzero(), this.server];
+    const str = strar.join(" :: ");
+    div.str(str);
   }
-  async exec(list) {
-    const club = list.shift();
-    if (!club) {
-      log("end> ", this.server);
-      this.result.forEach((res, i) => {
-        if (!res.body) {
-          log("no body> ", res);
-          return;
-        }
-        if (!res.body.jsonstr) {
-          log("no jsonstr> ", res);
-        }
+  async start(club) {
+    if (this.onprogress)
+      this.onprogress({
+        type: "start",
+        url: this.server,
+        club,
       });
-      return;
-    }
-    const i = this.list.length - list.length - 1;
+    this.isWorking = true;
     const param = { clubId: club.id, proc: club.proc };
-    this.result[i] = { clubId: club.id, url: this.server };
     let body;
     try {
       body = await "datesearch".api(param, this.server);
     } catch (e) {
       body = JSON.stringify(param);
     }
-    this.result[i].body = body;
-
-    await this.exec(list);
+    this.isWorking = false;
+    if (this.onprogress)
+      this.onprogress({
+        type: "end",
+        url: this.server,
+        club,
+        result: body,
+      });
   }
 }

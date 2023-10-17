@@ -3996,6 +3996,11 @@ HTMLElement.prototype.nm = function () {
 
   return el;
 };
+HTMLElement.prototype.lc = function () {
+  //last children
+  const lmt = this.children.length - 1;
+  return this.children[lmt];
+};
 HTMLTemplateElement.prototype.get = function (parent) {
   const content = this.content;
   const cover = document.importNode(content, true);
