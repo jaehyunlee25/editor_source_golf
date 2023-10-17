@@ -1,264 +1,276 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>업무일지</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, user-scalable=no" />
-        <script src="js/jCommonSE.js"></script>
-        <script src="js/global.js"></script>
-        <style>
-            body {
-                font-size: 13px;
-            }
-            td {
-                padding: 3px;
-            }
-            pre {
-                margin: 0px;
-            }
-            input {
-                width: 95%;
-            }
-            #cover {
-                width: 1500px;
-                margin: auto;
-            }
-            .leftWing {
-                background-color: #faf609;
-                max-height: 500px;
-            }
-            .leftWing {
-                background-color: #faf609;
-                max-height: 500px;
-                display:none;
-            }
-            .rightWing {
-                background-color: #eee;
-                max-height: 500px;
-                display:none;
-            }
-            .daybutton {
-                display: inline-block;
-                padding: 3px;
-                border: 1px solid darkgrey;
-                min-width: 30px;
-                text-align: center;
-                background-color: lightgray;
-            }
-            .checked {
-                background-color: white;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="cover">
-            <h2>업무일지v.0.0.1</h2>
-            <div style="padding: 5px;margin-bottom: 20px;">
-                <b>개발계 최신버전:</b>
-                <a href="file/tzzim_164.apk" download="tzzim_dev_164.apk">
-                    티찜(개발계) v.1.0.164 다운로드
-                </a>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <select id="selWeek" style = "padding: 5px;"></select>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <span>FROM:</span>                
-                <input id="iptStart" placeholder="like yyyy-mm-dd" style="width: 100px;padding: 3px;" />
-                <span> ~ </span>
-                <span>TO:</span>
-                <input id="iptEnd" placeholder="like yyyy-mm-dd" style="width: 100px;padding: 3px;" />
-                <span>요일: </span>
-                <span>
-                    <span class="daybutton">전체</span>
-                    <span class="daybutton">일</span>
-                    <span class="daybutton">월</span>
-                    <span class="daybutton">화</span>
-                    <span class="daybutton">수</span>
-                    <span class="daybutton">목</span>
-                    <span class="daybutton">금</span>
-                    <span class="daybutton">토</span>
-                </span>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <span>
-                    <span>분야: </span>
-                    <select id="selPart" style="padding: 3px;">
-                        <option>전체</option>
-                    </select>
-                </span>
-                <span>
-                    <span>태그: </span>
-                    <select id="selTag" style="padding: 3px;">
-                        <option>전체</option>
-                    </select>
-                </span>
-                <span>
-                    <span>기준일: </span>
-                    <select id="selProcDay" style="padding: 3px;">
-                        <option value="all">전체</option>
-                        <option value="create">등록일</option>
-                        <option value="update">처리일</option>
-                    </select>
-                </span>
-                <span>
-                    <span>작성자: </span>
-                    <select id="selWriter" style="padding: 3px;">
-                        <option value="all">전체</option>
-                    </select>
-                </span>
-            </div>
-            <div>
-                <button id="btnAdd">추가</button>
-                <button id="btnMod">수정</button>
-            </div>
-            <table>
-                <tr>
-                    <td style="vertical-align: top;">
-                        <div class="leftWing">
-                            <table border="1">
-                                <tbody>
-                                    <tr>
-                                        <td style="min-width: 70px;">아이디:</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>프로젝트:</td>
-                                        <td>
-                                            <select id="iptProject" style="padding:3px;width:100%;">
-                                                <option>티찜</option>
-                                                <option>표찜</option>
-                                                <option>관리</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>업무내용:</td>
-                                        <td>
-                                            <input id="iptName" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>분야:</td>
-                                        <td>
-                                            <input id="iptArea" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>진척율:</td>
-                                        <td>
-                                            <input id="iptProgress" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>상태:</td>
-                                        <td>
-                                            <input id="iptStatus" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>작성자:</td>
-                                        <td>
-                                            <select id="iptWriter" style="padding:3px;" disabled="true"></select>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div style="text-align:right;">
-                                <button id="btnAddReal">추가</button>
-                            </div>
-                        </div>
+  <head>
+    <title>업무일지</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <script src="js/jCommonSE.js"></script>
+    <script src="js/global.js"></script>
+    <style>
+      body {
+        font-size: 13px;
+      }
+      td {
+        padding: 3px;
+      }
+      pre {
+        margin: 0px;
+      }
+      input {
+        width: 95%;
+      }
+      #cover {
+        width: 1500px;
+        margin: auto;
+      }
+      .leftWing {
+        background-color: #faf609;
+        max-height: 500px;
+      }
+      .leftWing {
+        background-color: #faf609;
+        max-height: 500px;
+        display: none;
+      }
+      .rightWing {
+        background-color: #eee;
+        max-height: 500px;
+        display: none;
+      }
+      .daybutton {
+        display: inline-block;
+        padding: 3px;
+        border: 1px solid darkgrey;
+        min-width: 30px;
+        text-align: center;
+        background-color: lightgray;
+      }
+      .checked {
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cover">
+      <h2>업무일지v.0.0.1</h2>
+      <div style="padding: 5px; margin-bottom: 20px">
+        <b>개발계 최신버전:</b>
+        <a href="file/tzzim_165.apk" download="tzzim_dev_165.apk">
+          티찜(개발계) v.1.0.165 다운로드
+        </a>
+      </div>
+      <div style="margin-bottom: 10px">
+        <select id="selWeek" style="padding: 5px"></select>
+      </div>
+      <div style="margin-bottom: 10px">
+        <span>FROM:</span>
+        <input
+          id="iptStart"
+          placeholder="like yyyy-mm-dd"
+          style="width: 100px; padding: 3px"
+        />
+        <span> ~ </span>
+        <span>TO:</span>
+        <input
+          id="iptEnd"
+          placeholder="like yyyy-mm-dd"
+          style="width: 100px; padding: 3px"
+        />
+        <span>요일: </span>
+        <span>
+          <span class="daybutton">전체</span>
+          <span class="daybutton">일</span>
+          <span class="daybutton">월</span>
+          <span class="daybutton">화</span>
+          <span class="daybutton">수</span>
+          <span class="daybutton">목</span>
+          <span class="daybutton">금</span>
+          <span class="daybutton">토</span>
+        </span>
+      </div>
+      <div style="margin-bottom: 20px">
+        <span>
+          <span>분야: </span>
+          <select id="selPart" style="padding: 3px">
+            <option>전체</option>
+          </select>
+        </span>
+        <span>
+          <span>태그: </span>
+          <select id="selTag" style="padding: 3px">
+            <option>전체</option>
+          </select>
+        </span>
+        <span>
+          <span>기준일: </span>
+          <select id="selProcDay" style="padding: 3px">
+            <option value="all">전체</option>
+            <option value="create">등록일</option>
+            <option value="update">처리일</option>
+          </select>
+        </span>
+        <span>
+          <span>작성자: </span>
+          <select id="selWriter" style="padding: 3px">
+            <option value="all">전체</option>
+          </select>
+        </span>
+      </div>
+      <div>
+        <button id="btnAdd">추가</button>
+        <button id="btnMod">수정</button>
+      </div>
+      <table>
+        <tr>
+          <td style="vertical-align: top">
+            <div class="leftWing">
+              <table border="1">
+                <tbody>
+                  <tr>
+                    <td style="min-width: 70px">아이디:</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>프로젝트:</td>
+                    <td>
+                      <select id="iptProject" style="padding: 3px; width: 100%">
+                        <option>티찜</option>
+                        <option>표찜</option>
+                        <option>관리</option>
+                      </select>
                     </td>
-                    <td style="vertical-align:top;">
-                        <div style="">
-                            <table border="1" >
-                                <thead>
-                                    <tr style="text-align:center;">
-                                        <td>아이디</td>
-                                        <td>프로젝트</td>
-                                        <td style="max-width: 400px;min-width: 400px;">업무내용</td>
-                                        <td>분야</td>
-                                        <td>진척율</td>
-                                        <td>상태</td>
-                                        <td>작성자</td>
-                                        <td>등록일</td>
-                                        <td>처리일</td>
-                                    </tr>
-                                </thead>
-                                <tbody id="jobList"></tbody>
-                            </table>
-                        </div>
+                  </tr>
+                  <tr>
+                    <td>업무내용:</td>
+                    <td>
+                      <input id="iptName" />
                     </td>
-                    <td style="vertical-align:top;">
-                        <div class="rightWing">
-                            <table border="1">
-                                <tbody id="tblElem">
-                                    <tr>
-                                        <td style="min-width: 70px;">아이디:</td>
-                                        <td id="elId" style="min-width: 200px;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>프로젝트:</td>
-                                        <td id="elProject"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>업무내용:</td>
-                                        <td id="elName"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>분야:</td>
-                                        <td id="elArea"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>진척율:</td>
-                                        <td id="elProgress"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>상태:</td>
-                                        <td id="elStatus"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>작성자:</td>
-                                        <td id="elWriter"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>등록일:</td>
-                                        <td id="elDate"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>수정일:</td>
-                                        <td id="elDateProc"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div style="text-align:right;">
-                                <button id="btnDelReal">삭제</button>
-                                <button id="btnModReal">수정</button>
-                            </div>
-                        </div>
+                  </tr>
+                  <tr>
+                    <td>분야:</td>
+                    <td>
+                      <input id="iptArea" />
                     </td>
-                </tr>
-            </table>
-            <div>
-                <h3>미결업무</h3>
-                <table border="1">
-                    <tbody id="unSolvedList"></tbody>
-                </table>
+                  </tr>
+                  <tr>
+                    <td>진척율:</td>
+                    <td>
+                      <input id="iptProgress" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>상태:</td>
+                    <td>
+                      <input id="iptStatus" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>작성자:</td>
+                    <td>
+                      <select
+                        id="iptWriter"
+                        style="padding: 3px"
+                        disabled="true"
+                      ></select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="text-align: right">
+                <button id="btnAddReal">추가</button>
+              </div>
             </div>
-        </div>
-        <template id="jobElement">
-            <tr>
-                <td><!-- id --></td>
-                <td><!-- project --></td>
-                <td><!-- name --></td>
-                <td><!-- area --></td>
-                <td><!-- progress --></td>
-                <td><!-- status --></td>
-                <td><!-- writer --></td>
-                <td><!-- created_at --></td>
-                <td><!-- udpated_at --></td>
-            </tr>
-        </template>
-        <script src="js/job.js"></script>
-    </body>
+          </td>
+          <td style="vertical-align: top">
+            <div style="">
+              <table border="1">
+                <thead>
+                  <tr style="text-align: center">
+                    <td>아이디</td>
+                    <td>프로젝트</td>
+                    <td style="max-width: 400px; min-width: 400px">업무내용</td>
+                    <td>분야</td>
+                    <td>진척율</td>
+                    <td>상태</td>
+                    <td>작성자</td>
+                    <td>등록일</td>
+                    <td>처리일</td>
+                  </tr>
+                </thead>
+                <tbody id="jobList"></tbody>
+              </table>
+            </div>
+          </td>
+          <td style="vertical-align: top">
+            <div class="rightWing">
+              <table border="1">
+                <tbody id="tblElem">
+                  <tr>
+                    <td style="min-width: 70px">아이디:</td>
+                    <td id="elId" style="min-width: 200px"></td>
+                  </tr>
+                  <tr>
+                    <td>프로젝트:</td>
+                    <td id="elProject"></td>
+                  </tr>
+                  <tr>
+                    <td>업무내용:</td>
+                    <td id="elName"></td>
+                  </tr>
+                  <tr>
+                    <td>분야:</td>
+                    <td id="elArea"></td>
+                  </tr>
+                  <tr>
+                    <td>진척율:</td>
+                    <td id="elProgress"></td>
+                  </tr>
+                  <tr>
+                    <td>상태:</td>
+                    <td id="elStatus"></td>
+                  </tr>
+                  <tr>
+                    <td>작성자:</td>
+                    <td id="elWriter"></td>
+                  </tr>
+                  <tr>
+                    <td>등록일:</td>
+                    <td id="elDate"></td>
+                  </tr>
+                  <tr>
+                    <td>수정일:</td>
+                    <td id="elDateProc"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="text-align: right">
+                <button id="btnDelReal">삭제</button>
+                <button id="btnModReal">수정</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div>
+        <h3>미결업무</h3>
+        <table border="1">
+          <tbody id="unSolvedList"></tbody>
+        </table>
+      </div>
+    </div>
+    <template id="jobElement">
+      <tr>
+        <td><!-- id --></td>
+        <td><!-- project --></td>
+        <td><!-- name --></td>
+        <td><!-- area --></td>
+        <td><!-- progress --></td>
+        <td><!-- status --></td>
+        <td><!-- writer --></td>
+        <td><!-- created_at --></td>
+        <td><!-- udpated_at --></td>
+      </tr>
+    </template>
+    <script src="js/job.js"></script>
+  </body>
 </html>
