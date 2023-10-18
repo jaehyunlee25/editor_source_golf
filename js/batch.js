@@ -74,11 +74,6 @@ get(".env", {}, httpHeader, (resp) => {
 });
 
 async function main() {
-  btnExecDateSearch.click();
-  setInterval(() => {
-    btnExecDateSearch.click();
-  }, 1000 * 60 * 5);
-
   clublist = await "getGolfClubList".api();
   mapClublist = clublist.getmap("id");
   roundList = await "getRoundList".api();
@@ -91,6 +86,11 @@ async function main() {
   });
   await getRound();
   mkHistory();
+
+  btnExecDateSearch.click();
+  setInterval(() => {
+    btnExecDateSearch.click();
+  }, 1000 * 60 * 5);
 }
 async function getRound() {
   roundList.forEach((obj, i) => {
