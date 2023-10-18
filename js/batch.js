@@ -87,6 +87,7 @@ async function main() {
   await getRound();
   mkHistory();
 
+  btnExecDateSearch.click();
   setInterval(() => {
     btnExecDateSearch.click();
   }, 1000 * 60 * 5);
