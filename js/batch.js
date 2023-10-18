@@ -86,6 +86,10 @@ async function main() {
   });
   await getRound();
   mkHistory();
+
+  setInterval(() => {
+    btnExecDateSearch.click();
+  }, 1000 * 60 * 5);
 }
 async function getRound() {
   roundList.forEach((obj, i) => {

@@ -143,14 +143,13 @@ class ASCELL {
   }
 }
 class SEARCH {
+  id;
   server;
-  result;
   errors;
   element;
   onprogress;
-  onfinish;
-  id;
   isWorking = false;
+  club;
   constructor(id, addr) {
     this.id = id;
     this.server = addr;
@@ -163,6 +162,18 @@ class SEARCH {
     const str = strar.join(" :: ");
     div.str(str);
   }
+  checkStop(clubId) {
+    if (!this.isWorking) return;
+    if (clubId == this.club.id) {
+      if (this.onprogress)
+        this.onprogress({
+          type: "cancel",
+          club: this.club,
+        });
+      this.isWorking = false;
+      this.club = null;
+    }
+  }
   async start(club) {
     if (this.onprogress)
       this.onprogress({
@@ -170,7 +181,10 @@ class SEARCH {
         url: this.server,
         club,
       });
+    ////////////////////////////////////////////////////
     this.isWorking = true;
+    this.club = club;
+
     const param = { clubId: club.id, proc: club.proc };
     let body;
     try {
@@ -178,7 +192,16 @@ class SEARCH {
     } catch (e) {
       body = JSON.stringify(param);
     }
+
+    if (!this.isWorking) {
+      // 중간에 작업이 캔슬될 수 있다.
+      this.club = null;
+      return;
+    }
+
     this.isWorking = false;
+    this.club = null;
+
     if (this.onprogress)
       this.onprogress({
         type: "end",
@@ -186,5 +209,7 @@ class SEARCH {
         club,
         result: body,
       });
+
+    ////////////////////////////////////////////////////
   }
 }
