@@ -73,6 +73,17 @@ get(".env", {}, httpHeader, (resp) => {
   main();
 });
 
+// date search monitor
+let searches = [];
+let allerrors = [];
+let popupclose;
+let neolist;
+let availables = [];
+let searchTimeStamp;
+let workings = {};
+let isRoundFinished = false;
+// date search monitor
+
 async function main() {
   clublist = await "getGolfClubList".api();
   mapClublist = clublist.getmap("id");
@@ -88,10 +99,139 @@ async function main() {
   mkHistory();
 
   btnExecDateSearch.click();
-  setInterval(() => {
-    btnExecDateSearch.click();
+  setTimeout(() => {
+    location.href = location.href;
   }, 1000 * 60 * 5);
 }
+
+// date search monitor
+btnExecDateSearch.onclick = async function () {
+  isRoundFinished = false;
+  elResult.str("");
+  logfile = [];
+  const rawlist = await "getClubPass".api();
+  const list = [];
+  rawlist.forEach((club) => {
+    if (
+      club.eng_id == "rockgarden" ||
+      club.eng_id == "dyhills" ||
+      club.eng_id == "leaders" ||
+      club.eng_id == "ariji" ||
+      club.eng_id == "science_daeduk"
+    )
+      return;
+    list.push(club);
+  });
+  datesearch(list);
+};
+async function datesearch(list) {
+  searches = [];
+  allerrors = [];
+  const { back, content, close } = layerpop();
+  popupclose = close;
+  content.style.width = "90%";
+  content.style.padding = "10px";
+  content.style.fontSize = "10px";
+  tmDateSearch.get(content);
+
+  searchTimeStamp = new Date().getTime();
+  for (let i = 0; i < 20; i++) {
+    const search = new SEARCH(i, urls[i]);
+    searches.push(search);
+    search.onprogress = onsearchprogress;
+    search.setElement(dsList.add("div"));
+  }
+  neolist = list.shuffle();
+  searches.forEach((search, i) => {
+    const club = neolist.shift();
+    if (club) search.start(club);
+  });
+
+  /* const neolist = list.shuffle().cutto(10); */
+  /* neolist.forEach((ar, i) => {
+    const search = new SEARCH(i, ar, urls[i]);
+    searches.push(search);
+    search.onprogress = onsearchprogress;
+    search.onfinish = onsearchfinish;
+    search.setElement(dsList.add("div"));
+    search.start();
+  }); */
+
+  /* const param = { clubId: club.id };
+  const body = await club.proc.api(param, urls[2]);
+  log(body); */
+
+  /* logfile.push(club.id + "::" + club.eng_id);
+  const param = { clubId: club.id };
+  if (club.proc) proc = club.proc;
+  const body = await proc.api(param);
+
+  logfile.push(JSON.stringify(body));
+  await datesearch(list); */
+}
+function whenstart(search, eng_id) {
+  const span = search.element.children[1].add("span");
+  span.className = "dsSpan";
+  span.style.backgroundColor = "yellow";
+  span.str(eng_id);
+}
+function whencancel(search) {
+  const span = search.element.children[1].lc();
+  span.parentNode.removeChild(span);
+}
+function whenend(search, param) {
+  if (isRoundFinished) return;
+  const { result, club } = param;
+  const { club: eng_id, club_id, jsonstr, message } = result;
+  const span = search.element.children[1].lc();
+
+  if (jsonstr) whensuccess(span, club_id);
+  else whenfail(club, span, message);
+
+  whencommon(search);
+}
+function whencommon(search) {
+  // 공통
+  availables.push(search);
+  const newclub = neolist.shift();
+  if (newclub) availables.shift().start(newclub);
+
+  // 대기상태의 search가 있을 때는 워킹중인 클럽을 찾는다.
+  searches.forEach((srch) => {
+    if (availables.length == 0) return;
+    if (srch.isWorking && !workings[srch.club.id]) {
+      availables.shift().start(srch.club);
+      workings[srch.club.id] = true;
+    }
+  });
+}
+function whensuccess(span, clubId) {
+  if (isRoundFinished) return;
+  span.style.backgroundColor = "green";
+  // 결과대기중인 곳을 찾아가 작업을 취소한다.
+  searches.forEach((instance) => {
+    instance.checkStop(clubId);
+  });
+  if (neolist.length + countIsWorking() == 0) {
+    isRoundFinished = true;
+    log("elapsed> ", new Date().getTime() - searchTimeStamp);
+    popupclose();
+  }
+}
+function whenfail(club, span, message) {
+  log(message);
+  span.parentNode.removeChild(span);
+  neolist.push(club);
+}
+function onsearchprogress(param) {
+  const { type } = param;
+  const { url, club } = param;
+  const { eng_id } = club;
+  if (type == "start") whenstart(this, eng_id);
+  else if (type == "cancel") whencancel(this);
+  else if (type == "end") whenend(this, param);
+}
+// date search monitor
 async function getRound() {
   roundList.forEach((obj, i) => {
     const { round } = obj;
@@ -331,99 +471,7 @@ function countIsWorking() {
   });
   return count;
 }
-function onsearchprogress(param) {
-  const { type } = param;
-  const { url, club } = param;
-  const { eng_id } = club;
-  if (type == "start") {
-    const span = this.element.children[1].add("span");
-    span.className = "dsSpan";
-    span.style.backgroundColor = "yellow";
-    span.str(eng_id);
-  } else if (type == "cancel") {
-    const span = this.element.children[1].lc();
-    span.parentNode.removeChild(span);
-  } else if (type == "end") {
-    const { result } = param;
-    const { club: eng_id, club_id, jsonstr, message } = result;
-    const span = this.element.children[1].lc();
-    if (jsonstr) {
-      span.style.backgroundColor = "green";
-      // 결과대기중인 곳을 찾아가 작업을 취소한다.
-      searches.forEach((search) => {
-        search.checkStop(club_id);
-      });
-      if (neolist.length + countIsWorking() == 0) {
-        log("elapsed> ", new Date().getTime() - searchTimeStamp);
-        popupclose();
-      }
-    } else {
-      log(message);
-      span.parentNode.removeChild(span);
-      neolist.push(club);
-    }
-    availables.push(this);
-    const newclub = neolist.shift();
-    if (newclub) availables.shift().start(newclub);
-    // 대기상태의 search가 있을 때는
-    // 워킹중인 클럽을 찾는다.
-    searches.forEach((search) => {
-      if (availables.length == 0) return;
-      if (search.isWorking) availables.shift().start(search.club);
-    });
-  }
-}
-let searches = [];
-let allerrors = [];
-let popupclose;
-let neolist;
-let availables = [];
-let searchTimeStamp;
-async function datesearch(list) {
-  searches = [];
-  allerrors = [];
-  const { back, content, close } = layerpop();
-  popupclose = close;
-  content.style.width = "90%";
-  content.style.padding = "10px";
-  content.style.fontSize = "10px";
-  tmDateSearch.get(content);
 
-  searchTimeStamp = new Date().getTime();
-  for (let i = 0; i < 20; i++) {
-    const search = new SEARCH(i, urls[i]);
-    searches.push(search);
-    search.onprogress = onsearchprogress;
-    search.setElement(dsList.add("div"));
-  }
-  neolist = list.shuffle();
-  searches.forEach((search, i) => {
-    const club = neolist.shift();
-    if (club) search.start(club);
-  });
-
-  /* const neolist = list.shuffle().cutto(10); */
-  /* neolist.forEach((ar, i) => {
-    const search = new SEARCH(i, ar, urls[i]);
-    searches.push(search);
-    search.onprogress = onsearchprogress;
-    search.onfinish = onsearchfinish;
-    search.setElement(dsList.add("div"));
-    search.start();
-  }); */
-
-  /* const param = { clubId: club.id };
-  const body = await club.proc.api(param, urls[2]);
-  log(body); */
-
-  /* logfile.push(club.id + "::" + club.eng_id);
-  const param = { clubId: club.id };
-  if (club.proc) proc = club.proc;
-  const body = await proc.api(param);
-
-  logfile.push(JSON.stringify(body));
-  await datesearch(list); */
-}
 iptClubSearch.onkeyup = function () {
   elSelect.str("");
   elDesc.str("");
@@ -489,32 +537,6 @@ btnConSearchpage.onclick = async function () {
 btnExecLogin.onclick = function () {
   elResult.str("");
   alert("구현중입니다.");
-};
-btnExecDateSearch.onclick = async function () {
-  elResult.str("");
-  logfile = [];
-  const rawlist = await "getClubPass".api();
-  const list = [];
-  rawlist.forEach((club) => {
-    if (
-      // club.eng_id == "asecovalley" ||
-      //
-      /* club.eng_id == "maplebeach" ||
-      club.eng_id == "oceanbeach" ||
-      club.eng_id == "dongwonroyal_tongyung" ||
-      club.eng_id == "daeho" ||
-      club.eng_id == "linknine" || */
-      //
-      club.eng_id == "rockgarden" ||
-      club.eng_id == "dyhills" ||
-      club.eng_id == "leaders" ||
-      club.eng_id == "ariji" ||
-      club.eng_id == "science_daeduk"
-    )
-      return;
-    list.push(club);
-  });
-  datesearch(list);
 };
 selServerCount.onchange = function () {
   const servercount = selServerCount.value * 1 - 1;
