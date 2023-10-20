@@ -175,6 +175,9 @@ class SEARCH {
     }
   }
   async start(club) {
+    this.isWorking = true;
+    this.club = club;
+    ////////////////////////////////////////////////////
     if (this.onprogress)
       this.onprogress({
         type: "start",
@@ -182,9 +185,6 @@ class SEARCH {
         club,
       });
     ////////////////////////////////////////////////////
-    this.isWorking = true;
-    this.club = club;
-
     const param = { clubId: club.id, proc: club.proc };
     let body;
     try {
@@ -192,16 +192,7 @@ class SEARCH {
     } catch (e) {
       body = JSON.stringify(param);
     }
-
-    if (!this.isWorking) {
-      // 중간에 작업이 캔슬될 수 있다.
-      this.club = null;
-      return;
-    }
-
-    this.isWorking = false;
-    this.club = null;
-
+    ////////////////////////////////////////////////////
     if (this.onprogress)
       this.onprogress({
         type: "end",
@@ -209,7 +200,9 @@ class SEARCH {
         club,
         result: body,
       });
-
+    ////////////////////////////////////////////////////
+    this.isWorking = false;
+    this.club = null;
     ////////////////////////////////////////////////////
   }
 }
