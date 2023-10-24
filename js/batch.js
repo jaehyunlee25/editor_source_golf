@@ -129,12 +129,12 @@ async function datesearch(list) {
   failCount = 0;
   resultChecker = {};
 
-  const { back, content, close } = layerpop();
+  /* const { back, content, close } = layerpop();
   popupclose = close;
   content.style.width = "90%";
   content.style.padding = "10px";
   content.style.fontSize = "10px";
-  tmDateSearch.get(content);
+  tmDateSearch.get(content); */
 
   searchTimeStamp = new Date().getTime();
   for (let i = 0, lmt = urls.length; i < lmt; i++) {
@@ -172,7 +172,7 @@ async function datesearch(list) {
     //
     if (neolist.length + countIsWorking() == 0) {
       procLog();
-      setTimeout(popupclose, 2000);
+      // setTimeout(popupclose, 2000);
     }
   }, 500);
 }
