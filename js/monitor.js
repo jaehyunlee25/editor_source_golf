@@ -38,6 +38,7 @@ const urls = [
   "https://dev.mnemosyne.co.kr/monitor/8",
   "https://dev.mnemosyne.co.kr/monitor/9",
   "https://dev.mnemosyne.co.kr/monitor/10",
+  "http://192.168.0.10:8080",
 ];
 
 String.prototype.api = function (param, serverUrl) {
@@ -85,7 +86,13 @@ let startCount = 0;
 let successCount = 0;
 let failCount = 0;
 let resultChecker = {};
-let totalCount = 0;
+const windowsList = [
+  "rockgarden",
+  "dyhills",
+  "leaders",
+  "ariji",
+  "science_daeduk",
+];
 // date search monitor
 
 async function main() {
@@ -112,22 +119,15 @@ btnExecDateSearch.onclick = async function () {
   elResult.str("");
   logfile = [];
   const rawlist = await "getClubPass".api();
+  const exclusives = [];
   const list = [];
   rawlist.forEach((club) => {
-    if (
-      club.eng_id == "rockgarden" ||
-      club.eng_id == "dyhills" ||
-      club.eng_id == "leaders" ||
-      club.eng_id == "ariji" ||
-      club.eng_id == "science_daeduk" // ||
-      //
-      // club.eng_id == "muan"
-    )
-      return;
+    if (exclusives.length > 0) {
+      if (exclusives.indexOf(club.eng_id) == -1) return;
+    }
     list.push(club);
   });
   log("total> ", list.length);
-  totalCount = list.length;
   datesearch(list);
 };
 async function datesearch(list) {
@@ -141,7 +141,6 @@ async function datesearch(list) {
   successCount = 0;
   failCount = 0;
   resultChecker = {};
-  totalCount = 0;
 
   const { back, content, close } = layerpop();
   popupclose = close;
@@ -151,7 +150,7 @@ async function datesearch(list) {
   tmDateSearch.get(content);
 
   searchTimeStamp = new Date().getTime();
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0, lmt = urls.length; i < lmt; i++) {
     const search = new SEARCH(i, urls[i]);
     searches.push(search);
     search.onprogress = onsearchprogress;
@@ -177,9 +176,9 @@ async function datesearch(list) {
     //
     if (reportCount == 0 || reportCount % (2 * 2) == 0) procLog();
     //
-    if (successCount == totalCount) clearInterval(tReport);
+    if (successCount + countIsWorking() == 0) clearInterval(tReport);
     //
-    if (successCount == totalCount) {
+    if (successCount + countIsWorking() == 0) {
       procLog();
       setTimeout(popupclose, 2000);
     }
@@ -215,7 +214,7 @@ function whenstart(search, eng_id) {
 function whencancel(search) {
   const span = search.element.children[1].lc();
   span.parentNode.removeChild(span);
-  whencommon(search);
+  availables.push(search);
 }
 function whenend(search, param) {
   const { result, club } = param;
@@ -223,13 +222,7 @@ function whenend(search, param) {
   const span = search.element.children[1].lc();
 
   if (jsonstr) whensuccess(span, eng_id, jsonstr, search);
-  else whenfail(club, span, message);
-
-  whencommon(search);
-}
-function whencommon(search) {
-  // 공통
-  availables.push(search);
+  else whenfail(club, span, message, search);
 }
 function whensuccess(span, eng_id, jsonstr, search) {
   successCount++;
@@ -253,11 +246,31 @@ function whensuccess(span, eng_id, jsonstr, search) {
       }
     });
   });
+  //search가 로컬이면 로컬용 클럽을 먼저 수행한다.
+  if (search.id == 20) {
+    let index;
+    for (let i = 0, lmt = neolist.length; i < lmt; i++) {
+      const club = neolist[i];
+      if (windowsList.indexOf(club.eng_id) != -1) {
+        index = i;
+        break;
+      }
+    }
+    if (index == undefined) {
+      availables.push(search);
+    } else {
+      const [club] = neolist.splice(index, 1);
+      search.start(club);
+    }
+  } else {
+    availables.push(search);
+  }
 }
-function whenfail(club, span, message) {
+function whenfail(club, span, message, search) {
   failCount++;
   // span.parentNode.removeChild(span);
   neolist.push(club);
+  availables.push(search);
 }
 function onsearchprogress(param) {
   const { type } = param;

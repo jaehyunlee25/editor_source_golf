@@ -73,6 +73,13 @@ let startCount = 0;
 let successCount = 0;
 let failCount = 0;
 let resultChecker = {};
+const windowsList = [
+  "rockgarden",
+  "dyhills",
+  "leaders",
+  "ariji",
+  "science_daeduk",
+];
 // date search monitor
 
 async function main() {
@@ -88,18 +95,12 @@ async function main() {
 // date search monitor
 btnExecDateSearch.onclick = async function () {
   const rawlist = await "getClubPass".api();
+  const exclusives = [];
   const list = [];
   rawlist.forEach((club) => {
-    if (
-      club.eng_id == "rockgarden" ||
-      club.eng_id == "dyhills" ||
-      club.eng_id == "leaders" ||
-      club.eng_id == "ariji" ||
-      club.eng_id == "science_daeduk" // ||
-      //
-      // club.eng_id == "muan"
-    )
-      return;
+    if (exclusives.length > 0) {
+      if (exclusives.indexOf(club.eng_id) == -1) return;
+    }
     list.push(club);
   });
   log("total> ", list.length);
@@ -125,7 +126,7 @@ async function datesearch(list) {
   tmDateSearch.get(content);
 
   searchTimeStamp = new Date().getTime();
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0, lmt = urls.length; i < lmt; i++) {
     const search = new SEARCH(i, urls[i]);
     searches.push(search);
     search.onprogress = onsearchprogress;
@@ -227,6 +228,25 @@ function whensuccess(span, eng_id, jsonstr, search) {
       }
     });
   });
+  //search가 로컬이면 로컬용 클럽을 먼저 수행한다.
+  if (search.id == 20) {
+    let index;
+    for (let i = 0, lmt = neolist.length; i < lmt; i++) {
+      const club = neolist[i];
+      if (windowsList.indexOf(club.eng_id) != -1) {
+        index = i;
+        break;
+      }
+    }
+    if (index == undefined) {
+      availables.push(search);
+    } else {
+      const [club] = neolist.splice(index, 1);
+      search.start(club);
+    }
+  } else {
+    availables.push(search);
+  }
 }
 function whenfail(club, span, message) {
   failCount++;
