@@ -27,6 +27,7 @@ const urls = [
   "https://dev.mnemosyne.co.kr/monitor/9",
   "https://dev.mnemosyne.co.kr/monitor/10",
   "http://192.168.0.10:8080",
+  "http://192.168.0.18:8080",
 ];
 
 String.prototype.api = function (param, serverUrl) {
@@ -191,7 +192,7 @@ function whenstart(search, eng_id) {
 function whencancel(search) {
   const span = search.element.children[1].lc();
   span.parentNode.removeChild(span);
-  whencommon(search);
+  availables.push(search);
 }
 function whenend(search, param) {
   const { result, club } = param;
@@ -200,12 +201,6 @@ function whenend(search, param) {
 
   if (jsonstr) whensuccess(span, eng_id, jsonstr, search);
   else whenfail(club, span, message);
-
-  whencommon(search);
-}
-function whencommon(search) {
-  // 공통
-  availables.push(search);
 }
 function whensuccess(span, eng_id, jsonstr, search) {
   successCount++;
@@ -253,6 +248,7 @@ function whenfail(club, span, message) {
   failCount++;
   // span.parentNode.removeChild(span);
   neolist.push(club);
+  availables.push(search);
 }
 function onsearchprogress(param) {
   const { type } = param;
