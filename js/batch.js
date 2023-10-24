@@ -26,6 +26,7 @@ const urls = [
   "https://dev.mnemosyne.co.kr/monitor/8",
   "https://dev.mnemosyne.co.kr/monitor/9",
   "https://dev.mnemosyne.co.kr/monitor/10",
+  "http://192.168.0.10:8080",
 ];
 
 String.prototype.api = function (param, serverUrl) {
