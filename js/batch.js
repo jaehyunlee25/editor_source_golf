@@ -149,6 +149,11 @@ async function datesearch(list) {
     while (ablecheck()) {
       const search = availables.shift();
       const club = neolist.shift();
+      if (windowsList.indexOf(club.eng_id) != -1) {
+        availables.unshift(search);
+        neolist.push(club);
+        continue;
+      }
       search.start(club);
     }
     //
@@ -200,7 +205,7 @@ function whenend(search, param) {
   const span = search.element.children[1].lc();
 
   if (jsonstr) whensuccess(span, eng_id, jsonstr, search);
-  else whenfail(club, span, message);
+  else whenfail(club, span, message, search);
 }
 function whensuccess(span, eng_id, jsonstr, search) {
   successCount++;
@@ -244,7 +249,7 @@ function whensuccess(span, eng_id, jsonstr, search) {
     availables.push(search);
   }
 }
-function whenfail(club, span, message) {
+function whenfail(club, span, message, search) {
   failCount++;
   // span.parentNode.removeChild(span);
   neolist.push(club);

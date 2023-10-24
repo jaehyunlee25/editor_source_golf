@@ -171,7 +171,12 @@ async function datesearch(list) {
     //
     while (ablecheck()) {
       const search = availables.shift();
-      const club = neolist.shift();
+      let club = neolist.shift();
+      if (windowsList.indexOf(club.eng_id) != -1) {
+        availables.unshift(search);
+        neolist.push(club);
+        continue;
+      }
       search.start(club);
     }
     //
