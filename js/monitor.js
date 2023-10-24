@@ -40,7 +40,7 @@ const urls = [
   "https://dev.mnemosyne.co.kr/monitor/10",
   "http://192.168.0.10:8080",
   "http://192.168.0.10:8081",
-  "http://192.168.0.18:8080",
+  "http://post.ttpick.com:8080",
 ];
 
 String.prototype.api = function (param, serverUrl) {
