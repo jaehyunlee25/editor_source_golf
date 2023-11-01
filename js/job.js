@@ -1,23 +1,7 @@
 const httpHeader = { "Content-Type": "application/json" };
 let urlHeader = "https://mnemosynesolutions.co.kr/job";
 const cf = new jCommon();
-const obWeek = {
-  "11월01주": "2023-10-29~2023-11-04",
-  "10월04주": "2023-10-22~2023-10-28",
-  "10월03주": "2023-10-15~2023-10-21",
-  "10월02주": "2023-10-08~2023-10-14",
-  "10월01주": "2023-10-01~2023-10-07",
-  "09월04주": "2023-09-24~2023-09-30",
-  "09월03주": "2023-09-17~2023-09-23",
-  "09월02주": "2023-09-10~2023-09-16",
-  "09월01주": "2023-09-03~2023-09-09",
-  "08월04주": "2023-08-27~2023-09-02",
-  "08월03주": "2023-08-20~2023-08-26",
-  "08월02주": "2023-08-13~2023-08-19",
-  "08월01주": "2023-08-06~2023-08-12",
-  "07월04주": "2023-07-31~2023-08-05",
-  "07월03주": "2023-07-24~2023-07-30",
-};
+let obWeek = {};
 let checkedDayButton;
 let currentList;
 let members = {};
@@ -28,18 +12,23 @@ if (!setting.user) {
   location.href = "whoareyou.html";
 }
 
-get(".env", {}, httpHeader, (resp) => {
+setEnv();
+async function setEnv() {
+  const resp = await get(".env", {}, httpHeader);
   let { urlHeader: url } = resp.jp();
   urlHeader = url;
-  post(urlHeader + "/getMember", {}, httpHeader, (resp) => {
-    const json = JSON.parse(resp);
-    json.forEach((member) => {
-      members[member.id] = member;
-    });
-    init();
-  });
-});
 
+  const weeks = await post(urlHeader + "/getWeeks", {}, httpHeader);
+  obWeek = weeks.jp();
+
+  const raw = await post(urlHeader + "/getMember", {}, httpHeader);
+  const json = JSON.parse(raw);
+  json.forEach((member) => {
+    members[member.id] = member;
+  });
+
+  init();
+}
 function init() {
   setWeek();
   setPart();
