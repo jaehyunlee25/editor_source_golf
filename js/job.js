@@ -272,7 +272,6 @@ function mkTable(json) {
         pre.str(str);
       } else {
         if (i == 6) {
-          log(str);
           const member = members[str];
           str = member.name;
           tds[i].member = member;
