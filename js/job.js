@@ -256,6 +256,7 @@ function mkTable(json) {
     const tr = trFrag.children[0];
     const tds = tr.children;
     jobList.appendChild(tr);
+    log(obj);
     [
       obj.id,
       obj.project,
@@ -272,6 +273,7 @@ function mkTable(json) {
         pre.str(str);
       } else {
         if (i == 6) {
+          log(str);
           const member = members[str];
           str = member.name;
           tds[i].member = member;
