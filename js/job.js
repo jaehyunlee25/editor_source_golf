@@ -256,7 +256,6 @@ function mkTable(json) {
     const tr = trFrag.children[0];
     const tds = tr.children;
     jobList.appendChild(tr);
-    log(obj);
     [
       obj.id,
       obj.project,
