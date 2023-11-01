@@ -2,6 +2,7 @@ const httpHeader = { "Content-Type": "application/json" };
 let urlHeader = "https://mnemosynesolutions.co.kr/job";
 const cf = new jCommon();
 const obWeek = {
+  "11월01주": "2023-10-29~2023-11-04",
   "10월04주": "2023-10-22~2023-10-28",
   "10월03주": "2023-10-15~2023-10-21",
   "10월02주": "2023-10-08~2023-10-14",
