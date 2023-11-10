@@ -3229,7 +3229,6 @@ function WS(addr, callback) {
     });
   }
 }
-
 function gr(num) {
   return getRandom(0, num);
 }
@@ -3239,6 +3238,9 @@ function getRandom(start, end) {
   return parseInt(rslt);
 }
 function get(addr, param, header, callback) {
+  if (!callback) {
+    return asyncget(addr, param, header);
+  }
   var a = new ajaxcallforgeneral(),
     str = [];
   for (var el in param) {
@@ -3254,6 +3256,9 @@ function jFile(addr, param, callback) {
   a.ajaxcallback = callback;
 }
 function post(addr, param, header, callback, error) {
+  if (!callback) {
+    return asyncpost(addr, param, header);
+  }
   var a = new ajaxcallforgeneral(),
     str = [];
   if (header["Content-Type"] == "application/json") {
@@ -3265,6 +3270,36 @@ function post(addr, param, header, callback, error) {
   a.post(addr, str, header);
   a.ajaxcallback = callback;
   if (error) a.ajaxerror = error;
+}
+function asyncpost(addr, param, header) {
+  return new Promise((res, rej) => {
+    post(
+      addr,
+      param,
+      header,
+      (data) => {
+        res(data);
+      },
+      (e) => {
+        rej(e);
+      }
+    );
+  });
+}
+function asyncget(addr, param, header) {
+  return new Promise((res, rej) => {
+    get(
+      addr,
+      param,
+      header,
+      (data) => {
+        res(data);
+      },
+      (e) => {
+        rej(e);
+      }
+    );
+  });
 }
 function MAPPER(a, b, x) {
   var A = a,
@@ -3387,10 +3422,8 @@ function ASYNCmANAGER() {
     return fd;
   }
 }
-
 var layerPopPriority = 1001,
   layerPopStack = 0;
-
 function layerpop(opt) {
   if (!opt) {
     if (layerPopStack > 0) layerPopPriority--;

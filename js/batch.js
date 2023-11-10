@@ -158,11 +158,6 @@ async function datesearch(list) {
     while (ablecheck()) {
       const search = availables.shift();
       const club = neolist.shift();
-      if (windowsList.indexOf(club.eng_id) != -1) {
-        availables.unshift(search);
-        neolist.push(club);
-        continue;
-      }
       search.start(club);
     }
     //
@@ -238,25 +233,7 @@ function whensuccess(span, eng_id, jsonstr, search) {
       }
     });
   });
-  //search가 로컬이면 로컬용 클럽을 먼저 수행한다.
-  if (search.id == 20) {
-    let index;
-    for (let i = 0, lmt = neolist.length; i < lmt; i++) {
-      const club = neolist[i];
-      if (windowsList.indexOf(club.eng_id) != -1) {
-        index = i;
-        break;
-      }
-    }
-    if (index == undefined) {
-      availables.push(search);
-    } else {
-      const [club] = neolist.splice(index, 1);
-      search.start(club);
-    }
-  } else {
-    availables.push(search);
-  }
+  availables.push(search);
 }
 function whenfail(club, span, message, search) {
   failCount++;
