@@ -38,7 +38,7 @@ const urls = [
   "https://dev.mnemosyne.co.kr/monitor/8",
   "https://dev.mnemosyne.co.kr/monitor/9",
   "https://dev.mnemosyne.co.kr/monitor/10",
-  "http://192.168.0.10:8080",
+  /* "http://192.168.0.10:8080",
   "http://192.168.0.10:8081",
   "http://192.168.0.10:8082",
   "http://192.168.0.10:8083",
@@ -48,9 +48,8 @@ const urls = [
   "http://192.168.0.10:8087",
   "http://192.168.0.10:8088",
   "http://192.168.0.10:8089",
-  "http://post.ttpick.com:8080",
+  "http://post.ttpick.com:8080", */
 ];
-
 String.prototype.api = function (param, serverUrl) {
   param ??= {};
   const api = this.toString();
@@ -76,14 +75,12 @@ String.prototype.api = function (param, serverUrl) {
   });
   return prom;
 };
-
 get(".env", {}, httpHeader, (resp) => {
   let { monitorHeader: url, domain, port } = resp.jp();
   monitorHeader = url;
   // serverDomain = domain;
   main();
 });
-
 // date search monitor
 let searches = [];
 let allerrors = [];
